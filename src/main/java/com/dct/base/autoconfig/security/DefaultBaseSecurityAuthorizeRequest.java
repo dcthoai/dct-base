@@ -4,11 +4,9 @@ import com.dct.base.core.security.BaseSecurityAuthorizeRequestConfig;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.stereotype.Component;
 
 @Component
-@ConditionalOnMissingBean(value = BaseSecurityAuthorizeRequestConfig.class)
 public class DefaultBaseSecurityAuthorizeRequest extends BaseSecurityAuthorizeRequestConfig {
 
     private static final Logger log = LoggerFactory.getLogger(DefaultBaseSecurityAuthorizeRequest.class);

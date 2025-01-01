@@ -7,7 +7,6 @@ import com.dct.base.dto.response.BaseResponseDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.core.MethodParameter;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageConverter;
@@ -16,7 +15,6 @@ import org.springframework.http.server.ServerHttpResponse;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 
 @ControllerAdvice
-@ConditionalOnMissingBean(value = BaseResponseFilter.class)
 public class DefaultBaseResponseFilter extends BaseResponseFilter {
 
     private static final Logger log = LoggerFactory.getLogger(DefaultBaseResponseFilter.class);
