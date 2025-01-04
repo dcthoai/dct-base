@@ -6,6 +6,10 @@ package com.dct.base.constants;
  */
 public interface AuthConstants {
 
+    // The encryption complexity in PasswordEncoder's algorithm (between 4 and 31)
+    // Higher values mean the password is harder to attack, but too high will reduce performance
+    int BCRYPT_COST_FACTOR = 12;
+
     // Mark the key corresponding to the user's permission list when creating a JWT
     String AUTHORITIES_KEY = "AUTHORITIES_KEY";
 

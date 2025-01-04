@@ -1,7 +1,7 @@
 package com.dct.base.security;
 
 import com.dct.base.constants.AuthConstants;
-import com.dct.base.security.jwt.JwtTokenConfigurer;
+import com.dct.base.security.jwt.JwtTokenFilter;
 import com.dct.base.security.jwt.JwtTokenProvider;
 
 import org.springframework.context.annotation.Bean;
@@ -45,15 +45,16 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.csrf(AbstractHttpConfigurer::disable) // Because of using JWT, CSRF is not required
             .cors(Customizer.withDefaults())
-            .addFilterBefore(corsFilter, UsernamePasswordAuthenticationFilter.class)
-            .httpBasic(basic -> basic.authenticationEntryPoint(authenticationEntryPoint))
+            .addFilterBefore(jwtTokenFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter.class)
+            .addFilterBefore(corsFilter, JwtTokenFilter.class)
+            .httpBasic(httpBasic -> httpBasic.authenticationEntryPoint(authenticationEntryPoint))
             .exceptionHandling(handler -> handler.accessDeniedHandler(accessDeniedHandler))
             .headers(header -> header.frameOptions(HeadersConfigurer.FrameOptionsConfig::sameOrigin)
                 .contentSecurityPolicy(policy -> policy.policyDirectives(AuthConstants.HEADER_SECURITY_POLICY))
                 .referrerPolicy(config -> config.policy(ReferrerPolicyHeaderWriter.ReferrerPolicy.STRICT_ORIGIN_WHEN_CROSS_ORIGIN))
                 .permissionsPolicy(config -> config.policy(AuthConstants.HEADER_PERMISSIONS_POLICY))
             )
-            .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+            .sessionManagement(sessionManager -> sessionManager.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(authRequestsRegistry ->
                 authRequestsRegistry.requestMatchers("/api/admin/**", "/admin**").hasRole(AuthConstants.ROLE_ADMIN)
                                     .requestMatchers("/api/users/**", "/users**").hasRole(AuthConstants.ROLE_USER)
@@ -72,14 +73,18 @@ public class SecurityConfig {
                                     .requestMatchers("/login").permitAll()
                                     .requestMatchers("/p/**").permitAll()
                                     .anyRequest().authenticated()
-            )
-            .apply(new JwtTokenConfigurer(jwtTokenProvider));
+            );
 
         return http.build();
     }
 
     @Bean
+    public JwtTokenFilter jwtTokenFilter(JwtTokenProvider jwtTokenProvider) {
+        return new JwtTokenFilter(jwtTokenProvider);
+    }
+
+    @Bean
     public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
+        return new BCryptPasswordEncoder(AuthConstants.BCRYPT_COST_FACTOR);
     }
 }

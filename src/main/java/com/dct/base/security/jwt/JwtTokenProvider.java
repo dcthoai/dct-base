@@ -80,6 +80,7 @@ public class JwtTokenProvider {
                    .claim("username", baseAuthTokenDTO.getUsername())
                    .claim("deviceID", baseAuthTokenDTO.getDeviceID())
                    .signWith(secretKey)
+                   .issuedAt(new Date())
                    .expiration(validity)
                    .compact();
     }
