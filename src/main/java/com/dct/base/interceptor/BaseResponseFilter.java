@@ -12,7 +12,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.server.ServerHttpRequest;
 import org.springframework.http.server.ServerHttpResponse;
-import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice;
 
@@ -46,7 +45,6 @@ public class BaseResponseFilter implements ResponseBodyAdvice<Object> {
      * @param response ServerHttpResponse
      */
     @Override
-    @SuppressWarnings("")
     public Object beforeBodyWrite(Object body,
                                   MethodParameter returnType,
                                   @Nullable MediaType selectedContentType,
@@ -56,31 +54,19 @@ public class BaseResponseFilter implements ResponseBodyAdvice<Object> {
         Class<?> responseType = returnType.getParameterType();
 
         if (Objects.equals(responseType, BaseResponseDTO.class)) {
-            return setMessageI18nForResponse((BaseResponseDTO) body);
+            return baseCommon.setResponseMessageI18n((BaseResponseDTO) body);
         }
 
         if (Objects.equals(responseType, ResponseEntity.class)) {
             ResponseEntity<?> responseEntity = (ResponseEntity<?>) body;
+            Object responseBody = responseEntity.getBody();
 
-            if (responseEntity.getBody() instanceof BaseResponseDTO) {
-                BaseResponseDTO responseDTO = setMessageI18nForResponse((BaseResponseDTO) responseEntity.getBody());
+            if (responseBody instanceof BaseResponseDTO) {
+                BaseResponseDTO responseDTO = baseCommon.setResponseMessageI18n((BaseResponseDTO) responseBody);
                 return new ResponseEntity<>(responseDTO, responseEntity.getHeaders(), responseEntity.getStatusCode());
             }
         }
 
         return body;
-    }
-
-    private BaseResponseDTO setMessageI18nForResponse(BaseResponseDTO responseDTO) {
-        String messageKey = responseDTO.getMessage();
-
-        if (StringUtils.hasText(messageKey)) {
-            String messageTranslated = baseCommon.getMessageI18n(messageKey);
-
-            if (StringUtils.hasText(messageTranslated))
-                responseDTO.setMessage(messageTranslated);
-        }
-
-        return responseDTO;
     }
 }

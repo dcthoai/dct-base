@@ -50,29 +50,20 @@ public class SecurityConfig {
             .httpBasic(httpBasic -> httpBasic.authenticationEntryPoint(authenticationEntryPoint))
             .exceptionHandling(handler -> handler.accessDeniedHandler(accessDeniedHandler))
             .headers(header -> header.frameOptions(HeadersConfigurer.FrameOptionsConfig::sameOrigin)
-                .contentSecurityPolicy(policy -> policy.policyDirectives(AuthConstants.HEADER_SECURITY_POLICY))
+                .contentSecurityPolicy(policy -> policy.policyDirectives(AuthConstants.HEADER.SECURITY_POLICY))
                 .referrerPolicy(config -> config.policy(ReferrerPolicyHeaderWriter.ReferrerPolicy.STRICT_ORIGIN_WHEN_CROSS_ORIGIN))
-                .permissionsPolicy(config -> config.policy(AuthConstants.HEADER_PERMISSIONS_POLICY))
+                .permissionsPolicy(config -> config.policy(AuthConstants.HEADER.PERMISSIONS_POLICY))
             )
             .sessionManagement(sessionManager -> sessionManager.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-            .authorizeHttpRequests(authRequestsRegistry ->
-                authRequestsRegistry.requestMatchers("/api/admin/**", "/admin**").hasRole(AuthConstants.ROLE_ADMIN)
-                                    .requestMatchers("/api/users/**", "/users**").hasRole(AuthConstants.ROLE_USER)
-                                    // Used with custom CORS filters in CORS (Cross-Origin Resource Sharing) mechanism.
-                                    // The browser will send OPTIONS requests (preflight requests) to check
-                                    // if the server allows access from other sources before send requests such as POST.
-                                    .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-                                    .requestMatchers("/app/**/*.{js,html}").permitAll()
-                                    .requestMatchers("/resources/**").permitAll()
-                                    .requestMatchers("/i18n/**").permitAll()
-                                    .requestMatchers("/test/**").permitAll()
-                                    .requestMatchers("/api/authenticate").permitAll()
-                                    .requestMatchers("/api/auth/**").permitAll()
-                                    .requestMatchers("/api/p/**").permitAll()
-                                    .requestMatchers("/register").permitAll()
-                                    .requestMatchers("/login").permitAll()
-                                    .requestMatchers("/p/**").permitAll()
-                                    .anyRequest().authenticated()
+            .authorizeHttpRequests(registry ->
+                registry.requestMatchers(AuthConstants.REQUEST_MATCHERS.ADMIN).hasRole(AuthConstants.ROLES.ADMIN)
+                .requestMatchers(AuthConstants.REQUEST_MATCHERS.USER).hasRole(AuthConstants.ROLES.USER)
+                .requestMatchers(AuthConstants.REQUEST_MATCHERS.PUBLIC).permitAll()
+                // Used with custom CORS filters in CORS (Cross-Origin Resource Sharing) mechanism.
+                // The browser will send OPTIONS requests (preflight requests) to check
+                // if the server allows access from other sources before send requests such as POST.
+                .requestMatchers(HttpMethod.OPTIONS, AuthConstants.REQUEST_MATCHERS.OPTIONS).permitAll()
+                .anyRequest().authenticated()
             );
 
         return http.build();

@@ -1,11 +1,13 @@
 package com.dct.base.common;
 
 import com.dct.base.constants.ExceptionConstants;
+import com.dct.base.dto.response.BaseResponseDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
 
 import java.util.Locale;
 
@@ -34,5 +36,18 @@ public class BaseCommon {
         // The value of Locale represents the current region, here used to determine the language type to translate
         Locale locale = LocaleContextHolder.getLocale();
         return messageSource.getMessage(messageKey, args, ExceptionConstants.TRANSLATE_NOT_FOUND, locale);
+    }
+
+    public BaseResponseDTO setResponseMessageI18n(BaseResponseDTO responseDTO) {
+        String messageKey = responseDTO.getMessage();
+
+        if (StringUtils.hasText(messageKey)) {
+            String messageTranslated = getMessageI18n(messageKey);
+
+            if (StringUtils.hasText(messageTranslated))
+                responseDTO.setMessage(messageTranslated);
+        }
+
+        return responseDTO;
     }
 }

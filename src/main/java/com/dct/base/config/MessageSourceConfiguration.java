@@ -1,5 +1,6 @@
 package com.dct.base.config;
 
+import com.dct.base.constants.BaseConstants;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -20,8 +21,8 @@ public class MessageSourceConfiguration {
         ReloadableResourceBundleMessageSource messageSource = new ReloadableResourceBundleMessageSource();
         // Set the location of the message files
         // Spring will look for files by name messages_{locale}.properties
-        messageSource.setBasename("classpath:i18n/messages");
-        messageSource.setDefaultEncoding("UTF-8");
+        messageSource.setBasename(BaseConstants.MESSAGE_SOURCE_BASENAME);
+        messageSource.setDefaultEncoding(BaseConstants.MESSAGE_SOURCE_ENCODING);
         return messageSource;
     }
 

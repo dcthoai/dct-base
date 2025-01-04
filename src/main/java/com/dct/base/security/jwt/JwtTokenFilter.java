@@ -1,5 +1,6 @@
 package com.dct.base.security.jwt;
 
+import com.dct.base.constants.AuthConstants;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.ServletRequest;
@@ -19,7 +20,6 @@ import java.io.IOException;
  */
 public class JwtTokenFilter extends GenericFilterBean {
 
-    private static final String AUTHORIZATION_HEADER = "Authorization";
     private final JwtTokenProvider jwtTokenProvider;
 
     public JwtTokenFilter(JwtTokenProvider jwtTokenProvider) {
@@ -40,13 +40,13 @@ public class JwtTokenFilter extends GenericFilterBean {
     }
 
     private String resolveToken(HttpServletRequest request) {
-        String bearerToken = request.getHeader(AUTHORIZATION_HEADER);
+        String bearerToken = request.getHeader(AuthConstants.HEADER.AUTHORIZATION_HEADER);
 
         if (!StringUtils.hasText(bearerToken)) {
-            bearerToken = request.getHeader("Authorization-Gateway");
+            bearerToken = request.getHeader(AuthConstants.HEADER.AUTHORIZATION_GATEWAY_HEADER);
         }
 
-        if (StringUtils.hasText(bearerToken) && bearerToken.startsWith("Bearer ")) {
+        if (StringUtils.hasText(bearerToken) && bearerToken.startsWith(AuthConstants.HEADER.TOKEN_TYPE)) {
             return bearerToken.substring(7);
         }
 

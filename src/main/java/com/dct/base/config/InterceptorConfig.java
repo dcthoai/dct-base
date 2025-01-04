@@ -1,5 +1,7 @@
 package com.dct.base.config;
 
+import com.dct.base.constants.AuthConstants;
+import com.dct.base.constants.BaseConstants;
 import com.dct.base.interceptor.BaseHandlerInterceptor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,39 +38,20 @@ public class InterceptorConfig implements WebMvcConfigurer {
                 // Static files (favicon.ico, /images/**)
                 // Paths related to the login page (**/login/**)
                 // Error or internationalization files (/error**, /i18n/**)
-                .excludePathPatterns("**/favicon.ico")
-                .excludePathPatterns("/images/**")
-                .excludePathPatterns("**images**")
-                .excludePathPatterns("/index.html")
-                .excludePathPatterns("**index.html**")
-                .excludePathPatterns("**/file/**")
-                .excludePathPatterns("**/login/**")
-                .excludePathPatterns("/error**")
-                .excludePathPatterns("/i18n/**");
+                .excludePathPatterns(BaseConstants.INTERCEPTOR_EXCLUDED_PATHS);
     }
 
     @Bean
     public CorsFilter corsFilter() {
         CorsConfiguration config = new CorsConfiguration();
 
-        config.addAllowedOriginPattern("*");
-        config.setAllowedHeaders(List.of(
-                "Content-Type",     // Content format
-                "Authorization",    // Authentication token
-                "Accept",           // Client-expected content
-                "Origin",           // Origin of the request
-                "X-CSRF-Token",     // Anti-CSRF token
-                "X-Requested-With", // Ajax request markup
-                "Access-Control-Allow-Origin", // Server response header
-                "X-App-Version",    // Application version (optional)
-                "X-Device-ID"
-        ));
-
-        config.setAllowedMethods(List.of("GET", "PUT", "POST", "DELETE"));
-        config.setAllowCredentials(true);  // Allow sending cookies or authentication information
+        config.setAllowedOriginPatterns(List.of(AuthConstants.CORS.ALLOWED_ORIGIN_PATTERNS));
+        config.setAllowedHeaders(List.of(AuthConstants.CORS.ALLOWED_HEADERS));
+        config.setAllowedMethods(List.of(AuthConstants.CORS.ALLOWED_REQUEST_METHODS));
+        config.setAllowCredentials(AuthConstants.CORS.ALLOW_CREDENTIALS);  // Allow sending cookies or authentication information
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", config); // Apply CORS to all endpoints
+        source.registerCorsConfiguration(AuthConstants.CORS.APPLY_FOR, config); // Apply CORS to all endpoints
 
         return new CorsFilter(source);
     }
