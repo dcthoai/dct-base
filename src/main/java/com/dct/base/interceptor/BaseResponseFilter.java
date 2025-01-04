@@ -1,9 +1,9 @@
 package com.dct.base.interceptor;
 
 import com.dct.base.common.BaseCommon;
-import com.dct.base.constants.ExceptionConstants;
 import com.dct.base.dto.response.BaseResponseDTO;
 import jakarta.annotation.Nullable;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.MethodParameter;
@@ -79,8 +79,6 @@ public class BaseResponseFilter implements ResponseBodyAdvice<Object> {
 
             if (StringUtils.hasText(messageTranslated))
                 responseDTO.setMessage(messageTranslated);
-            else
-                responseDTO.setMessage(ExceptionConstants.TRANSLATE_NOT_FOUND);
         }
 
         return responseDTO;
