@@ -21,7 +21,7 @@ public class MessageSourceConfiguration {
         ReloadableResourceBundleMessageSource messageSource = new ReloadableResourceBundleMessageSource();
         // Set the location of the message files
         // Spring will look for files by name messages_{locale}.properties
-        messageSource.setBasename(BaseConstants.MESSAGE_SOURCE_BASENAME);
+        messageSource.setBasenames(BaseConstants.MESSAGE_SOURCE_BASENAME);
         messageSource.setDefaultEncoding(BaseConstants.MESSAGE_SOURCE_ENCODING);
         return messageSource;
     }

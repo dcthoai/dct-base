@@ -29,8 +29,8 @@ public class CustomAccessDeniedHandler implements AccessDeniedHandler {
     @Override
     public void handle(HttpServletRequest request,
                        HttpServletResponse response,
-                       AccessDeniedException accessDeniedException) throws IOException {
-        log.debug("AccessDenied handler is active", accessDeniedException);
+                       AccessDeniedException exception) throws IOException {
+        log.warn("AccessDenied handler is active. {}: {}", exception.getMessage(), request.getRequestURL());
 
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");

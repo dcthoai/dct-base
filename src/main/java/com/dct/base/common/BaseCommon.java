@@ -35,7 +35,12 @@ public class BaseCommon {
         log.debug("Translate message for {}", messageKey);
         // The value of Locale represents the current region, here used to determine the language type to translate
         Locale locale = LocaleContextHolder.getLocale();
-        return messageSource.getMessage(messageKey, args, ExceptionConstants.TRANSLATE_NOT_FOUND, locale);
+        String message = messageSource.getMessage(messageKey, args, null, locale);
+
+        if (StringUtils.hasText(message))
+            return message;
+
+        return messageSource.getMessage(ExceptionConstants.TRANSLATE_NOT_FOUND, null, "", locale);
     }
 
     public BaseResponseDTO setResponseMessageI18n(BaseResponseDTO responseDTO) {

@@ -16,8 +16,6 @@ spring:
     name: dct-base
   profiles:
     active: dev
-  messages:
-    basename: i18n/messages # Base path for resource files containing internationalized (i18n) messages
   datasource:
     hikari:
       poolName: Hikari
