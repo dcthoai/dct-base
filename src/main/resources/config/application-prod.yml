@@ -27,20 +27,6 @@ spring:
     url: jdbc:mysql://${NEXTGEN_DATABASE_URL};encrypt=true;trustServerCertificate=true
     username: ${NEXTGEN_DATABASE_USERNAME}
     password: ${NEXTGEN_DATABASE_PASSWORD}
-    hikari:
-      poolName: Hikari
-      auto-commit: false # Do not automatically commit transactions
-      data-source-properties:
-        cachePrepStmts: true # Enable caching to improve performance when using multiple identical statements
-        prepStmtCacheSize: 250 # Prepared statement cache size. In this case, the cache can hold up to 250 statements
-        prepStmtCacheSqlLimit: 2048 # Limits the maximum length (in bytes) of an SQL statement that can be cached
-        useServerPrepStmts: true # Enable server-side prepared statements instead of client-side prepared statements
-      maximumPoolSize: 15 # Maximum 15 database connections
-      minimumIdle: 5 # At least 5 connections will be kept idle, ready for use
-      maxLifetime: 1800000 # Maximum time (ms) that a connection can exist in the pool before being closed and recreated
-      idleTimeout: 180000 # Maximum time (ms) that a connection can be idle before being closed (3 min)
-      connectionTimeout: 200000 # Maximum time (ms) to wait for connection from pool when no connection is available
-      leak-detection-threshold: 200000 # Leak detection time of a connection pool (200 seconds)
   jpa:
     show-sql: false
     properties:
@@ -48,27 +34,8 @@ spring:
         hibernate:
           envers: # Helps track and retrieve information of deleted records in the system
             store_data_at_delete: true # Store data of records before deletion into `audit` table
-    hibernate:
-      # Hibernate only checks if the current schema matches the entity
-      # If it does not match, the application will not start
-      # Do not make any changes to the schema
-      ddl-auto: validate
-  thymeleaf:
-    cache: false
-  servlet:
-    multipart:
-      # Maximum size of the entire HTTP request when uploading multipart data (including files and other parameters)
-      max-request-size: 10MB
-      # Maximum size for each file that a user can upload
-      max-file-size: 10MB
-
-server:
-  port: 8080
 
 security:
   authentication:
     jwt:
       base64-secret: ${NEXTGEN_SECRET_KEY}
-      # Token is valid 24 hours
-      token-validity-in-milliseconds: 604800000
-      token-validity-in-milliseconds-for-remember-me: 604800000

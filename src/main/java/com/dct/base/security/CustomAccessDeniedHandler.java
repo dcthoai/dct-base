@@ -1,5 +1,6 @@
 package com.dct.base.security;
 
+import com.dct.base.common.BaseCommon;
 import com.dct.base.common.JsonUtils;
 import com.dct.base.constants.ExceptionConstants;
 import com.dct.base.constants.HttpStatusConstants;
@@ -19,6 +20,11 @@ import java.io.IOException;
 public class CustomAccessDeniedHandler implements AccessDeniedHandler {
 
     private static final Logger log = LoggerFactory.getLogger(CustomAccessDeniedHandler.class);
+    private final BaseCommon baseCommon;
+
+    public CustomAccessDeniedHandler(BaseCommon baseCommon) {
+        this.baseCommon = baseCommon;
+    }
 
     @Override
     public void handle(HttpServletRequest request,
@@ -27,12 +33,13 @@ public class CustomAccessDeniedHandler implements AccessDeniedHandler {
         log.debug("AccessDenied handler is active", accessDeniedException);
 
         response.setContentType("application/json");
+        response.setCharacterEncoding("UTF-8");
         response.setStatus(HttpStatusConstants.FORBIDDEN);
 
         BaseResponseDTO responseDTO = new BaseResponseDTO(
             HttpStatusConstants.FORBIDDEN,
             HttpStatusConstants.STATUS.FAILED,
-            ExceptionConstants.FORBIDDEN
+            baseCommon.getMessageI18n(ExceptionConstants.FORBIDDEN)
         );
 
         response.getWriter().write(JsonUtils.toJsonString(responseDTO));

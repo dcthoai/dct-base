@@ -1,5 +1,6 @@
 package com.dct.base.security;
 
+import com.dct.base.common.BaseCommon;
 import com.dct.base.common.JsonUtils;
 import com.dct.base.constants.ExceptionConstants;
 import com.dct.base.constants.HttpStatusConstants;
@@ -19,6 +20,11 @@ import java.io.IOException;
 public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint {
 
     private static final Logger log = LoggerFactory.getLogger(CustomAuthenticationEntryPoint.class);
+    private final BaseCommon baseCommon;
+
+    public CustomAuthenticationEntryPoint(BaseCommon baseCommon) {
+        this.baseCommon = baseCommon;
+    }
 
     @Override
     public void commence(HttpServletRequest request,
@@ -27,12 +33,13 @@ public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint 
         log.debug("Authentication entry point is active", authException);
 
         response.setContentType("application/json");
+        response.setCharacterEncoding("UTF-8");
         response.setStatus(HttpStatusConstants.UNAUTHORIZED);
 
         BaseResponseDTO responseDTO = new BaseResponseDTO(
             HttpStatusConstants.UNAUTHORIZED,
             HttpStatusConstants.STATUS.FAILED,
-            ExceptionConstants.UNAUTHORIZED
+            baseCommon.getMessageI18n(ExceptionConstants.UNAUTHORIZED)
         );
 
         response.getWriter().write(JsonUtils.toJsonString(responseDTO));
