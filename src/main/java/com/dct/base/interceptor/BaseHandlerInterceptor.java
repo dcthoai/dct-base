@@ -12,17 +12,17 @@ import org.springframework.web.servlet.ModelAndView;
 @SuppressWarnings("unused")
 public class BaseHandlerInterceptor implements HandlerInterceptor {
 
-    private final Logger log = LoggerFactory.getLogger(BaseHandlerInterceptor.class);
+    private static final Logger log = LoggerFactory.getLogger(BaseHandlerInterceptor.class);
     private static final String ENTITY_NAME = "BaseHandlerInterceptor";
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
 
-        return false;
+        return true;
     }
 
     @Override
-    public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler, ModelAndView modelAndView) {
+    public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler, ModelAndView mav) {
 
     }
 }

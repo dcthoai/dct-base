@@ -15,8 +15,6 @@ import org.springframework.http.server.ServerHttpResponse;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice;
 
-import java.util.Objects;
-
 @ControllerAdvice
 public class BaseResponseFilter implements ResponseBodyAdvice<Object> {
 
@@ -46,19 +44,16 @@ public class BaseResponseFilter implements ResponseBodyAdvice<Object> {
      */
     @Override
     public Object beforeBodyWrite(Object body,
-                                  MethodParameter returnType,
+                                  @Nullable MethodParameter returnType,
                                   @Nullable MediaType selectedContentType,
                                   @Nullable Class<? extends HttpMessageConverter<?>> selectedConverterType,
                                   @Nullable ServerHttpRequest request,
                                   @Nullable ServerHttpResponse response) {
-        Class<?> responseType = returnType.getParameterType();
-
-        if (Objects.equals(responseType, BaseResponseDTO.class)) {
+        if (body instanceof BaseResponseDTO) {
             return baseCommon.setResponseMessageI18n((BaseResponseDTO) body);
         }
 
-        if (Objects.equals(responseType, ResponseEntity.class)) {
-            ResponseEntity<?> responseEntity = (ResponseEntity<?>) body;
+        if (body instanceof ResponseEntity<?> responseEntity) {
             Object responseBody = responseEntity.getBody();
 
             if (responseBody instanceof BaseResponseDTO) {

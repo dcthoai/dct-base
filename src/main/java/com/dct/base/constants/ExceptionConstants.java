@@ -7,5 +7,7 @@ package com.dct.base.constants;
  */
 public interface ExceptionConstants {
 
-    String TRANSLATE_NOT_FOUND = "TRANSLATE_NOT_FOUND";
+    String TRANSLATE_NOT_FOUND = "exception.i18n.notFound";
+    String UNAUTHORIZED = "exception.auth.unauthorized";
+    String FORBIDDEN = "exception.auth.forbidden";
 }

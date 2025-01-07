@@ -10,8 +10,11 @@ public interface AuthConstants {
     // Higher values mean the password is harder to attack, but too high will reduce performance
     int BCRYPT_COST_FACTOR = 12;
 
-    // Mark the key corresponding to the user's permission list when creating a JWT
-    String AUTHORITIES_KEY = "AUTHORITIES_KEY";
+    interface TOKEN_PAYLOAD {
+        String USER_ID = "userID";
+        String USERNAME = "username";
+        String DEVICE_ID = "deviceID";
+    }
 
     interface REQUEST_MATCHERS {
         String[] OPTIONS = { "/**" };
