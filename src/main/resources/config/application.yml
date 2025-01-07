@@ -21,9 +21,9 @@ spring:
   jpa:
     # Avoid causing LazyInitializationException if querying outside the scope of EntityManager or causing poor performance
     open-in-view: false
-#    properties:
-#      hibernate:
-#        packagesToScan: ${spring.jpa.properties.hibernate.packagesToScan},com.dct.base.entity
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQLDialect
 
 server:
   servlet:

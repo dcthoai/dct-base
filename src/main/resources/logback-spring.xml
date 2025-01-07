@@ -34,6 +34,10 @@
         </encoder>
     </appender>
 
+    <root>
+        <appender-ref ref="FILE"/>
+    </root>
+
     <!-- Appender for unsafe log. Dedicated to connection pool leak monitoring log -->
     <appender name = "CONNECTION_POOL_FILE" class = "ch.qos.logback.core.FileAppender">
         <file>mnt/logs/connection_pool_leak.log</file>
