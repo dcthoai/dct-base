@@ -20,22 +20,3 @@ logging:
   charset:
     console: UTF-8
     file: UTF-8
-
-spring:
-  datasource:
-    type: com.mysql.cj.jdbc.MysqlDataSource
-    url: jdbc:mysql://${NEXTGEN_DATABASE_URL};encrypt=true;trustServerCertificate=true
-    username: ${NEXTGEN_DATABASE_USERNAME}
-    password: ${NEXTGEN_DATABASE_PASSWORD}
-  jpa:
-    show-sql: false
-    properties:
-      org:
-        hibernate:
-          envers: # Helps track and retrieve information of deleted records in the system
-            store_data_at_delete: true # Store data of records before deletion into `audit` table
-
-security:
-  authentication:
-    jwt:
-      base64-secret: ${NEXTGEN_SECRET_KEY}

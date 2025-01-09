@@ -6,7 +6,7 @@ public interface BaseConstants {
     String MESSAGE_SOURCE_ENCODING = "UTF-8";
 
     String[] MESSAGE_SOURCE_BASENAME = {
-        "classpath:i18n/child/messages",
+        "classpath:common/i18n/messages",
         "classpath:i18n/messages"
     };
 
@@ -20,7 +20,7 @@ public interface BaseConstants {
         "**/login/**",
         "/error**",
         "/i18n/**",
-        "/i18n/child/**"
+        "/common/i18n/**"
     };
 
     interface STATIC_RESOURCES {
@@ -33,14 +33,14 @@ public interface BaseConstants {
             "/*.ico",
             "/content/**",
             "/i18n/*",
-            "/i18n/child/*"
+            "/common/i18n/*"
         };
 
         String[] LOCATIONS = {
             "classpath:/static/",
             "classpath:/static/content/",
             "classpath:/static/i18n/",
-            "classpath:/static/i18n/child/",
+            "classpath:/static/common/i18n/",
         };
     }
 }

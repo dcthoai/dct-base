@@ -1,10 +1,16 @@
 package com.dct.base;
 
 import com.dct.base.config.CRLFLogConverter;
+import com.dct.base.config.properties.Datasource;
+import com.dct.base.config.properties.DatasourceProperties;
+import com.dct.base.config.properties.Hikari;
+import com.dct.base.config.properties.Security;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.core.env.Environment;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.util.StringUtils;
@@ -14,6 +20,7 @@ import java.net.UnknownHostException;
 import java.util.Optional;
 
 @SpringBootApplication
+@EnableConfigurationProperties({ Datasource.class, Hikari.class, DatasourceProperties.class, Security.class })
 public class DctBaseApplication {
 
 	private static final Logger log = LoggerFactory.getLogger(DctBaseApplication.class);

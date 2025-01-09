@@ -7,7 +7,13 @@ package com.dct.base.constants;
  */
 public interface ExceptionConstants {
 
+    // I18n exception
     String TRANSLATE_NOT_FOUND = "exception.i18n.notFound";
+
+    // Http exception
+    String METHOD_NOT_ALLOW = "exception.http.methodNotAllow";
+
+    // Authentication exception
     String UNAUTHORIZED = "exception.auth.unauthorized";
     String FORBIDDEN = "exception.auth.forbidden";
 }

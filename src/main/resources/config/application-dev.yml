@@ -16,17 +16,3 @@ logging:
   charset:
     console: UTF-8
     file: UTF-8
-
-spring:
-  datasource:
-    type: com.mysql.cj.jdbc.MysqlDataSource
-    url: jdbc:mysql://localhost:3306/nextgen_shop
-    username: admin-nextgen-shop
-    password: 123456a@
-  jpa:
-    show-sql: true
-
-security:
-  authentication:
-    jwt:
-      base64-secret: ZGN0X2Jhc2VfbmV4dGdlbl9zZWNyZXRfa2V5XzRkNTg5MzEyMjdlMDhiNGFmMDY0NDZhNGRkMWEyMGQwMzBhMzZmZTk5ZQ==

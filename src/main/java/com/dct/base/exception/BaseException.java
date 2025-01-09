@@ -1,6 +1,6 @@
 package com.dct.base.exception;
 
-public class BaseException extends Throwable {
+public class BaseException extends Exception {
 
     private final String entityName;
     private final String errorKey;
@@ -11,6 +11,7 @@ public class BaseException extends Throwable {
     }
 
     public BaseException(String entityName, String errorKey, Object[] args) {
+        super();
         this.entityName = entityName;
         this.errorKey = errorKey;
         this.args = args;

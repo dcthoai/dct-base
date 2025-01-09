@@ -25,6 +25,7 @@ public interface AuthConstants {
             "*.html",
             "/resources/**",
             "/i18n/**",
+            "/common/i18n/**",
             "/test/**",
             "/api/authenticate",
             "/api/auth/**",

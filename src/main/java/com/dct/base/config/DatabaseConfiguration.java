@@ -1,13 +1,17 @@
 package com.dct.base.config;
 
+import com.dct.base.config.properties.Datasource;
+import com.dct.base.config.properties.DatasourceProperties;
+import com.dct.base.config.properties.Hikari;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
-import org.springframework.core.env.Environment;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
@@ -19,51 +23,44 @@ import java.util.Properties;
 public class DatabaseConfiguration {
 
     private static final Logger log = LoggerFactory.getLogger(DatabaseConfiguration.class);
-    private final Environment env;
+    private final Datasource datasource;
+    private final Hikari hikari;
+    private final DatasourceProperties datasourceProperties;
 
-    public DatabaseConfiguration(Environment env) {
-        this.env = env;
+    public DatabaseConfiguration(@Qualifier("datasource") Datasource datasource,
+                                 @Qualifier("hikari") Hikari hikari,
+                                 @Qualifier("datasourceProperties") DatasourceProperties datasourceProperties) {
+        this.datasource = datasource;
+        this.hikari = hikari;
+        this.datasourceProperties = datasourceProperties;
     }
 
-    @Primary
     @Bean(name = "dataSource")
     public DataSource dataSource() {
         log.debug("Configuring data source");
         HikariConfig config = new HikariConfig();
-        Properties properties = new Properties();
+        Properties props = new Properties();
 
-        boolean autoCommit = env.getProperty("spring.datasource.hikari.auto-commit", Boolean.class, false);
-        int maxPoolSize = env.getProperty("spring.datasource.hikari.maximumPoolSize", Integer.class, 15);
-        int minIdle = env.getProperty("spring.datasource.hikari.minimumIdle", Integer.class, 5);
-        long idleTimeout = env.getProperty("spring.datasource.hikari.idleTimeout", Long.class, 180000L);
-        long maxLifetime = env.getProperty("spring.datasource.hikari.maxLifetime", Long.class, 1800000L);
-        long cntTimeout = env.getProperty("spring.datasource.hikari.connectionTimeout", Long.class, 200000L);
-        String poolName = env.getProperty("spring.datasource.hikari.poolName", "HikariPool");
-        String cachePrepStmts = env.getProperty("spring.datasource.hikari.data-source-properties.cachePrepStmts", "true");
-        String cacheSize = env.getProperty("spring.datasource.hikari.data-source-properties.prepStmtCacheSize", "250");
-        String cacheLimit = env.getProperty("spring.datasource.hikari.data-source-properties.prepStmtCacheSqlLimit", "2048");
-        String useServerPrepStmts = env.getProperty("spring.datasource.hikari.data-source-properties.useServerPrepStmts", "true");
+        config.setJdbcUrl(datasource.getDatabase());
+        config.setUsername(datasource.getUsername());
+        config.setPassword(datasource.getPassword());
 
-        properties.setProperty("cachePrepStmts", cachePrepStmts);
-        properties.setProperty("prepStmtCacheSize", cacheSize);
-        properties.setProperty("prepStmtCacheSqlLimit", cacheLimit);
-        properties.setProperty("useServerPrepStmts", useServerPrepStmts);
-        properties.setProperty("passwordCharacterEncoding", "UTF-8");
-        properties.setProperty("serverTimezone", "UTC");
+        config.setAutoCommit(hikari.getAutoCommit());
+        config.setAllowPoolSuspension(hikari.getAllowPoolSuspension());
+        config.setMaximumPoolSize(hikari.getMaximumPoolSize());
+        config.setMinimumIdle(hikari.getMinimumIdle());
+        config.setIdleTimeout(hikari.getIdleTimeout());
+        config.setMaxLifetime(hikari.getMaxLifetime());
+        config.setConnectionTimeout(hikari.getConnectionTimeout());
+        config.setPoolName(hikari.getPoolName());
 
-        config.setJdbcUrl(env.getProperty("spring.datasource.url"));
-        config.setUsername(env.getProperty("spring.datasource.username"));
-        config.setPassword(env.getProperty("spring.datasource.password"));
-
-        config.setAutoCommit(autoCommit);
-        config.setAllowPoolSuspension(false);
-        config.setMaximumPoolSize(maxPoolSize);
-        config.setMinimumIdle(minIdle);
-        config.setIdleTimeout(idleTimeout);
-        config.setMaxLifetime(maxLifetime);
-        config.setConnectionTimeout(cntTimeout);
-        config.setPoolName(poolName);
-        config.setDataSourceProperties(properties);
+        props.setProperty("cachePrepStmts", datasourceProperties.getCachePrepStmts());
+        props.setProperty("prepStmtCacheSize", datasourceProperties.getPrepStmtCacheSize());
+        props.setProperty("prepStmtCacheSqlLimit", datasourceProperties.getPrepStmtCacheSqlLimit());
+        props.setProperty("useServerPrepStmts", datasourceProperties.getUseServerPrepStmts());
+        props.setProperty("passwordCharacterEncoding", "UTF-8");
+        props.setProperty("serverTimezone", "UTC");
+        config.setDataSourceProperties(props);
 
         return new HikariDataSource(config);
     }

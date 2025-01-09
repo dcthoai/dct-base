@@ -1,24 +1,25 @@
 package com.dct.base.security.jwt;
 
 import com.dct.base.constants.AuthConstants;
+import jakarta.annotation.Nullable;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
-import jakarta.servlet.ServletRequest;
-import jakarta.servlet.ServletResponse;
 import jakarta.servlet.http.HttpServletRequest;
 
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.util.StringUtils;
-import org.springframework.web.filter.GenericFilterBean;
+import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.util.Objects;
 
 /**
  * Filters incoming requests and installs a Spring Security principal if a header corresponding to a valid user is found
  * @author thoaidc
  */
-public class JwtTokenFilter extends GenericFilterBean {
+public class JwtTokenFilter extends OncePerRequestFilter {
 
     private final JwtTokenProvider jwtTokenProvider;
 
@@ -27,16 +28,20 @@ public class JwtTokenFilter extends GenericFilterBean {
     }
 
     @Override
-    public void doFilter(ServletRequest request, ServletResponse response, FilterChain filterChain) throws IOException, ServletException {
-        HttpServletRequest httpServletRequest = (HttpServletRequest) request;
-        String jwt = resolveToken(httpServletRequest);
+    protected void doFilterInternal(@Nullable HttpServletRequest request,
+                                    @Nullable HttpServletResponse response,
+                                    @Nullable FilterChain filterChain) throws ServletException, IOException {
+        if (Objects.nonNull(request)) {
+            String jwt = resolveToken(request);
 
-        if (StringUtils.hasText(jwt) && this.jwtTokenProvider.validateToken(jwt)) {
-            Authentication authentication = this.jwtTokenProvider.getAuthentication(jwt);
-            SecurityContextHolder.getContext().setAuthentication(authentication);
+            if (StringUtils.hasText(jwt) && this.jwtTokenProvider.validateToken(jwt)) {
+                Authentication authentication = this.jwtTokenProvider.getAuthentication(jwt);
+                SecurityContextHolder.getContext().setAuthentication(authentication);
+            }
         }
 
-        filterChain.doFilter(request, response);
+        if (Objects.nonNull(filterChain))
+            filterChain.doFilter(request, response);
     }
 
     private String resolveToken(HttpServletRequest request) {

@@ -1,8 +1,10 @@
 package com.dct.base.security.jwt;
 
+import com.dct.base.config.properties.Security;
 import com.dct.base.constants.AuthConstants;
 import com.dct.base.dto.BaseAuthTokenDTO;
 import com.dct.base.repositories.AuthorityRepository;
+
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.JwtParser;
@@ -14,8 +16,7 @@ import io.jsonwebtoken.security.SecurityException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.env.Environment;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -33,26 +34,26 @@ import java.util.Set;
 public class JwtTokenProvider {
 
     private static final Logger log = LoggerFactory.getLogger(JwtTokenProvider.class);
+    private final AuthorityRepository authorityRepository;
     private final SecretKey secretKey;
     private final JwtParser jwtParser;
-    private final AuthorityRepository authorityRepository;
+    private final long TOKEN_VALIDITY;
+    private final long TOKEN_VALIDITY_FOR_REMEMBER_ME;
 
-    @Value("${security.authentication.jwt.token-validity-in-milliseconds}")
-    private long TOKEN_EXPIRED_AFTER;
-
-    @Value("${security.authentication.jwt.token-validity-in-milliseconds-for-remember-me}")
-    private long TOKEN_FOR_REMEMBER_ME_EXPIRED_AFTER;
-
-    public JwtTokenProvider(Environment env, AuthorityRepository authorityRepository) {
+    public JwtTokenProvider(AuthorityRepository authorityRepository,
+                            @Qualifier("security") Security securityProperties) {
         this.authorityRepository = authorityRepository;
-        String jwtSecretKey = env.getProperty("security.authentication.jwt.base64-secret");
+        this.TOKEN_VALIDITY = securityProperties.getTokenValidity();
+        this.TOKEN_VALIDITY_FOR_REMEMBER_ME = securityProperties.getTokenValidityForRememberMe();
 
-        if (!StringUtils.hasText(jwtSecretKey)) {
+        String base64SecretKey = securityProperties.getBase64SecretKey();
+
+        if (!StringUtils.hasText(base64SecretKey)) {
             throw new RuntimeException("Secret key not found to sign JWT");
         }
 
         log.debug("Using a Base64-encoded JWT secret key");
-        byte[] keyBytes = Decoders.BASE64.decode(jwtSecretKey);
+        byte[] keyBytes = Decoders.BASE64.decode(base64SecretKey);
         secretKey = Keys.hmacShaKeyFor(keyBytes);
         jwtParser = Jwts.parser().verifyWith(secretKey).build();
         log.debug("Encoded secret key with algorithm: {}", secretKey.getAlgorithm());
@@ -63,9 +64,9 @@ public class JwtTokenProvider {
         Date validity;
 
         if (baseAuthTokenDTO.isRememberMe()) {
-            validity = new Date(now + this.TOKEN_FOR_REMEMBER_ME_EXPIRED_AFTER);
+            validity = new Date(now + this.TOKEN_VALIDITY_FOR_REMEMBER_ME);
         } else {
-            validity = new Date(now + this.TOKEN_EXPIRED_AFTER);
+            validity = new Date(now + this.TOKEN_VALIDITY);
         }
 
         return Jwts.builder()

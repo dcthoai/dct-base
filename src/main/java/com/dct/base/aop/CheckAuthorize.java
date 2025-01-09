@@ -13,5 +13,5 @@ import java.lang.annotation.Target;
 @Documented
 @SuppressWarnings("unused")
 public @interface CheckAuthorize {
-    String authorities();
+    String authorities() default "";
 }
