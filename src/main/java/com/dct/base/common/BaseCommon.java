@@ -32,7 +32,7 @@ public class BaseCommon {
      * @return Value of {@link ExceptionConstants#TRANSLATE_NOT_FOUND} if not found message I18n
      */
     public String getMessageI18n(String messageKey, Object ...args) {
-        log.debug("Translate message for {}", messageKey);
+        log.debug("Translate message for key: '{}'", messageKey);
         // The value of Locale represents the current region, here used to determine the language type to translate
         Locale locale = LocaleContextHolder.getLocale();
         String message = messageSource.getMessage(messageKey, args, null, locale);

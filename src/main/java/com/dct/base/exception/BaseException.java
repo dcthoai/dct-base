@@ -1,6 +1,7 @@
 package com.dct.base.exception;
 
-public class BaseException extends Exception {
+@SuppressWarnings("unused")
+public class BaseException extends RuntimeException {
 
     private final String entityName;
     private final String errorKey;

@@ -11,6 +11,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.core.env.Environment;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.util.StringUtils;
@@ -20,6 +21,7 @@ import java.net.UnknownHostException;
 import java.util.Optional;
 
 @SpringBootApplication
+@EnableAspectJAutoProxy(proxyTargetClass = true)
 @EnableConfigurationProperties({ Datasource.class, Hikari.class, DatasourceProperties.class, Security.class })
 public class DctBaseApplication {
 

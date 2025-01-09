@@ -38,7 +38,7 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
                                                                       @Nullable HttpStatusCode status,
                                                                       @Nullable WebRequest request) {
         String message = Objects.nonNull(ex) ? ex.getMessage() : "";
-        log.debug("Handle method not allow exception. " + message);
+        log.warn("Handle method not allow exception. " + message);
 
         BaseResponseDTO responseDTO = new BaseResponseDTO(
             HttpStatusConstants.METHOD_NOT_ALLOWED,
@@ -46,45 +46,50 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
             ExceptionConstants.METHOD_NOT_ALLOW,
             message
         );
+
         return new ResponseEntity<>(responseDTO, HttpStatus.METHOD_NOT_ALLOWED);
     }
 
     @ExceptionHandler({ BaseException.class })
     public ResponseEntity<BaseResponseDTO> handleBaseException(BaseException exception) {
-        log.debug("Handle base exception", exception);
         String reason = baseCommon.getMessageI18n(exception.getErrorKey(), exception.getArgs());
+        log.error("Handle exception: {}", reason, exception);
+
         BaseResponseDTO responseDTO = new BaseResponseDTO(
             HttpStatusConstants.BAD_REQUEST,
             HttpStatusConstants.STATUS.FAILED,
-            reason,
+            exception.getErrorKey(),
             exception.getMessage()
         );
+
         return new ResponseEntity<>(responseDTO, HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler({ BaseAuthenticationException.class })
     public ResponseEntity<BaseResponseDTO> handleBaseAuthenticationException(BaseAuthenticationException exception) {
-        log.debug("Handle authentication exception", exception);
-        String reason = baseCommon.getMessageI18n(exception.getErrorKey(), exception.getArgs());
+        log.error("Handle authentication exception", exception);
+
         BaseResponseDTO responseDTO = new BaseResponseDTO(
             HttpStatusConstants.UNAUTHORIZED,
             HttpStatusConstants.STATUS.FAILED,
-            reason,
+            exception.getErrorKey(),
             exception.getMessage()
         );
+
         return new ResponseEntity<>(responseDTO, HttpStatus.UNAUTHORIZED);
     }
 
     @ExceptionHandler({ Exception.class })
     public ResponseEntity<BaseResponseDTO> handleException(Exception exception) {
-        log.debug("Handle exception", exception);
-        String reason = baseCommon.getMessageI18n(exception.getMessage());
+        log.error("Handle unexpected exception", exception);
+
         BaseResponseDTO responseDTO = new BaseResponseDTO(
             HttpStatusConstants.BAD_REQUEST,
             HttpStatusConstants.STATUS.FAILED,
-            reason,
+            exception.getMessage(),
             exception.getMessage()
         );
+
         return new ResponseEntity<>(responseDTO, HttpStatus.BAD_REQUEST);
     }
 }

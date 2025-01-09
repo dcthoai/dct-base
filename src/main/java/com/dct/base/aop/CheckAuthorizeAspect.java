@@ -2,6 +2,7 @@ package com.dct.base.aop;
 
 import com.dct.base.constants.ExceptionConstants;
 import com.dct.base.exception.BaseAuthenticationException;
+import jakarta.servlet.http.HttpServletRequest;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Before;
 import org.aspectj.lang.annotation.After;
@@ -9,13 +10,18 @@ import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
 import org.aspectj.lang.reflect.MethodSignature;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -23,6 +29,7 @@ import java.util.stream.Collectors;
 @Component
 public class CheckAuthorizeAspect {
 
+    private static final Logger log = LoggerFactory.getLogger(CheckAuthorizeAspect.class);
     private static final String ENTITY_NAME = "CheckAuthorizeAspect";
 
     /**
@@ -49,6 +56,14 @@ public class CheckAuthorizeAspect {
 
         if (userAuthorities.containsAll(requiredAuthorities))
             return pjp.proceed();
+
+        try {
+            ServletRequestAttributes servletRequest = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
+            HttpServletRequest request = Objects.requireNonNull(servletRequest).getRequest();
+            String url = request.getRequestURL().toString();
+            String username = Objects.nonNull(authentication.getName()) ? authentication.getName() : "Anonymous";
+            log.error("User '{}' does not have any permission to access this function: {}", username, url);
+        } catch (Exception ignore) {}
 
         throw new BaseAuthenticationException(ENTITY_NAME, ExceptionConstants.FORBIDDEN);
     }
