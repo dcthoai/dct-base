@@ -4,6 +4,7 @@ package com.dct.base.constants;
  * Security configuration parameters and list of permissions and roles
  * @author thoaidc
  */
+@SuppressWarnings("unused")
 public interface AuthConstants {
 
     // The encryption complexity in PasswordEncoder's algorithm (between 4 and 31)
@@ -31,7 +32,9 @@ public interface AuthConstants {
             "/api/auth/**",
             "/api/p/**",
             "/register",
+            "/api/register",
             "/login",
+            "/api/login",
             "/p/**"
         };
     }

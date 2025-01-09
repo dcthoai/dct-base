@@ -14,7 +14,9 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.FieldError;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
@@ -48,6 +50,27 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
         );
 
         return new ResponseEntity<>(responseDTO, HttpStatus.METHOD_NOT_ALLOWED);
+    }
+
+    @Override
+    protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException exception,
+                                                                  @Nullable HttpHeaders headers,
+                                                                  @Nullable HttpStatusCode status,
+                                                                  @Nullable WebRequest request) {
+        log.error("Handle validate request data exception: {}", exception.getMessage());
+        FieldError fieldError = exception.getBindingResult().getFieldError();
+        String errorKey = ExceptionConstants.INVALID_DATA;
+
+        if (Objects.nonNull(fieldError))
+            errorKey = fieldError.getDefaultMessage();
+
+        BaseResponseDTO responseDTO = new BaseResponseDTO(
+            HttpStatusConstants.BAD_REQUEST,
+            HttpStatusConstants.STATUS.FAILED,
+            errorKey
+        );
+
+        return new ResponseEntity<>(responseDTO, HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler({ BaseException.class })
