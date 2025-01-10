@@ -3,6 +3,7 @@ package com.dct.base.constants;
 @SuppressWarnings("unused")
 public interface BaseConstants {
 
+    String ANONYMOUS_USER = "anonymousUser";
     String DEFAULT_CREATOR = "system";
     String MESSAGE_SOURCE_ENCODING = "UTF-8";
 

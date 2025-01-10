@@ -14,24 +14,30 @@ public interface ExceptionConstants {
     // Http exception
     String METHOD_NOT_ALLOW = "exception.http.methodNotAllow";
 
+    // Runtime exception OR undetermined error
+    String UNCERTAIN_ERROR = "exception.uncertain";
+
     // Authentication exception
     String UNAUTHORIZED = "exception.auth.unauthorized";
     String FORBIDDEN = "exception.auth.forbidden";
 
     // Validate account info exception
-    String INVALID_DATA = "account.data.invalid";
-    String USERNAME_INVALID = "account.username.invalid";
-    String USERNAME_NOT_BLANK = "account.username.notBlank";
-    String PASSWORD_NOT_BLANK = "account.password.notBlank";
-    String PASSWORD_MIN_LENGTH = "account.password.minLength";
-    String PASSWORD_MAX_LENGTH = "account.password.maxLength";
-    String PASSWORD_INVALID = "account.password.invalid";
-    String PHONE_NOT_BLANK = "account.phone.notBlank";
-    String PHONE_INVALID = "account.phone.invalid";
-    String EMAIL_NOT_BANK = "account.email.notBlank";
-    String EMAIL_INVALID = "account.email.invalid";
-    String FULL_NAME_NOT_BLANK = "account.fullName.notBlank";
-    String FULL_NAME_INVALID = "account.fullName.invalid";
-    String ADDRESS_NOT_BLANK = "account.address.notBlank";
-    String ADDRESS_INVALID = "account.address.invalid";
+    String REGISTER_FAILED = "exception.account.register.failed";
+    String ACCOUNT_EXISTED = "exception.account.existed";
+    String ACCOUNT_NOT_EXISTED = "exception.account.notExisted";
+    String INVALID_DATA = "exception.account.data.invalid";
+    String USERNAME_INVALID = "exception.account.username.invalid";
+    String USERNAME_NOT_BLANK = "exception.account.username.notBlank";
+    String PASSWORD_NOT_BLANK = "exception.account.password.notBlank";
+    String PASSWORD_MIN_LENGTH = "exception.account.password.minLength";
+    String PASSWORD_MAX_LENGTH = "exception.account.password.maxLength";
+    String PASSWORD_INVALID = "exception.account.password.invalid";
+    String PHONE_NOT_BLANK = "exception.account.phone.notBlank";
+    String PHONE_INVALID = "exception.account.phone.invalid";
+    String EMAIL_NOT_BANK = "exception.account.email.notBlank";
+    String EMAIL_INVALID = "exception.account.email.invalid";
+    String FULL_NAME_NOT_BLANK = "exception.account.fullName.notBlank";
+    String FULL_NAME_INVALID = "exception.account.fullName.invalid";
+    String ADDRESS_NOT_BLANK = "exception.account.address.notBlank";
+    String ADDRESS_INVALID = "exception.account.address.invalid";
 }

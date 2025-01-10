@@ -8,6 +8,7 @@ import org.hibernate.annotations.DynamicUpdate;
 @Entity
 @Table(name = "role")
 @DynamicUpdate // Hibernate only updates the changed columns to the database instead of updating the entire table
+@SuppressWarnings("unused")
 public class Role extends AbstractAuditingEntity {
 
     @Column(name = "name", length = 45, nullable = false)

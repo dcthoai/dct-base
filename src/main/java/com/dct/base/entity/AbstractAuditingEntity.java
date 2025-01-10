@@ -2,6 +2,9 @@ package com.dct.base.entity;
 
 import com.dct.base.config.PersistenceConfig;
 import jakarta.persistence.Column;
+import jakarta.persistence.EntityListeners;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.MappedSuperclass;
 
@@ -10,6 +13,7 @@ import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedBy;
 import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.io.Serial;
 import java.io.Serializable;
@@ -18,11 +22,13 @@ import java.time.Instant;
 /**
  * Provides a mechanism to automatically track information about data creation and modification in application entities<p>
  * This is part of the Auditing model in Hibernate/Spring Data JPA <p>
- * Which helps automatically record who created, modified data and when
+ * Which helps automatically record who created, modified data and when <p>
+ * {@link EntityListeners}({@link AuditingEntityListener}.class) to enable {@link PersistenceConfig#auditorProvider()}
  * @author thoaidc
  */
 @DynamicUpdate // Hibernate only updates the changed columns to the database instead of updating the entire table
 @MappedSuperclass // Make this class a superclass that other entities can inherit from
+@EntityListeners(AuditingEntityListener.class)
 @SuppressWarnings("unused")
 public abstract class AbstractAuditingEntity implements Serializable {
 
@@ -32,7 +38,8 @@ public abstract class AbstractAuditingEntity implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Id
-    @Column(name = "ID")
+    @Column(name = "ID", nullable = false, unique = true)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
     /**
@@ -55,12 +62,12 @@ public abstract class AbstractAuditingEntity implements Serializable {
      * Use JPA Auditing configuration in {@link PersistenceConfig} to auto set values
      */
     @LastModifiedBy
-    @Column(name = "last_modified_by", length = 45)
+    @Column(name = "last_modified_by", nullable = false, length = 45, updatable = false)
     private String lastModifiedBy;
 
     // Automatically saves the time of the last edit
     @LastModifiedDate
-    @Column(name = "last_modified_date")
+    @Column(name = "last_modified_date", nullable = false, updatable = false)
     private Instant lastModifiedDate;
 
     public Integer getId() {

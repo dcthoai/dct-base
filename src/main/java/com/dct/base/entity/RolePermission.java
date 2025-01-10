@@ -8,18 +8,19 @@ import org.hibernate.annotations.DynamicUpdate;
 @Entity
 @Table(name = "role_permission")
 @DynamicUpdate // Hibernate only updates the changed columns to the database instead of updating the entire table
+@SuppressWarnings("unused")
 public class RolePermission extends AbstractAuditingEntity {
 
     @Column(name = "role_ID", nullable = false)
     private Integer roleID;
 
-    @Column(name = "role_code", length = 45)
+    @Column(name = "role_code", length = 45, nullable = false)
     private String roleCode;
 
     @Column(name = "permission_ID", nullable = false)
     private Integer permissionID;
 
-    @Column(name = "permission_code", length = 45)
+    @Column(name = "permission_code", length = 45, nullable = false)
     private String permissionCode;
 
     @Column(name = "permission_parent_code", length = 45)

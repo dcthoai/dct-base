@@ -20,3 +20,9 @@ logging:
   charset:
     console: UTF-8
     file: UTF-8
+
+spring:
+  jpa:
+    properties:
+      hibernate:
+        show_sql: false

@@ -8,6 +8,7 @@ import org.hibernate.annotations.DynamicUpdate;
 @Entity
 @Table(name = "authority")
 @DynamicUpdate // Hibernate only updates the changed columns to the database instead of updating the entire table
+@SuppressWarnings("unused")
 public class Authority extends AbstractAuditingEntity {
 
     @Column(name = "name", length = 45, nullable = false)
@@ -23,11 +24,11 @@ public class Authority extends AbstractAuditingEntity {
     private int parentID;
 
     @Column(name = "parent_code", nullable = false)
-    private int parentCode;
+    private String parentCode;
 
     public Authority() {}
 
-    public Authority(String name, String code, int parentID, int parentCode, String description) {
+    public Authority(String name, String code, int parentID, String parentCode, String description) {
         this.name = name;
         this.code = code;
         this.parentID = parentID;
@@ -67,11 +68,11 @@ public class Authority extends AbstractAuditingEntity {
         this.parentID = parentID;
     }
 
-    public int getParentCode() {
+    public String getParentCode() {
         return parentCode;
     }
 
-    public void setParentCode(int parentCode) {
+    public void setParentCode(String parentCode) {
         this.parentCode = parentCode;
     }
 }

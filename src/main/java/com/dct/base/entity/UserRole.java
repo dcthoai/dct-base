@@ -8,17 +8,18 @@ import org.hibernate.annotations.DynamicUpdate;
 @Entity
 @Table(name = "user_role")
 @DynamicUpdate // Hibernate only updates the changed columns to the database instead of updating the entire table
+@SuppressWarnings("unused")
 public class UserRole extends AbstractAuditingEntity {
 
     @Column(name = "role_ID", nullable = false)
     private int roleID;
 
     @Column(name = "user_ID", nullable = false)
-    private String userID;
+    private int userID;
 
     public UserRole() {}
 
-    public UserRole(int roleID, String userID) {
+    public UserRole(int roleID, int userID) {
         this.roleID = roleID;
         this.userID = userID;
     }
@@ -31,11 +32,11 @@ public class UserRole extends AbstractAuditingEntity {
         this.roleID = roleID;
     }
 
-    public String getUserID() {
+    public int getUserID() {
         return userID;
     }
 
-    public void setUserID(String userID) {
+    public void setUserID(int userID) {
         this.userID = userID;
     }
 }

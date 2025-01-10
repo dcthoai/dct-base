@@ -6,18 +6,19 @@ import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "system_config")
+@SuppressWarnings("unused")
 public class SystemConfig extends AbstractAuditingEntity {
 
-    @Column(name = "code")
+    @Column(name = "code", nullable = false, length = 45, unique = true)
     private String code;
 
-    @Column(name = "content")
+    @Column(name = "content", nullable = false)
     private String content;
 
     @Column(name = "description")
     private String description;
 
-    @Column(name = "enabled")
+    @Column(name = "enabled", nullable = false)
     private Integer enabled;
 
     public SystemConfig() {}
@@ -53,8 +54,8 @@ public class SystemConfig extends AbstractAuditingEntity {
         this.description = description;
     }
 
-    public Integer getEnabled() {
-        return enabled;
+    public boolean getEnabled() {
+        return enabled == 1;
     }
 
     public void setEnabled(Integer enabled) {

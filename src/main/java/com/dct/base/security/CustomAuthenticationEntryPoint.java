@@ -30,7 +30,7 @@ public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint 
     public void commence(HttpServletRequest request,
                          HttpServletResponse response,
                          AuthenticationException authException) throws IOException {
-        log.warn("Authentication entry point is active. {}: {}", authException.getMessage(), request.getRequestURL());
+        log.error("Authentication entry point is active. {}: {}", authException.getMessage(), request.getRequestURL());
 
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");

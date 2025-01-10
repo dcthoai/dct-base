@@ -37,8 +37,8 @@ public class TransactionConfiguration {
      * Automatically integrates with @Transactional in the application
      * @return {@link PlatformTransactionManager}
      */
-    @Bean
-    public PlatformTransactionManager platformTransactionManager() {
+    @Bean(name = "transactionManager")
+    public PlatformTransactionManager transactionManager() {
         JpaTransactionManager transactionManager = new JpaTransactionManager();
         transactionManager.setEntityManagerFactory(entityManagerFactory);
         return transactionManager;
@@ -50,7 +50,7 @@ public class TransactionConfiguration {
      */
     @Bean
     public TransactionTemplate transactionTemplate() {
-        TransactionTemplate transactionTemplate = new TransactionTemplate(platformTransactionManager());
+        TransactionTemplate transactionTemplate = new TransactionTemplate(transactionManager());
         // Set the transaction isolation level (e.g. ISOLATION_READ_COMMITTED prevents reading uncommitted data)
         transactionTemplate.setIsolationLevel(TransactionDefinition.ISOLATION_READ_COMMITTED);
         // Set transaction behavior (e.g. PROPAGATION_REQUIRED ensures new transactions will join existing transactions, if any)

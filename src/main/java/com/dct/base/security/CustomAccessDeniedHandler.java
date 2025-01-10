@@ -30,7 +30,7 @@ public class CustomAccessDeniedHandler implements AccessDeniedHandler {
     public void handle(HttpServletRequest request,
                        HttpServletResponse response,
                        AccessDeniedException exception) throws IOException {
-        log.warn("AccessDenied handler is active. {}: {}", exception.getMessage(), request.getRequestURL());
+        log.error("AccessDenied handler is active. {}: {}", exception.getMessage(), request.getRequestURL());
 
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");
