@@ -1,6 +1,6 @@
 package com.dct.base.config;
 
-import com.dct.base.constants.AuthConstants;
+import com.dct.base.constants.SecurityConstants;
 import com.dct.base.constants.BaseConstants;
 import com.dct.base.interceptor.BaseHandlerInterceptor;
 import org.slf4j.Logger;
@@ -45,13 +45,13 @@ public class InterceptorConfig implements WebMvcConfigurer {
     public CorsFilter corsFilter() {
         CorsConfiguration config = new CorsConfiguration();
 
-        config.setAllowedOriginPatterns(List.of(AuthConstants.CORS.ALLOWED_ORIGIN_PATTERNS));
-        config.setAllowedHeaders(List.of(AuthConstants.CORS.ALLOWED_HEADERS));
-        config.setAllowedMethods(List.of(AuthConstants.CORS.ALLOWED_REQUEST_METHODS));
-        config.setAllowCredentials(AuthConstants.CORS.ALLOW_CREDENTIALS);  // Allow sending cookies or authentication information
+        config.setAllowedOriginPatterns(List.of(SecurityConstants.CORS.ALLOWED_ORIGIN_PATTERNS));
+        config.setAllowedHeaders(List.of(SecurityConstants.CORS.ALLOWED_HEADERS));
+        config.setAllowedMethods(List.of(SecurityConstants.CORS.ALLOWED_REQUEST_METHODS));
+        config.setAllowCredentials(SecurityConstants.CORS.ALLOW_CREDENTIALS);  // Allow sending cookies or authentication information
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration(AuthConstants.CORS.APPLY_FOR, config); // Apply CORS to all endpoints
+        source.registerCorsConfiguration(SecurityConstants.CORS.APPLY_FOR, config); // Apply CORS to all endpoints
 
         return new CorsFilter(source);
     }

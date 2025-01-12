@@ -1,11 +1,11 @@
 package com.dct.base.constants;
 
 /**
- * Security configuration parameters and list of permissions and roles
+ * Security configuration parameters
  * @author thoaidc
  */
 @SuppressWarnings("unused")
-public interface AuthConstants {
+public interface SecurityConstants {
 
     // The encryption complexity in PasswordEncoder's algorithm (between 4 and 31)
     // Higher values mean the password is harder to attack, but too high will reduce performance
@@ -94,10 +94,5 @@ public interface AuthConstants {
     interface ROLES {
         String ADMIN = "ADMIN";
         String USER = "USER";
-    }
-
-    // The list of authorities serves the function of granting permissions to users in the application
-    interface PERMISSIONS {
-
     }
 }

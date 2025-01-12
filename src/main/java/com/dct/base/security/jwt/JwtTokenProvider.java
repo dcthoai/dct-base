@@ -1,7 +1,7 @@
 package com.dct.base.security.jwt;
 
 import com.dct.base.config.properties.Security;
-import com.dct.base.constants.AuthConstants;
+import com.dct.base.constants.SecurityConstants;
 import com.dct.base.dto.BaseAuthTokenDTO;
 import com.dct.base.repositories.AuthorityRepository;
 
@@ -71,9 +71,9 @@ public class JwtTokenProvider {
 
         return Jwts.builder()
                    .subject(baseAuthTokenDTO.getAuthentication().getName())
-                   .claim(AuthConstants.TOKEN_PAYLOAD.USERNAME, baseAuthTokenDTO.getUsername())
-                   .claim(AuthConstants.TOKEN_PAYLOAD.USER_ID, baseAuthTokenDTO.getID())
-                   .claim(AuthConstants.TOKEN_PAYLOAD.DEVICE_ID, baseAuthTokenDTO.getDeviceID())
+                   .claim(SecurityConstants.TOKEN_PAYLOAD.USERNAME, baseAuthTokenDTO.getUsername())
+                   .claim(SecurityConstants.TOKEN_PAYLOAD.USER_ID, baseAuthTokenDTO.getID())
+                   .claim(SecurityConstants.TOKEN_PAYLOAD.DEVICE_ID, baseAuthTokenDTO.getDeviceID())
                    .signWith(secretKey)
                    .issuedAt(new Date())
                    .expiration(validity)
@@ -95,7 +95,7 @@ public class JwtTokenProvider {
 
     public Authentication getAuthentication(String token) {
         Claims claims = (Claims) jwtParser.parse(token).getPayload();
-        int userID = (int) claims.get(AuthConstants.TOKEN_PAYLOAD.USER_ID);
+        int userID = (int) claims.get(SecurityConstants.TOKEN_PAYLOAD.USER_ID);
         Set<String> authorities = authorityRepository.findAllByUserID(userID);
 
         Collection<? extends GrantedAuthority> userAuthorities = authorities.stream()

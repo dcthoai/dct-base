@@ -1,6 +1,6 @@
 package com.dct.base.security.jwt;
 
-import com.dct.base.constants.AuthConstants;
+import com.dct.base.constants.SecurityConstants;
 import jakarta.annotation.Nullable;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -45,13 +45,13 @@ public class JwtTokenFilter extends OncePerRequestFilter {
     }
 
     private String resolveToken(HttpServletRequest request) {
-        String bearerToken = request.getHeader(AuthConstants.HEADER.AUTHORIZATION_HEADER);
+        String bearerToken = request.getHeader(SecurityConstants.HEADER.AUTHORIZATION_HEADER);
 
         if (!StringUtils.hasText(bearerToken)) {
-            bearerToken = request.getHeader(AuthConstants.HEADER.AUTHORIZATION_GATEWAY_HEADER);
+            bearerToken = request.getHeader(SecurityConstants.HEADER.AUTHORIZATION_GATEWAY_HEADER);
         }
 
-        if (StringUtils.hasText(bearerToken) && bearerToken.startsWith(AuthConstants.HEADER.TOKEN_TYPE)) {
+        if (StringUtils.hasText(bearerToken) && bearerToken.startsWith(SecurityConstants.HEADER.TOKEN_TYPE)) {
             return bearerToken.substring(7);
         }
 

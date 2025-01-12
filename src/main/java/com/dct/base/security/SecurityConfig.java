@@ -1,6 +1,6 @@
 package com.dct.base.security;
 
-import com.dct.base.constants.AuthConstants;
+import com.dct.base.constants.SecurityConstants;
 import com.dct.base.security.jwt.JwtTokenFilter;
 import com.dct.base.security.jwt.JwtTokenProvider;
 
@@ -50,19 +50,19 @@ public class SecurityConfig {
             .httpBasic(httpBasic -> httpBasic.authenticationEntryPoint(authenticationEntryPoint))
             .exceptionHandling(handler -> handler.accessDeniedHandler(accessDeniedHandler))
             .headers(header -> header.frameOptions(HeadersConfigurer.FrameOptionsConfig::sameOrigin)
-                .contentSecurityPolicy(policy -> policy.policyDirectives(AuthConstants.HEADER.SECURITY_POLICY))
+                .contentSecurityPolicy(policy -> policy.policyDirectives(SecurityConstants.HEADER.SECURITY_POLICY))
                 .referrerPolicy(config -> config.policy(ReferrerPolicyHeaderWriter.ReferrerPolicy.STRICT_ORIGIN_WHEN_CROSS_ORIGIN))
-                .permissionsPolicy(config -> config.policy(AuthConstants.HEADER.PERMISSIONS_POLICY))
+                .permissionsPolicy(config -> config.policy(SecurityConstants.HEADER.PERMISSIONS_POLICY))
             )
             .sessionManagement(sessionManager -> sessionManager.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(registry ->
-                registry.requestMatchers(AuthConstants.REQUEST_MATCHERS.ADMIN).hasRole(AuthConstants.ROLES.ADMIN)
-                .requestMatchers(AuthConstants.REQUEST_MATCHERS.USER).hasRole(AuthConstants.ROLES.USER)
-                .requestMatchers(AuthConstants.REQUEST_MATCHERS.PUBLIC).permitAll()
+                registry.requestMatchers(SecurityConstants.REQUEST_MATCHERS.ADMIN).hasRole(SecurityConstants.ROLES.ADMIN)
+                .requestMatchers(SecurityConstants.REQUEST_MATCHERS.USER).hasAnyRole(SecurityConstants.ROLES.USER, SecurityConstants.ROLES.ADMIN)
+                .requestMatchers(SecurityConstants.REQUEST_MATCHERS.PUBLIC).permitAll()
                 // Used with custom CORS filters in CORS (Cross-Origin Resource Sharing) mechanism.
                 // The browser will send OPTIONS requests (preflight requests) to check
                 // if the server allows access from other sources before send requests such as POST.
-                .requestMatchers(HttpMethod.OPTIONS, AuthConstants.REQUEST_MATCHERS.OPTIONS).permitAll()
+                .requestMatchers(HttpMethod.OPTIONS, SecurityConstants.REQUEST_MATCHERS.OPTIONS).permitAll()
                 .anyRequest().authenticated()
             );
 
@@ -76,6 +76,6 @@ public class SecurityConfig {
 
     @Bean
     public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder(AuthConstants.BCRYPT_COST_FACTOR);
+        return new BCryptPasswordEncoder(SecurityConstants.BCRYPT_COST_FACTOR);
     }
 }
