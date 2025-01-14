@@ -13,7 +13,9 @@ public interface AccountService {
 
     Account findUserByEmail(String email);
 
-    Account save(RegisterRequestDTO requestDTO);
+    Account createUserAccount(RegisterRequestDTO requestDTO);
 
-    Account save(Account account);
+    Account createAdminAccount();
+
+    Account update(Account account);
 }

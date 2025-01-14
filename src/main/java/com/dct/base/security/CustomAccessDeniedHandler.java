@@ -10,11 +10,13 @@ import jakarta.servlet.http.HttpServletResponse;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.MediaType;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 
 @Component
 public class CustomAccessDeniedHandler implements AccessDeniedHandler {
@@ -32,8 +34,8 @@ public class CustomAccessDeniedHandler implements AccessDeniedHandler {
                        AccessDeniedException exception) throws IOException {
         log.error("AccessDenied handler is active. {}: {}", exception.getMessage(), request.getRequestURL());
 
-        response.setContentType("application/json");
-        response.setCharacterEncoding("UTF-8");
+        response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+        response.setCharacterEncoding(StandardCharsets.UTF_8.name());
         response.setStatus(HttpStatusConstants.FORBIDDEN);
 
         BaseResponseDTO responseDTO = new BaseResponseDTO(

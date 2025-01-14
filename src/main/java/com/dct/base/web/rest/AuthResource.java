@@ -34,7 +34,7 @@ public class AuthResource {
     @PostMapping("/register")
     public BaseResponseDTO register(@Valid @RequestBody RegisterRequestDTO requestDTO) {
         log.debug("REST request to create an account. POST: /api/auth/register");
-        Account account = accountService.save(requestDTO);
+        Account account = accountService.createUserAccount(requestDTO);
 
         if (Objects.isNull(account) || Objects.isNull(account.getId()) || account.getId() < 1)
             throw new BaseBadRequestException(ENTITY_NAME, ExceptionConstants.REGISTER_FAILED);

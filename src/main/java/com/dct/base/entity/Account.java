@@ -32,6 +32,9 @@ public class Account extends AbstractAuditingEntity {
     @Column(name = "token", length = 512)
     private String token;
 
+    @Column(name = "role", nullable = false)
+    private String roles;
+
     public Account() {}
 
     public Account(String username, String password) {
@@ -93,5 +96,13 @@ public class Account extends AbstractAuditingEntity {
 
     public void setToken(String token) {
         this.token = token;
+    }
+
+    public String getRoles() {
+        return roles;
+    }
+
+    public void setRoles(String roles) {
+        this.roles = roles;
     }
 }
