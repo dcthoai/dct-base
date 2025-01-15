@@ -15,6 +15,7 @@ public interface SecurityConstants {
         String USER_ID = "userID";
         String USERNAME = "username";
         String DEVICE_ID = "deviceID";
+        String AUTHORITIES = "auth";
     }
 
     interface REQUEST_MATCHERS {
@@ -94,5 +95,7 @@ public interface SecurityConstants {
     interface ROLES {
         String ADMIN = "ADMIN";
         String USER = "USER";
+        String ROLE_ADMIN = "ROLE_ADMIN";
+        String ROLE_USER = "ROLE_USER";
     }
 }

@@ -3,12 +3,14 @@ package com.dct.base.web.rest;
 import com.dct.base.constants.ExceptionConstants;
 import com.dct.base.constants.HttpStatusConstants;
 import com.dct.base.constants.ResultConstants;
+import com.dct.base.dto.request.AuthRequestDTO;
 import com.dct.base.dto.request.RegisterRequestDTO;
 import com.dct.base.dto.response.BaseResponseDTO;
 import com.dct.base.entity.Account;
 import com.dct.base.exception.BaseBadRequestException;
 import com.dct.base.service.AccountService;
 
+import com.dct.base.service.AuthService;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,9 +28,11 @@ public class AuthResource {
     private static final Logger log = LoggerFactory.getLogger(AuthResource.class);
     private static final String ENTITY_NAME = "AuthResource";
     private final AccountService accountService;
+    private final AuthService authService;
 
-    public AuthResource(AccountService accountService) {
+    public AuthResource(AccountService accountService, AuthService authService) {
         this.accountService = accountService;
+        this.authService = authService;
     }
 
     @PostMapping("/register")
@@ -45,5 +49,11 @@ public class AuthResource {
             ResultConstants.REGISTER_SUCCESS,
             account
         );
+    }
+
+    @PostMapping("/login")
+    public BaseResponseDTO login(@Valid @RequestBody AuthRequestDTO requestDTO) {
+        log.debug("REST request to authenticate account. POST: /api/auth/login");
+        return authService.authenticate(requestDTO);
     }
 }

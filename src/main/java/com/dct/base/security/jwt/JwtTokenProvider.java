@@ -1,10 +1,11 @@
 package com.dct.base.security.jwt;
 
 import com.dct.base.config.properties.Security;
+import com.dct.base.constants.ExceptionConstants;
 import com.dct.base.constants.SecurityConstants;
 import com.dct.base.dto.BaseAuthTokenDTO;
-import com.dct.base.repositories.AuthorityRepository;
 
+import com.dct.base.exception.BaseAuthenticationException;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.JwtParser;
@@ -26,23 +27,23 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
 import javax.crypto.SecretKey;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Component
 public class JwtTokenProvider {
 
     private static final Logger log = LoggerFactory.getLogger(JwtTokenProvider.class);
-    private final AuthorityRepository authorityRepository;
+    private static final String ENTITY_NAME = "JwtTokenProvider";
     private final SecretKey secretKey;
     private final JwtParser jwtParser;
     private final long TOKEN_VALIDITY;
     private final long TOKEN_VALIDITY_FOR_REMEMBER_ME;
 
-    public JwtTokenProvider(AuthorityRepository authorityRepository,
-                            @Qualifier("security") Security securityProperties) {
-        this.authorityRepository = authorityRepository;
+    public JwtTokenProvider(@Qualifier("security") Security securityProperties) {
         this.TOKEN_VALIDITY = securityProperties.getTokenValidity();
         this.TOKEN_VALIDITY_FOR_REMEMBER_ME = securityProperties.getTokenValidityForRememberMe();
 
@@ -59,21 +60,28 @@ public class JwtTokenProvider {
         log.debug("Encoded secret key with algorithm: {}", secretKey.getAlgorithm());
     }
 
-    public String createToken(BaseAuthTokenDTO baseAuthTokenDTO) {
+    public String createToken(BaseAuthTokenDTO authTokenDTO) {
+        Authentication authentication = authTokenDTO.getAuthentication();
+        Set<String> userAuthorities = authentication.getAuthorities()
+                .stream()
+                .map(GrantedAuthority::getAuthority)
+                .collect(Collectors.toSet());
+
         long now = (new Date()).getTime();
         Date validity;
 
-        if (baseAuthTokenDTO.isRememberMe()) {
+        if (authTokenDTO.isRememberMe()) {
             validity = new Date(now + this.TOKEN_VALIDITY_FOR_REMEMBER_ME);
         } else {
             validity = new Date(now + this.TOKEN_VALIDITY);
         }
 
         return Jwts.builder()
-                   .subject(baseAuthTokenDTO.getAuthentication().getName())
-                   .claim(SecurityConstants.TOKEN_PAYLOAD.USERNAME, baseAuthTokenDTO.getUsername())
-                   .claim(SecurityConstants.TOKEN_PAYLOAD.USER_ID, baseAuthTokenDTO.getID())
-                   .claim(SecurityConstants.TOKEN_PAYLOAD.DEVICE_ID, baseAuthTokenDTO.getDeviceID())
+                   .subject(authTokenDTO.getAuthentication().getName())
+                   .claim(SecurityConstants.TOKEN_PAYLOAD.USERNAME, authTokenDTO.getUsername())
+                   .claim(SecurityConstants.TOKEN_PAYLOAD.USER_ID, authTokenDTO.getUserID())
+                   .claim(SecurityConstants.TOKEN_PAYLOAD.DEVICE_ID, authTokenDTO.getDeviceID())
+                   .claim(SecurityConstants.TOKEN_PAYLOAD.AUTHORITIES, String.join(",", userAuthorities))
                    .signWith(secretKey)
                    .issuedAt(new Date())
                    .expiration(validity)
@@ -86,6 +94,7 @@ public class JwtTokenProvider {
             return true;
         } catch (ExpiredJwtException | MalformedJwtException | SecurityException e) {
             log.error("Invalid JWT token. ", e);
+            throw new BaseAuthenticationException(ENTITY_NAME, ExceptionConstants.TOKEN_INVALID_OR_EXPIRED);
         } catch (IllegalArgumentException e) {
             log.error("Token validation error {}", e.getMessage());
         }
@@ -95,13 +104,16 @@ public class JwtTokenProvider {
 
     public Authentication getAuthentication(String token) {
         Claims claims = (Claims) jwtParser.parse(token).getPayload();
-        int userID = (int) claims.get(SecurityConstants.TOKEN_PAYLOAD.USER_ID);
-        Set<String> authorities = authorityRepository.findAllByUserID(userID);
+        String authorities = (String) claims.get(SecurityConstants.TOKEN_PAYLOAD.AUTHORITIES);
 
-        Collection<? extends GrantedAuthority> userAuthorities = authorities.stream()
-                .filter(auth -> StringUtils.hasText(auth.trim()))
+        if (!StringUtils.hasText(authorities)) {
+            throw new BaseAuthenticationException(ENTITY_NAME, ExceptionConstants.TOKEN_INVALID_OR_EXPIRED);
+        }
+
+        Collection<SimpleGrantedAuthority> userAuthorities = Arrays.stream(authorities.split(","))
+                .filter(StringUtils::hasText)
                 .map(SimpleGrantedAuthority::new)
-                .toList();
+                .collect(Collectors.toSet());
 
         User principal = new User(claims.getSubject(), "", userAuthorities);
         return new UsernamePasswordAuthenticationToken(principal, token, userAuthorities);

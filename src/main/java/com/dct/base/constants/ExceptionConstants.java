@@ -20,6 +20,7 @@ public interface ExceptionConstants {
     // Authentication exception
     String UNAUTHORIZED = "exception.auth.unauthorized";
     String FORBIDDEN = "exception.auth.forbidden";
+    String TOKEN_INVALID_OR_EXPIRED = "exception.auth.token.invalidOrExpired";
 
     // Validate account info exception
     String REGISTER_FAILED = "exception.account.register.failed";

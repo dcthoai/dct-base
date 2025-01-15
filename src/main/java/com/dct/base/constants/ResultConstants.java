@@ -10,6 +10,9 @@ import com.dct.base.dto.response.BaseResponseDTO;
  */
 public interface ResultConstants {
 
-    // Account information processing results messages
+    // Account information processing result messages
     String REGISTER_SUCCESS = "result.account.register.success";
+
+    // Authenticate account result messages
+    String LOGIN_SUCCESS = "result.auth.login.success";
 }

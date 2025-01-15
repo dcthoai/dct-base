@@ -62,7 +62,7 @@ public class AccountServiceImpl implements AccountService {
 
             account = new Account(username, hashedPassword);
             account.setEmail(email);
-            account.setRoles(SecurityConstants.ROLES.USER);
+            account.setRoles(SecurityConstants.ROLES.ROLE_USER);
 
             return accountRepository.save(account);
         }
