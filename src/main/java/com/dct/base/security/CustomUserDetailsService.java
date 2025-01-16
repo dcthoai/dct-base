@@ -1,5 +1,6 @@
 package com.dct.base.security;
 
+import com.dct.base.constants.ExceptionConstants;
 import com.dct.base.entity.Account;
 import com.dct.base.repositories.AccountRepository;
 import com.dct.base.repositories.AuthorityRepository;
@@ -15,6 +16,7 @@ import org.springframework.util.StringUtils;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -37,6 +39,10 @@ public class CustomUserDetailsService implements UserDetailsService {
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         log.debug("Load user by username: " + username);
         Account account = accountRepository.findAccountByUsername(username);
+
+        if (Objects.isNull(account))
+            throw new UsernameNotFoundException(ExceptionConstants.ACCOUNT_NOT_FOUND);
+
         String[] userRoles = account.getRoles().trim().split(",");
         Set<String> userPermissions = authorityRepository.findAllByUserID(account.getId());
 

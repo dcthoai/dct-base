@@ -8,6 +8,7 @@ import com.dct.base.dto.request.AuthRequestDTO;
 import com.dct.base.dto.response.BaseResponseDTO;
 import com.dct.base.entity.Account;
 import com.dct.base.exception.BaseAuthenticationException;
+import com.dct.base.exception.BaseBadRequestException;
 import com.dct.base.security.CustomUserDetails;
 import com.dct.base.security.jwt.JwtTokenProvider;
 import com.dct.base.service.AuthService;
@@ -49,17 +50,17 @@ public class AuthServiceImpl implements AuthService {
 
         try {
             authentication = authenticationManager.authenticate(token);
-        } catch (BadCredentialsException e) {
-            log.error("[{}.{}] Bad credentials: {}", ENTITY_NAME, e.getMessage(), e.getClass().getName());
-            throw new BaseAuthenticationException(ENTITY_NAME, ExceptionConstants.BAD_CREDENTIALS);
         } catch (UsernameNotFoundException e) {
-            log.error("[{}.{}] Username not found: {}", ENTITY_NAME, e.getMessage(), e.getClass().getName());
-            throw new BaseAuthenticationException(ENTITY_NAME, ExceptionConstants.ACCOUNT_NOT_FOUND);
+            log.error("[{}] Account '{}' does not exists", e.getClass().getSimpleName(), username);
+            throw new BaseBadRequestException(ENTITY_NAME, ExceptionConstants.ACCOUNT_NOT_FOUND);
+        } catch (BadCredentialsException e) {
+            log.error("[{}] - {}", e.getClass().getSimpleName(), e.getMessage());
+            throw new BaseBadRequestException(ENTITY_NAME, ExceptionConstants.BAD_CREDENTIALS);
         } catch (CredentialsExpiredException e) {
-            log.error("[{}.{}] Credentials expired: {}", ENTITY_NAME, e.getMessage(), e.getClass().getName());
-            throw new BaseAuthenticationException(ENTITY_NAME, ExceptionConstants.ACCOUNT_EXPIRED);
+            log.error("[{}] - {}", e.getClass().getSimpleName(), e.getMessage());
+            throw new BaseBadRequestException(ENTITY_NAME, ExceptionConstants.ACCOUNT_EXPIRED);
         } catch (AuthenticationException e) {
-            log.error("[{}.{}] Authentication failed: {}", ENTITY_NAME, e.getMessage(), e.getClass().getName());
+            log.error("[{}] Authentication failed: {}", e.getClass().getSimpleName(), e.getMessage());
             throw new BaseAuthenticationException(ENTITY_NAME, ExceptionConstants.UNAUTHORIZED);
         }
 

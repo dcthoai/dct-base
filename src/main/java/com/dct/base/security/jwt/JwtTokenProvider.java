@@ -4,8 +4,8 @@ import com.dct.base.config.properties.Security;
 import com.dct.base.constants.ExceptionConstants;
 import com.dct.base.constants.SecurityConstants;
 import com.dct.base.dto.BaseAuthTokenDTO;
-
 import com.dct.base.exception.BaseAuthenticationException;
+
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.JwtParser;
@@ -18,11 +18,14 @@ import io.jsonwebtoken.security.SecurityException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.annotation.Bean;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
+import org.springframework.security.oauth2.jwt.Jwt;
+import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
@@ -58,6 +61,11 @@ public class JwtTokenProvider {
         secretKey = Keys.hmacShaKeyFor(keyBytes);
         jwtParser = Jwts.parser().verifyWith(secretKey).build();
         log.debug("Encoded secret key with algorithm: {}", secretKey.getAlgorithm());
+    }
+
+    @Bean
+    public JwtDecoder jwtDecoder() {
+        return (String token) -> (Jwt) jwtParser.parse(token);
     }
 
     public String createToken(BaseAuthTokenDTO authTokenDTO) {
