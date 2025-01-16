@@ -26,6 +26,7 @@ public class CustomAccessDeniedHandler implements AccessDeniedHandler {
 
     public CustomAccessDeniedHandler(BaseCommon baseCommon) {
         this.baseCommon = baseCommon;
+        log.debug("AccessDeniedHandler 'CustomAccessDeniedHandler' is configured for use");
     }
 
     @Override

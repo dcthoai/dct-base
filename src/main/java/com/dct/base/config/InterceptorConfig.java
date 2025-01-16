@@ -31,7 +31,7 @@ public class InterceptorConfig implements WebMvcConfigurer {
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
-        log.debug("Registering base handler interceptor");
+        log.debug("Interceptor 'BaseHandlerInterceptor' is configured for handle request before passed to controller");
         // Register a BaseHandlerInterceptor to handle requests (HTTP requests) before they are passed to the Controllers
         registry.addInterceptor(baseHandlerInterceptor)
                 // Ignore some paths that don't need to be processed, such as:

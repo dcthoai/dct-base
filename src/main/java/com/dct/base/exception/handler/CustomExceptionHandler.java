@@ -33,6 +33,7 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
 
     public CustomExceptionHandler(BaseCommon baseCommon) {
         this.baseCommon = baseCommon;
+        log.debug("ResponseEntityExceptionHandler 'CustomExceptionHandler' is configured for handle exception");
     }
 
     @Override

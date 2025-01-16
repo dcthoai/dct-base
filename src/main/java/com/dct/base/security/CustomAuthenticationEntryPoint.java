@@ -26,6 +26,7 @@ public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint 
 
     public CustomAuthenticationEntryPoint(BaseCommon baseCommon) {
         this.baseCommon = baseCommon;
+        log.debug("AuthenticationEntryPoint 'CustomAuthenticationEntryPoint' is configured for use");
     }
 
     @Override

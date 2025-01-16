@@ -3,6 +3,8 @@ package com.dct.base.security;
 import com.dct.base.constants.SecurityConstants;
 import com.dct.base.security.jwt.JwtTokenFilter;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -27,6 +29,7 @@ import org.springframework.web.filter.CorsFilter;
 @EnableMethodSecurity(securedEnabled = true)
 public class SecurityConfig {
 
+    private static final Logger log = LoggerFactory.getLogger(SecurityConfig.class);
     private final CorsFilter corsFilter;
     private final JwtTokenFilter jwtTokenFilter;
     private final CustomAuthenticationEntryPoint authenticationEntryPoint;
@@ -44,6 +47,7 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        log.debug("Configuring SecurityFilterChain");
         http.csrf(AbstractHttpConfigurer::disable) // Because of using JWT, CSRF is not required
             .cors(Customizer.withDefaults())
             .addFilterBefore(jwtTokenFilter, UsernamePasswordAuthenticationFilter.class)

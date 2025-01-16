@@ -30,6 +30,7 @@ public class CustomUserDetailsService implements UserDetailsService {
                                     AuthorityRepository authorityRepository) {
         this.accountRepository = accountRepository;
         this.authorityRepository = authorityRepository;
+        log.debug("UserDetailsService 'CustomUserDetailsService' is configured for load user credentials info");
     }
 
     @Override

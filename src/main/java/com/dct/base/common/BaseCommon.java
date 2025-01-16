@@ -15,6 +15,7 @@ import java.util.Locale;
  * Provide common processing functions for the entire application
  * @author thoaidc
  */
+@SuppressWarnings("unused")
 @Component
 public class BaseCommon {
 

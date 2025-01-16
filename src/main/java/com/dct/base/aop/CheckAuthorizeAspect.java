@@ -32,6 +32,10 @@ public class CheckAuthorizeAspect {
     private static final Logger log = LoggerFactory.getLogger(CheckAuthorizeAspect.class);
     private static final String ENTITY_NAME = "CheckAuthorizeAspect";
 
+    public CheckAuthorizeAspect() {
+        log.debug("Configured CheckAuthorizeAspect for handle authenticate method");
+    }
+
     /**
      * {@link Pointcut} specifies where (in which method, class, or annotation) AOP logic will be applied<p>
      * This function only serves to name and define the pointcut, it does not execute any logic<p>
