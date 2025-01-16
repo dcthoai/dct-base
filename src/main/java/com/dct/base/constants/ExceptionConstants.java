@@ -20,6 +20,9 @@ public interface ExceptionConstants {
     String FILTER_CHAIN_NOT_FOUND = "exception.filterChain.notFound";
 
     // Authentication exception
+    String BAD_CREDENTIALS = "exception.auth.badCredentials";
+    String ACCOUNT_EXPIRED = "exception.auth.accountExpired";
+    String ACCOUNT_NOT_FOUND = "exception.auth.accountNotFound";
     String UNAUTHORIZED = "exception.auth.unauthorized";
     String FORBIDDEN = "exception.auth.forbidden";
     String TOKEN_INVALID_OR_EXPIRED = "exception.auth.token.invalidOrExpired";

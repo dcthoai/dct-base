@@ -1,11 +1,13 @@
 package com.dct.base.service.impl;
 
+import com.dct.base.constants.ExceptionConstants;
 import com.dct.base.constants.HttpStatusConstants;
 import com.dct.base.constants.ResultConstants;
 import com.dct.base.dto.BaseAuthTokenDTO;
 import com.dct.base.dto.request.AuthRequestDTO;
 import com.dct.base.dto.response.BaseResponseDTO;
 import com.dct.base.entity.Account;
+import com.dct.base.exception.BaseAuthenticationException;
 import com.dct.base.security.CustomUserDetails;
 import com.dct.base.security.jwt.JwtTokenProvider;
 import com.dct.base.service.AuthService;
@@ -13,9 +15,13 @@ import com.dct.base.service.AuthService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.CredentialsExpiredException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -35,12 +41,28 @@ public class AuthServiceImpl implements AuthService {
     @Override
     public BaseResponseDTO authenticate(AuthRequestDTO authRequestDTO) {
         log.debug("Authenticating user: {}", authRequestDTO.getUsername());
-        UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(
-            authRequestDTO.getUsername().trim(),
-            authRequestDTO.getPassword().trim()
-        );
 
-        Authentication authentication = authenticationManager.authenticate(token);
+        String username = authRequestDTO.getUsername().trim();
+        String rawPassword = authRequestDTO.getPassword().trim();
+        UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(username, rawPassword);
+        Authentication authentication;
+
+        try {
+            authentication = authenticationManager.authenticate(token);
+        } catch (BadCredentialsException e) {
+            log.error("[{}.{}] Bad credentials: {}", ENTITY_NAME, e.getMessage(), e.getClass().getName());
+            throw new BaseAuthenticationException(ENTITY_NAME, ExceptionConstants.BAD_CREDENTIALS);
+        } catch (UsernameNotFoundException e) {
+            log.error("[{}.{}] Username not found: {}", ENTITY_NAME, e.getMessage(), e.getClass().getName());
+            throw new BaseAuthenticationException(ENTITY_NAME, ExceptionConstants.ACCOUNT_NOT_FOUND);
+        } catch (CredentialsExpiredException e) {
+            log.error("[{}.{}] Credentials expired: {}", ENTITY_NAME, e.getMessage(), e.getClass().getName());
+            throw new BaseAuthenticationException(ENTITY_NAME, ExceptionConstants.ACCOUNT_EXPIRED);
+        } catch (AuthenticationException e) {
+            log.error("[{}.{}] Authentication failed: {}", ENTITY_NAME, e.getMessage(), e.getClass().getName());
+            throw new BaseAuthenticationException(ENTITY_NAME, ExceptionConstants.UNAUTHORIZED);
+        }
+
         SecurityContextHolder.getContext().setAuthentication(authentication);
         CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
         Account account = userDetails.getAccount();
