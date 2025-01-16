@@ -43,6 +43,23 @@ public class BaseCommon {
         return messageSource.getMessage(ExceptionConstants.TRANSLATE_NOT_FOUND, null, "", locale);
     }
 
+    /**
+     * Check if message found in i18n message file then return, otherwise return null
+     * @param messageKey The code corresponding to the internationalized content to be retrieved
+     * @param args Arguments passed to use dynamic values for message
+     * @return null if not found message
+     */
+    public String checkMessageI18n(String messageKey, Object ...args) {
+        // The value of Locale represents the current region, here used to determine the language type to translate
+        Locale locale = LocaleContextHolder.getLocale();
+        String message = messageSource.getMessage(messageKey, args, null, locale);
+
+        if (StringUtils.hasText(message))
+            return message;
+
+        return null;
+    }
+
     public BaseResponseDTO setResponseMessageI18n(BaseResponseDTO responseDTO) {
         String messageKey = responseDTO.getMessage();
 

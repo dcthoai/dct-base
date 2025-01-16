@@ -93,13 +93,12 @@ public class JwtTokenProvider {
             jwtParser.parse(authToken);
             return true;
         } catch (ExpiredJwtException | MalformedJwtException | SecurityException e) {
-            log.error("Invalid JWT token. ", e);
-            throw new BaseAuthenticationException(ENTITY_NAME, ExceptionConstants.TOKEN_INVALID_OR_EXPIRED);
+            log.error("Invalid JWT token: {} - {}", e.getClass().getName(), e.getMessage());
         } catch (IllegalArgumentException e) {
-            log.error("Token validation error {}", e.getMessage());
+            log.error("Token validation error: {} - {}", e.getClass().getName(), e.getMessage());
         }
 
-        return false;
+        throw new BaseAuthenticationException(ENTITY_NAME, ExceptionConstants.TOKEN_INVALID_OR_EXPIRED);
     }
 
     public Authentication getAuthentication(String token) {

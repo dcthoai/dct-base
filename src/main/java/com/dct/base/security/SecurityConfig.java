@@ -2,7 +2,6 @@ package com.dct.base.security;
 
 import com.dct.base.constants.SecurityConstants;
 import com.dct.base.security.jwt.JwtTokenFilter;
-import com.dct.base.security.jwt.JwtTokenProvider;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -29,16 +28,16 @@ import org.springframework.web.filter.CorsFilter;
 public class SecurityConfig {
 
     private final CorsFilter corsFilter;
-    private final JwtTokenProvider jwtTokenProvider;
+    private final JwtTokenFilter jwtTokenFilter;
     private final CustomAuthenticationEntryPoint authenticationEntryPoint;
     private final CustomAccessDeniedHandler accessDeniedHandler;
 
     public SecurityConfig(CorsFilter corsFilter,
-                          JwtTokenProvider jwtTokenProvider,
+                          JwtTokenFilter jwtTokenFilter,
                           CustomAuthenticationEntryPoint authenticationEntryPoint,
                           CustomAccessDeniedHandler accessDeniedHandler) {
         this.corsFilter = corsFilter;
-        this.jwtTokenProvider = jwtTokenProvider;
+        this.jwtTokenFilter = jwtTokenFilter;
         this.authenticationEntryPoint = authenticationEntryPoint;
         this.accessDeniedHandler = accessDeniedHandler;
     }
@@ -47,7 +46,7 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.csrf(AbstractHttpConfigurer::disable) // Because of using JWT, CSRF is not required
             .cors(Customizer.withDefaults())
-            .addFilterBefore(jwtTokenFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter.class)
+            .addFilterBefore(jwtTokenFilter, UsernamePasswordAuthenticationFilter.class)
             .addFilterBefore(corsFilter, JwtTokenFilter.class)
             .httpBasic(httpBasic -> httpBasic.authenticationEntryPoint(authenticationEntryPoint))
             .exceptionHandling(handler -> handler.accessDeniedHandler(accessDeniedHandler))
@@ -74,11 +73,6 @@ public class SecurityConfig {
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration auth) throws Exception {
         return auth.getAuthenticationManager();
-    }
-
-    @Bean
-    public JwtTokenFilter jwtTokenFilter(JwtTokenProvider jwtTokenProvider) {
-        return new JwtTokenFilter(jwtTokenProvider);
     }
 
     @Bean

@@ -118,17 +118,32 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
         return new ResponseEntity<>(responseDTO, HttpStatus.BAD_REQUEST);
     }
 
+    @ExceptionHandler(NullPointerException.class)
+    public ResponseEntity<Object> handleNullPointerException(NullPointerException exception, WebRequest request) {
+        // Handle NullPointerException (include of Objects.requireNonNull())
+        log.error("Null pointer exception occurred: {} - {}", exception.getMessage(), request.getClass().getSimpleName());
+
+        BaseResponseDTO responseDTO = new BaseResponseDTO(
+            HttpStatusConstants.INTERNAL_SERVER_ERROR,
+            HttpStatusConstants.STATUS.FAILED,
+            ExceptionConstants.NULL_EXCEPTION
+        );
+
+        return new ResponseEntity<>(responseDTO, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+
     @ExceptionHandler({ RuntimeException.class })
     public ResponseEntity<BaseResponseDTO> handleRuntimeException(RuntimeException exception) {
         log.error("Handle runtime exception", exception);
 
         BaseResponseDTO responseDTO = new BaseResponseDTO(
-            HttpStatusConstants.BAD_REQUEST,
+            HttpStatusConstants.INTERNAL_SERVER_ERROR,
             HttpStatusConstants.STATUS.FAILED,
             ExceptionConstants.UNCERTAIN_ERROR
         );
 
-        return new ResponseEntity<>(responseDTO, HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(responseDTO, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     @ExceptionHandler({ Exception.class })
@@ -136,11 +151,11 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
         log.error("Handle unexpected exception", exception);
 
         BaseResponseDTO responseDTO = new BaseResponseDTO(
-            HttpStatusConstants.BAD_REQUEST,
+            HttpStatusConstants.INTERNAL_SERVER_ERROR,
             HttpStatusConstants.STATUS.FAILED,
             ExceptionConstants.UNCERTAIN_ERROR
         );
 
-        return new ResponseEntity<>(responseDTO, HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(responseDTO, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 }
