@@ -23,6 +23,7 @@ import org.springframework.security.config.annotation.web.configurers.HeadersCon
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.oauth2.client.web.OAuth2AuthorizationRequestResolver;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
@@ -40,17 +41,20 @@ public class SecurityConfig {
     private final JwtTokenFilter jwtTokenFilter;
     private final CustomAuthenticationEntryPoint authenticationEntryPoint;
     private final CustomAccessDeniedHandler accessDeniedHandler;
+    private final OAuth2AuthorizationRequestResolver oAuth2AuthorizationRequestResolver;
 
     public SecurityConfig(CorsFilter corsFilter,
                           JwtDecoder jwtDecoder,
                           JwtTokenFilter jwtTokenFilter,
                           CustomAuthenticationEntryPoint authenticationEntryPoint,
-                          CustomAccessDeniedHandler accessDeniedHandler) {
+                          CustomAccessDeniedHandler accessDeniedHandler,
+                          OAuth2AuthorizationRequestResolver oAuth2AuthorizationRequestResolver) {
         this.corsFilter = corsFilter;
         this.jwtDecoder = jwtDecoder;
         this.jwtTokenFilter = jwtTokenFilter;
         this.authenticationEntryPoint = authenticationEntryPoint;
         this.accessDeniedHandler = accessDeniedHandler;
+        this.oAuth2AuthorizationRequestResolver = oAuth2AuthorizationRequestResolver;
     }
 
     @Bean
@@ -78,7 +82,9 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.OPTIONS, SecurityConstants.REQUEST_MATCHERS.OPTIONS).permitAll()
                 .anyRequest().authenticated()
             )
-            .oauth2Login(Customizer.withDefaults())
+            .oauth2Login(oAuth2Config -> oAuth2Config.authorizationEndpoint(config ->
+                config.authorizationRequestResolver(oAuth2AuthorizationRequestResolver)
+            ))
             .oauth2ResourceServer(config -> config.jwt(jwtConfigurer -> jwtConfigurer.decoder(jwtDecoder)));
 
         return http.build();

@@ -6,4 +6,5 @@ import com.dct.base.dto.response.BaseResponseDTO;
 public interface AuthService {
 
     BaseResponseDTO authenticate(AuthRequestDTO authRequestDTO);
+    BaseResponseDTO authenticateFromGoogle(String code);
 }

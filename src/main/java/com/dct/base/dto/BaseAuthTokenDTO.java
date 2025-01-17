@@ -6,15 +6,21 @@ public class BaseAuthTokenDTO {
 
     private Authentication authentication;
     private String username;
-    private String deviceID;
+    private String deviceID = "";
     private Integer userID;
-    private Boolean isRememberMe;
+    private Boolean isRememberMe = false;
 
     public BaseAuthTokenDTO() {}
 
     public BaseAuthTokenDTO(Authentication authentication, String username) {
         this.authentication = authentication;
         this.username = username;
+    }
+
+    public BaseAuthTokenDTO(Authentication authentication, String username, Integer userID) {
+        this.authentication = authentication;
+        this.username = username;
+        this.userID = userID;
     }
 
     public Authentication getAuthentication() {

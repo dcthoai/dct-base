@@ -9,6 +9,8 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.oauth2.client.registration.ClientRegistration;
 import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
 import org.springframework.security.oauth2.client.registration.InMemoryClientRegistrationRepository;
+import org.springframework.security.oauth2.client.web.DefaultOAuth2AuthorizationRequestResolver;
+import org.springframework.security.oauth2.client.web.OAuth2AuthorizationRequestResolver;
 import org.springframework.security.oauth2.core.AuthorizationGrantType;
 
 @Configuration
@@ -22,7 +24,24 @@ public class OAuth2ClientConfig {
     }
 
     @Bean
-    public ClientRegistrationRepository clientRegistrationRepository() {
+    protected OAuth2AuthorizationRequestResolver googleOAuth2RequestResolver() {
+        DefaultOAuth2AuthorizationRequestResolver resolver = new DefaultOAuth2AuthorizationRequestResolver(
+                clientRegistrationRepository(),
+                "/api/auth/oauth2/authorize"
+        );
+
+        resolver.setAuthorizationRequestCustomizer(customizer ->
+                customizer.additionalParameters(params -> {
+                    params.put("access_type", "offline");
+                    params.put("prompt", "consent");
+                })
+        );
+
+        return resolver;
+    }
+
+    @Bean
+    protected ClientRegistrationRepository clientRegistrationRepository() {
         log.debug("Configuring OAuth2Client with Google info");
         return new InMemoryClientRegistrationRepository(googleClientRegistration());
     }

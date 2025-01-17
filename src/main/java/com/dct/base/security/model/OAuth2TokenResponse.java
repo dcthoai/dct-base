@@ -8,6 +8,9 @@ public class OAuth2TokenResponse {
     @SerializedName("access_token")
     private String accessToken;
 
+    @SerializedName("refresh_token")
+    private String refreshToken;
+
     @SerializedName("expires_in")
     private int expiresIn;
 
@@ -27,6 +30,14 @@ public class OAuth2TokenResponse {
 
     public void setAccessToken(String accessToken) {
         this.accessToken = accessToken;
+    }
+
+    public String getRefreshToken() {
+        return refreshToken;
+    }
+
+    public void setRefreshToken(String refreshToken) {
+        this.refreshToken = refreshToken;
     }
 
     public int getExpiresIn() {
@@ -65,6 +76,7 @@ public class OAuth2TokenResponse {
     public String toString() {
         return "\n\n OAuth2TokenResponse:" +
                "\n\t accessToken: " + accessToken +
+               "\n\t refreshToken: " + refreshToken +
                "\n\t expiresIn: " + expiresIn +
                "\n\t scope: " + scope +
                "\n\t tokenType: " + tokenType +

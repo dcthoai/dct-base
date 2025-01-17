@@ -104,6 +104,8 @@ dct-base:
       scope:
         - https://www.googleapis.com/auth/userinfo.email
         - https://www.googleapis.com/auth/userinfo.profile
+#        - https://www.googleapis.com/auth/user.phonenumbers.read
+#        - https://www.googleapis.com/auth/drive.file
       authorization-uri: https://accounts.google.com/o/oauth2/auth
       google-auth-redirect-URL: ${dct-base.domain}/api/p/callback/oauth2/google/authenticate
       token-uri: https://oauth2.googleapis.com/token

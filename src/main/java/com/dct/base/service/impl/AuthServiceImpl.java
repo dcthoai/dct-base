@@ -1,16 +1,23 @@
 package com.dct.base.service.impl;
 
+import com.dct.base.common.CredentialGenerator;
 import com.dct.base.constants.ExceptionConstants;
 import com.dct.base.constants.HttpStatusConstants;
 import com.dct.base.constants.ResultConstants;
+import com.dct.base.constants.SecurityConstants;
 import com.dct.base.dto.BaseAuthTokenDTO;
 import com.dct.base.dto.request.AuthRequestDTO;
+import com.dct.base.dto.request.RegisterRequestDTO;
 import com.dct.base.dto.response.BaseResponseDTO;
 import com.dct.base.entity.Account;
 import com.dct.base.exception.BaseAuthenticationException;
 import com.dct.base.exception.BaseBadRequestException;
 import com.dct.base.security.model.CustomUserDetails;
 import com.dct.base.security.jwt.JwtTokenProvider;
+import com.dct.base.security.model.OAuth2TokenResponse;
+import com.dct.base.security.model.OAuth2UserInfoResponse;
+import com.dct.base.security.service.GoogleOAuth2Service;
+import com.dct.base.service.AccountService;
 import com.dct.base.service.AuthService;
 
 import org.slf4j.Logger;
@@ -21,9 +28,13 @@ import org.springframework.security.authentication.CredentialsExpiredException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+
+import java.util.Objects;
+import java.util.Set;
 
 @Service
 public class AuthServiceImpl implements AuthService {
@@ -32,11 +43,17 @@ public class AuthServiceImpl implements AuthService {
     private static final String ENTITY_NAME = "AuthServiceImpl";
     private final JwtTokenProvider tokenProvider;
     private final AuthenticationManager authenticationManager;
+    private final GoogleOAuth2Service googleOAuth2Service;
+    private final AccountService accountService;
 
     public AuthServiceImpl(JwtTokenProvider tokenProvider,
-                           AuthenticationManager authenticationManager) {
+                           AuthenticationManager authenticationManager,
+                           GoogleOAuth2Service googleOAuth2Service,
+                           AccountService accountService) {
         this.tokenProvider = tokenProvider;
         this.authenticationManager = authenticationManager;
+        this.googleOAuth2Service = googleOAuth2Service;
+        this.accountService = accountService;
     }
 
     @Override
@@ -79,5 +96,33 @@ public class AuthServiceImpl implements AuthService {
             ResultConstants.LOGIN_SUCCESS,
             tokenProvider.createToken(authTokenDTO)
         );
+    }
+
+    @Override
+    public BaseResponseDTO authenticateFromGoogle(String code) {
+        log.debug("Creating an account for user is authenticate from google");
+        OAuth2TokenResponse tokenResponse = googleOAuth2Service.getAccessToken(code);
+        OAuth2UserInfoResponse userInfoResponse = googleOAuth2Service.getUserInfo(tokenResponse.getAccessToken());
+
+        String username = CredentialGenerator.generateUsername(8);
+        String password = CredentialGenerator.generatePassword(8);
+        RegisterRequestDTO registerRequestDTO = new RegisterRequestDTO(username, userInfoResponse.getEmail(), password);
+        Account account = accountService.createUserAccount(registerRequestDTO);
+
+        if (Objects.nonNull(account)) {
+            Set<SimpleGrantedAuthority> authorities = Set.of(new SimpleGrantedAuthority(SecurityConstants.ROLES.ROLE_USER));
+            UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(username, password, authorities);
+            SecurityContextHolder.getContext().setAuthentication(token);
+            BaseAuthTokenDTO authTokenDTO = new BaseAuthTokenDTO(token, username, account.getId());
+
+            return new BaseResponseDTO(
+                HttpStatusConstants.ACCEPTED,
+                HttpStatusConstants.STATUS.SUCCESS,
+                ResultConstants.LOGIN_SUCCESS,
+                tokenProvider.createToken(authTokenDTO)
+            );
+        }
+
+        throw new BaseAuthenticationException(ENTITY_NAME, ExceptionConstants.REGISTER_FAILED);
     }
 }

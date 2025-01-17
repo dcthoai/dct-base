@@ -20,23 +20,22 @@ public interface SecurityConstants {
 
     interface REQUEST_MATCHERS {
         String[] OPTIONS = { "/**" };
-        String[] ADMIN = { "/api/admin/**", "/admin**" };
-        String[] USER = { "/api/users/**", "/users**" };
+        String[] ADMIN = { "/api/admin**", "/admin**" };
+        String[] USER = { "/api/users**", "/users**" };
         String[] PUBLIC = {
             "*.js",
             "*.html",
-            "/resources/**",
+            "/",
             "/i18n/**",
             "/common/i18n/**",
-            "/test/**",
-            "/api/authenticate",
-            "/api/auth/**",
-            "/api/p/**",
+            "/resources/**",
+            "/p/**",
+            "/login",
             "/register",
             "/api/register",
-            "/login",
             "/api/login",
-            "/p/**"
+            "/api/auth/**",
+            "/api/p/**"
         };
     }
 
