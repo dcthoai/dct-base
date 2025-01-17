@@ -1,4 +1,4 @@
-package com.dct.base.security;
+package com.dct.base.security.exception;
 
 import com.dct.base.common.BaseCommon;
 import com.dct.base.common.JsonUtils;

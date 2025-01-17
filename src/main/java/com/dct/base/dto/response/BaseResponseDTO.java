@@ -1,6 +1,7 @@
 package com.dct.base.dto.response;
 
 import com.dct.base.constants.HttpStatusConstants;
+import com.dct.base.constants.ResultConstants;
 
 @SuppressWarnings("unused")
 public class BaseResponseDTO {
@@ -13,6 +14,13 @@ public class BaseResponseDTO {
     public BaseResponseDTO() {
         this.code = HttpStatusConstants.OK;
         this.status = HttpStatusConstants.STATUS.SUCCESS;
+    }
+
+    public BaseResponseDTO(Object result) {
+        this.code = HttpStatusConstants.OK;
+        this.status = HttpStatusConstants.STATUS.SUCCESS;
+        this.message = ResultConstants.GET_DATA_SUCCESS;
+        this.result = result;
     }
 
     public BaseResponseDTO(Integer code, Boolean status) {

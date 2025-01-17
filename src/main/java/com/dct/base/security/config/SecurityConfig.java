@@ -1,6 +1,9 @@
-package com.dct.base.security;
+package com.dct.base.security.config;
 
 import com.dct.base.constants.SecurityConstants;
+import com.dct.base.security.exception.CustomAccessDeniedHandler;
+import com.dct.base.security.exception.CustomAuthenticationEntryPoint;
+import com.dct.base.security.service.CustomUserDetailsService;
 import com.dct.base.security.jwt.JwtTokenFilter;
 
 import org.slf4j.Logger;
@@ -75,6 +78,7 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.OPTIONS, SecurityConstants.REQUEST_MATCHERS.OPTIONS).permitAll()
                 .anyRequest().authenticated()
             )
+            .oauth2Login(Customizer.withDefaults())
             .oauth2ResourceServer(config -> config.jwt(jwtConfigurer -> jwtConfigurer.decoder(jwtDecoder)));
 
         return http.build();

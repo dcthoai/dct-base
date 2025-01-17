@@ -1,4 +1,4 @@
-package com.dct.base.security;
+package com.dct.base.security.model;
 
 import com.dct.base.entity.Account;
 import org.springframework.security.core.GrantedAuthority;

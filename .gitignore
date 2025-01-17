@@ -34,3 +34,6 @@ build/
 
 ### Ignore log file ###
 mnt/logs/**.log
+
+### Ignore secret key file
+src/main/resources/secret/

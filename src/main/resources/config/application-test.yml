@@ -68,6 +68,7 @@ server:
   port: 8080
 
 dct-base:
+  domain: http://localhost:8080
   datasource:
     database: jdbc:mysql://localhost:3306/nextgen_shop
     username: admin-nextgen-shop
@@ -96,3 +97,15 @@ dct-base:
       # Token is valid 24 hours
       token-validity: 86400000 # milliseconds
       token-validity-for-remember-me: 86400000 # milliseconds
+    oauth2:
+      client-name: Nextgen Creative
+      google-client-ID: ${GOOGLE_CLIENT_ID}
+      google-client-secret: ${GOOGLE_CLIENT_SECRET}
+      scope:
+        - https://www.googleapis.com/auth/userinfo.email
+        - https://www.googleapis.com/auth/userinfo.profile
+      authorization-uri: https://accounts.google.com/o/oauth2/auth
+      google-auth-redirect-URL: ${dct-base.domain}/api/p/callback/oauth2/google/authenticate
+      token-uri: https://oauth2.googleapis.com/token
+      user-info-uri: https://openidconnect.googleapis.com/v1/userinfo
+      username-attribute-name: sub

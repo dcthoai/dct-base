@@ -9,7 +9,7 @@ import com.dct.base.dto.response.BaseResponseDTO;
 import com.dct.base.entity.Account;
 import com.dct.base.exception.BaseAuthenticationException;
 import com.dct.base.exception.BaseBadRequestException;
-import com.dct.base.security.CustomUserDetails;
+import com.dct.base.security.model.CustomUserDetails;
 import com.dct.base.security.jwt.JwtTokenProvider;
 import com.dct.base.service.AuthService;
 

@@ -1,9 +1,10 @@
-package com.dct.base.security;
+package com.dct.base.security.service;
 
 import com.dct.base.constants.ExceptionConstants;
 import com.dct.base.entity.Account;
 import com.dct.base.repositories.AccountRepository;
 import com.dct.base.repositories.AuthorityRepository;
+import com.dct.base.security.model.CustomUserDetails;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
