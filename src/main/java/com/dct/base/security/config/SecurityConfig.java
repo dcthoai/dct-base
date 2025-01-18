@@ -3,6 +3,8 @@ package com.dct.base.security.config;
 import com.dct.base.constants.SecurityConstants;
 import com.dct.base.security.exception.CustomAccessDeniedHandler;
 import com.dct.base.security.exception.CustomAuthenticationEntryPoint;
+import com.dct.base.security.exception.OAuth2AuthenticationFailureHandler;
+import com.dct.base.security.exception.OAuth2AuthenticationSuccessHandler;
 import com.dct.base.security.service.CustomUserDetailsService;
 import com.dct.base.security.jwt.JwtTokenFilter;
 
@@ -24,7 +26,6 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.client.web.OAuth2AuthorizationRequestResolver;
-import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.header.writers.ReferrerPolicyHeaderWriter;
@@ -37,24 +38,27 @@ public class SecurityConfig {
 
     private static final Logger log = LoggerFactory.getLogger(SecurityConfig.class);
     private final CorsFilter corsFilter;
-    private final JwtDecoder jwtDecoder;
     private final JwtTokenFilter jwtTokenFilter;
     private final CustomAuthenticationEntryPoint authenticationEntryPoint;
     private final CustomAccessDeniedHandler accessDeniedHandler;
     private final OAuth2AuthorizationRequestResolver oAuth2AuthorizationRequestResolver;
+    private final OAuth2AuthenticationSuccessHandler oAuth2AuthenticationSuccessHandler;
+    private final OAuth2AuthenticationFailureHandler oAuth2AuthenticationFailureHandler;
 
     public SecurityConfig(CorsFilter corsFilter,
-                          JwtDecoder jwtDecoder,
                           JwtTokenFilter jwtTokenFilter,
                           CustomAuthenticationEntryPoint authenticationEntryPoint,
                           CustomAccessDeniedHandler accessDeniedHandler,
-                          OAuth2AuthorizationRequestResolver oAuth2AuthorizationRequestResolver) {
+                          OAuth2AuthorizationRequestResolver oAuth2AuthorizationRequestResolver,
+                          OAuth2AuthenticationSuccessHandler oAuth2AuthenticationSuccessHandler,
+                          OAuth2AuthenticationFailureHandler oAuth2AuthenticationFailureHandler) {
         this.corsFilter = corsFilter;
-        this.jwtDecoder = jwtDecoder;
         this.jwtTokenFilter = jwtTokenFilter;
         this.authenticationEntryPoint = authenticationEntryPoint;
         this.accessDeniedHandler = accessDeniedHandler;
         this.oAuth2AuthorizationRequestResolver = oAuth2AuthorizationRequestResolver;
+        this.oAuth2AuthenticationSuccessHandler = oAuth2AuthenticationSuccessHandler;
+        this.oAuth2AuthenticationFailureHandler = oAuth2AuthenticationFailureHandler;
     }
 
     @Bean
@@ -66,7 +70,8 @@ public class SecurityConfig {
             .addFilterBefore(corsFilter, JwtTokenFilter.class)
             .httpBasic(httpBasic -> httpBasic.authenticationEntryPoint(authenticationEntryPoint))
             .exceptionHandling(handler -> handler.accessDeniedHandler(accessDeniedHandler))
-            .headers(header -> header.frameOptions(HeadersConfigurer.FrameOptionsConfig::sameOrigin)
+            .headers(header ->
+                header.frameOptions(HeadersConfigurer.FrameOptionsConfig::sameOrigin)
                 .contentSecurityPolicy(policy -> policy.policyDirectives(SecurityConstants.HEADER.SECURITY_POLICY))
                 .referrerPolicy(config -> config.policy(ReferrerPolicyHeaderWriter.ReferrerPolicy.STRICT_ORIGIN_WHEN_CROSS_ORIGIN))
                 .permissionsPolicy(config -> config.policy(SecurityConstants.HEADER.PERMISSIONS_POLICY))
@@ -74,7 +79,10 @@ public class SecurityConfig {
             .sessionManagement(sessionManager -> sessionManager.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(registry ->
                 registry.requestMatchers(SecurityConstants.REQUEST_MATCHERS.ADMIN).hasRole(SecurityConstants.ROLES.ADMIN)
-                .requestMatchers(SecurityConstants.REQUEST_MATCHERS.USER).hasAnyRole(SecurityConstants.ROLES.USER, SecurityConstants.ROLES.ADMIN)
+                .requestMatchers(SecurityConstants.REQUEST_MATCHERS.USER).hasAnyRole(
+                    SecurityConstants.ROLES.USER,
+                    SecurityConstants.ROLES.ADMIN
+                )
                 .requestMatchers(SecurityConstants.REQUEST_MATCHERS.PUBLIC).permitAll()
                 // Used with custom CORS filters in CORS (Cross-Origin Resource Sharing) mechanism.
                 // The browser will send OPTIONS requests (preflight requests) to check
@@ -82,10 +90,12 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.OPTIONS, SecurityConstants.REQUEST_MATCHERS.OPTIONS).permitAll()
                 .anyRequest().authenticated()
             )
-            .oauth2Login(oAuth2Config -> oAuth2Config.authorizationEndpoint(config ->
-                config.authorizationRequestResolver(oAuth2AuthorizationRequestResolver)
-            ))
-            .oauth2ResourceServer(config -> config.jwt(jwtConfigurer -> jwtConfigurer.decoder(jwtDecoder)));
+            .formLogin(AbstractHttpConfigurer::disable)
+            .oauth2Login(oAuth2Config -> oAuth2Config
+                .successHandler(oAuth2AuthenticationSuccessHandler)
+                .failureHandler(oAuth2AuthenticationFailureHandler)
+                .authorizationEndpoint(config -> config.authorizationRequestResolver(oAuth2AuthorizationRequestResolver))
+            );
 
         return http.build();
     }

@@ -129,6 +129,11 @@
       "name": "dct-base.domain",
       "type": "java.lang.String",
       "description": "Description for dct-base.domain."
+    },
+    {
+      "name": "dct-base.security.oauth2.base-url-authenticate",
+      "type": "java.lang.String",
+      "description": "Description for dct-base.security.oauth2.base-url-authenticate."
     }
   ]
 }

@@ -1,10 +1,11 @@
 package com.dct.base.config.properties;
 
+import com.dct.base.constants.PropertiesConstants;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-@ConfigurationProperties(prefix = "dct-base.datasource")
+@ConfigurationProperties(prefix = PropertiesConstants.DATASOURCE)
 public class Datasource {
     private String database;
     private String username;

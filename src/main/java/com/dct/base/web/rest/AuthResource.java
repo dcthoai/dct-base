@@ -9,8 +9,8 @@ import com.dct.base.dto.response.BaseResponseDTO;
 import com.dct.base.entity.Account;
 import com.dct.base.exception.BaseBadRequestException;
 import com.dct.base.service.AccountService;
+import com.dct.base.service.AuthenticationService;
 
-import com.dct.base.service.AuthService;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,9 +28,9 @@ public class AuthResource {
     private static final Logger log = LoggerFactory.getLogger(AuthResource.class);
     private static final String ENTITY_NAME = "AuthResource";
     private final AccountService accountService;
-    private final AuthService authService;
+    private final AuthenticationService authService;
 
-    public AuthResource(AccountService accountService, AuthService authService) {
+    public AuthResource(AccountService accountService, AuthenticationService authService) {
         this.accountService = accountService;
         this.authService = authService;
     }

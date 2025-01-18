@@ -59,6 +59,10 @@ public interface SecurityConstants {
         boolean ALLOW_CREDENTIALS = true;
     }
 
+    interface COOKIES {
+        String OAUTH2_GOOGLE_ACCESS_TOKEN = "oauth2_google_access_token";
+    }
+
     interface HEADER {
         String AUTHORIZATION_HEADER = "Authorization";
         String AUTHORIZATION_GATEWAY_HEADER = "Authorization-Gateway";

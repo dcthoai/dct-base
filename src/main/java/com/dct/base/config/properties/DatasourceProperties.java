@@ -1,10 +1,11 @@
 package com.dct.base.config.properties;
 
+import com.dct.base.constants.PropertiesConstants;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-@ConfigurationProperties(prefix = "dct-base.datasource.hikari.datasource-properties")
+@ConfigurationProperties(prefix = PropertiesConstants.DATASOURCE_PROPERTIES)
 public class DatasourceProperties {
 
     private String cachePrepStmts;

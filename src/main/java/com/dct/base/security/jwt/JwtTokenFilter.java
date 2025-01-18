@@ -7,12 +7,14 @@ import com.dct.base.constants.HttpStatusConstants;
 import com.dct.base.constants.SecurityConstants;
 import com.dct.base.dto.response.BaseResponseDTO;
 import com.dct.base.exception.BaseAuthenticationException;
+
 import jakarta.annotation.Nullable;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
-
 import jakarta.servlet.http.HttpServletResponse;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.MediaType;
@@ -24,6 +26,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
 import java.util.Objects;
 
 /**
@@ -74,15 +77,28 @@ public class JwtTokenFilter extends OncePerRequestFilter {
     }
 
     private String resolveToken(HttpServletRequest request) {
-        String bearerToken = request.getHeader(SecurityConstants.HEADER.AUTHORIZATION_HEADER);
+        Cookie[] cookies = request.getCookies();
+        String bearerToken = null;
 
-        if (!StringUtils.hasText(bearerToken)) {
+        if (Objects.nonNull(cookies)) {
+            bearerToken = Arrays.stream(cookies)
+                    .filter(cookie -> SecurityConstants.COOKIES.OAUTH2_GOOGLE_ACCESS_TOKEN.equals(cookie.getName()))
+                    .findFirst()
+                    .map(Cookie::getValue)
+                    .orElse(null);
+
+            if (StringUtils.hasText(bearerToken))
+                return bearerToken;
+        }
+
+        if (!StringUtils.hasText(bearerToken))
+            bearerToken = request.getHeader(SecurityConstants.HEADER.AUTHORIZATION_HEADER);
+
+        if (!StringUtils.hasText(bearerToken))
             bearerToken = request.getHeader(SecurityConstants.HEADER.AUTHORIZATION_GATEWAY_HEADER);
-        }
 
-        if (StringUtils.hasText(bearerToken) && bearerToken.startsWith(SecurityConstants.HEADER.TOKEN_TYPE)) {
+        if (StringUtils.hasText(bearerToken) && bearerToken.startsWith(SecurityConstants.HEADER.TOKEN_TYPE))
             return bearerToken.substring(7);
-        }
 
         return null;
     }

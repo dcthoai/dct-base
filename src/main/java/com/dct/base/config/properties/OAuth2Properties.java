@@ -1,15 +1,17 @@
 package com.dct.base.config.properties;
 
+import com.dct.base.constants.PropertiesConstants;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 
 import java.util.List;
 
 @Configuration
-@ConfigurationProperties(prefix = "dct-base.security.oauth2")
+@ConfigurationProperties(prefix = PropertiesConstants.OAUTH2_GOOGLE_PROPERTIES)
 public class OAuth2Properties {
 
     private String clientName;
+    private String baseUrlAuthenticate;
     private String authorizationUri;
     private String tokenUri;
     private String userInfoUri;
@@ -18,6 +20,14 @@ public class OAuth2Properties {
     private String googleClientSecret;
     private String googleAuthRedirectURL;
     private List<String> scope;
+
+    public String getBaseUrlAuthenticate() {
+        return baseUrlAuthenticate;
+    }
+
+    public void setBaseUrlAuthenticate(String baseUrlAuthenticate) {
+        this.baseUrlAuthenticate = baseUrlAuthenticate;
+    }
 
     public String getClientName() {
         return clientName;

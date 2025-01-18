@@ -1,7 +1,9 @@
 package com.dct.base.dto;
 
+import com.dct.base.entity.Account;
 import org.springframework.security.core.Authentication;
 
+@SuppressWarnings("unused")
 public class BaseAuthTokenDTO {
 
     private Authentication authentication;
@@ -12,15 +14,16 @@ public class BaseAuthTokenDTO {
 
     public BaseAuthTokenDTO() {}
 
-    public BaseAuthTokenDTO(Authentication authentication, String username) {
+    public BaseAuthTokenDTO(Authentication authentication, Account account) {
         this.authentication = authentication;
-        this.username = username;
+        this.username = account.getUsername();
+        this.userID = account.getId();
     }
 
-    public BaseAuthTokenDTO(Authentication authentication, String username, Integer userID) {
-        this.authentication = authentication;
-        this.username = username;
-        this.userID = userID;
+    public BaseAuthTokenDTO(Authentication authentication, Account account, String deviceID, boolean isRememberMe) {
+        this(authentication, account);
+        this.deviceID = deviceID;
+        this.isRememberMe = isRememberMe;
     }
 
     public Authentication getAuthentication() {

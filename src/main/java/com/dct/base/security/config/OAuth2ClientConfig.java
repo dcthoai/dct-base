@@ -26,15 +26,11 @@ public class OAuth2ClientConfig {
     @Bean
     protected OAuth2AuthorizationRequestResolver googleOAuth2RequestResolver() {
         DefaultOAuth2AuthorizationRequestResolver resolver = new DefaultOAuth2AuthorizationRequestResolver(
-                clientRegistrationRepository(),
-                "/api/auth/oauth2/authorize"
+            clientRegistrationRepository(), oAuth2Properties.getBaseUrlAuthenticate()
         );
 
         resolver.setAuthorizationRequestCustomizer(customizer ->
-                customizer.additionalParameters(params -> {
-                    params.put("access_type", "offline");
-                    params.put("prompt", "consent");
-                })
+            customizer.additionalParameters(params -> params.put("access_type", "offline"))
         );
 
         return resolver;

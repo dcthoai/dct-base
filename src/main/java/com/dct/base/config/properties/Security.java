@@ -1,10 +1,11 @@
 package com.dct.base.config.properties;
 
+import com.dct.base.constants.PropertiesConstants;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-@ConfigurationProperties(prefix = "dct-base.security.auth")
+@ConfigurationProperties(prefix = PropertiesConstants.SECURITY_CONFIG)
 public class Security {
     private String base64SecretKey;
     private Long tokenValidity;

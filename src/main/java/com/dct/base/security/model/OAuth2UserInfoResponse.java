@@ -1,29 +1,37 @@
 package com.dct.base.security.model;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.gson.annotations.SerializedName;
 
 @SuppressWarnings("unused")
 public class OAuth2UserInfoResponse {
 
     @SerializedName("sub")
+    @JsonProperty("sub")
     private String sub;
 
     @SerializedName("name")
+    @JsonProperty("name")
     private String name;
 
     @SerializedName("given_name")
+    @JsonProperty("given_name")
     private String givenName;
 
     @SerializedName("family_name")
+    @JsonProperty("family_name")
     private String familyName;
 
     @SerializedName("picture")
+    @JsonProperty("picture")
     private String picture;
 
     @SerializedName("email")
+    @JsonProperty("email")
     private String email;
 
     @SerializedName("email_verified")
+    @JsonProperty("email_verified")
     private boolean emailVerified;
 
     public String getSub() {

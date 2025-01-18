@@ -1,10 +1,11 @@
 package com.dct.base.config.properties;
 
+import com.dct.base.constants.PropertiesConstants;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-@ConfigurationProperties(prefix = "dct-base.datasource.hikari")
+@ConfigurationProperties(prefix = PropertiesConstants.HIKARI)
 public class Hikari {
 
     private boolean autoCommit;

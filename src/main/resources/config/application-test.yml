@@ -98,6 +98,7 @@ dct-base:
       token-validity: 86400000 # milliseconds
       token-validity-for-remember-me: 86400000 # milliseconds
     oauth2:
+      base-url-authenticate: /api/auth/oauth2/authorize
       client-name: Nextgen Creative
       google-client-ID: ${GOOGLE_CLIENT_ID}
       google-client-secret: ${GOOGLE_CLIENT_SECRET}
@@ -107,7 +108,8 @@ dct-base:
 #        - https://www.googleapis.com/auth/user.phonenumbers.read
 #        - https://www.googleapis.com/auth/drive.file
       authorization-uri: https://accounts.google.com/o/oauth2/auth
-      google-auth-redirect-URL: ${dct-base.domain}/api/p/callback/oauth2/google/authenticate
+#      google-auth-redirect-URL: ${dct-base.domain}/api/p/callback/oauth2/google/authenticate
+      google-auth-redirect-URL: ${dct-base.domain}/login/oauth2/code/google
       token-uri: https://oauth2.googleapis.com/token
       user-info-uri: https://openidconnect.googleapis.com/v1/userinfo
       username-attribute-name: sub
