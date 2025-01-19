@@ -1,6 +1,8 @@
 package com.dct.base.config;
 
 import jakarta.persistence.EntityManagerFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.orm.jpa.JpaTransactionManager;
@@ -27,6 +29,7 @@ public class TransactionConfiguration {
     // This is the main component of JPA, which is automatically initialized by Spring based on the ORM configuration
     // It provides EntityManagers to manipulate the database
     private final EntityManagerFactory entityManagerFactory;
+    private static final Logger log = LoggerFactory.getLogger(TransactionConfiguration.class);
 
     public TransactionConfiguration(EntityManagerFactory entityManagerFactory) {
         this.entityManagerFactory = entityManagerFactory;
@@ -37,8 +40,8 @@ public class TransactionConfiguration {
      * Automatically integrates with @Transactional in the application
      * @return {@link PlatformTransactionManager}
      */
-    @Bean
-    public PlatformTransactionManager platformTransactionManager() {
+    @Bean(name = "transactionManager")
+    public PlatformTransactionManager transactionManager() {
         JpaTransactionManager transactionManager = new JpaTransactionManager();
         transactionManager.setEntityManagerFactory(entityManagerFactory);
         return transactionManager;
@@ -50,7 +53,8 @@ public class TransactionConfiguration {
      */
     @Bean
     public TransactionTemplate transactionTemplate() {
-        TransactionTemplate transactionTemplate = new TransactionTemplate(platformTransactionManager());
+        log.debug("TransactionTemplate 'JpaTransactionManager' is configured for manage entity");
+        TransactionTemplate transactionTemplate = new TransactionTemplate(transactionManager());
         // Set the transaction isolation level (e.g. ISOLATION_READ_COMMITTED prevents reading uncommitted data)
         transactionTemplate.setIsolationLevel(TransactionDefinition.ISOLATION_READ_COMMITTED);
         // Set transaction behavior (e.g. PROPAGATION_REQUIRED ensures new transactions will join existing transactions, if any)

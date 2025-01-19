@@ -16,14 +16,14 @@ spring:
     name: dct-base
   profiles:
     active: dev
-  messages:
-    basename: i18n/messages # Base path for resource files containing internationalized (i18n) messages
   jpa:
     # Avoid causing LazyInitializationException if querying outside the scope of EntityManager or causing poor performance
     open-in-view: false
-#    properties:
-#      hibernate:
-#        packagesToScan: ${spring.jpa.properties.hibernate.packagesToScan},com.dct.base.entity
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQLDialect
+  thymeleaf:
+    cache: false
 
 server:
   servlet:

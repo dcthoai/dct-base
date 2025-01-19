@@ -1,0 +1,92 @@
+package com.dct.base.config.properties;
+
+import com.dct.base.constants.PropertiesConstants;
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.context.annotation.Configuration;
+
+@Configuration
+@ConfigurationProperties(prefix = PropertiesConstants.HIKARI)
+public class Hikari {
+
+    private boolean autoCommit;
+    private boolean allowPoolSuspension;
+    private int maximumPoolSize;
+    private int minimumIdle;
+    private long idleTimeout;
+    private long maxLifetime;
+    private long connectionTimeout;
+    private long leakDetectionThreshold;
+    private String poolName;
+
+    public boolean getAutoCommit() {
+        return autoCommit;
+    }
+
+    public void setAutoCommit(boolean autoCommit) {
+        this.autoCommit = autoCommit;
+    }
+
+    public int getMaximumPoolSize() {
+        return maximumPoolSize;
+    }
+
+    public void setMaximumPoolSize(int maximumPoolSize) {
+        this.maximumPoolSize = maximumPoolSize;
+    }
+
+    public int getMinimumIdle() {
+        return minimumIdle;
+    }
+
+    public void setMinimumIdle(int minimumIdle) {
+        this.minimumIdle = minimumIdle;
+    }
+
+    public long getIdleTimeout() {
+        return idleTimeout;
+    }
+
+    public void setIdleTimeout(long idleTimeout) {
+        this.idleTimeout = idleTimeout;
+    }
+
+    public long getMaxLifetime() {
+        return maxLifetime;
+    }
+
+    public void setMaxLifetime(long maxLifetime) {
+        this.maxLifetime = maxLifetime;
+    }
+
+    public long getConnectionTimeout() {
+        return connectionTimeout;
+    }
+
+    public void setConnectionTimeout(long connectionTimeout) {
+        this.connectionTimeout = connectionTimeout;
+    }
+
+    public String getPoolName() {
+        return poolName;
+    }
+
+    public void setPoolName(String poolName) {
+        this.poolName = poolName;
+    }
+
+    public long getLeakDetectionThreshold() {
+        return leakDetectionThreshold;
+    }
+
+    public void setLeakDetectionThreshold(long leakDetectionThreshold) {
+        this.leakDetectionThreshold = leakDetectionThreshold;
+    }
+
+    public boolean getAllowPoolSuspension() {
+        return allowPoolSuspension;
+    }
+
+    public void setAllowPoolSuspension(boolean allowPoolSuspension) {
+        this.allowPoolSuspension = allowPoolSuspension;
+    }
+}

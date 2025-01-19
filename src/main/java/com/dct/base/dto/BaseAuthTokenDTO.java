@@ -1,19 +1,29 @@
 package com.dct.base.dto;
 
+import com.dct.base.entity.Account;
 import org.springframework.security.core.Authentication;
 
+@SuppressWarnings("unused")
 public class BaseAuthTokenDTO {
 
     private Authentication authentication;
     private String username;
-    private Integer ID, deviceID;
-    private Boolean isRememberMe;
+    private String deviceID = "";
+    private Integer userID;
+    private Boolean isRememberMe = false;
 
     public BaseAuthTokenDTO() {}
 
-    public BaseAuthTokenDTO(Authentication authentication, String username) {
+    public BaseAuthTokenDTO(Authentication authentication, Account account) {
         this.authentication = authentication;
-        this.username = username;
+        this.username = account.getUsername();
+        this.userID = account.getId();
+    }
+
+    public BaseAuthTokenDTO(Authentication authentication, Account account, String deviceID, boolean isRememberMe) {
+        this(authentication, account);
+        this.deviceID = deviceID;
+        this.isRememberMe = isRememberMe;
     }
 
     public Authentication getAuthentication() {
@@ -32,19 +42,19 @@ public class BaseAuthTokenDTO {
         this.username = username;
     }
 
-    public Integer getID() {
-        return ID;
+    public Integer getUserID() {
+        return userID;
     }
 
-    public void setID(Integer ID) {
-        this.ID = ID;
+    public void setUserID(Integer userID) {
+        this.userID = userID;
     }
 
-    public Integer getDeviceID() {
+    public String getDeviceID() {
         return deviceID;
     }
 
-    public void setDeviceID(Integer deviceID) {
+    public void setDeviceID(String deviceID) {
         this.deviceID = deviceID;
     }
 

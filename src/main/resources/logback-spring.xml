@@ -34,6 +34,10 @@
         </encoder>
     </appender>
 
+    <root>
+        <appender-ref ref="FILE"/>
+    </root>
+
     <!-- Appender for unsafe log. Dedicated to connection pool leak monitoring log -->
     <appender name = "CONNECTION_POOL_FILE" class = "ch.qos.logback.core.FileAppender">
         <file>mnt/logs/connection_pool_leak.log</file>
@@ -66,5 +70,6 @@
     <logger name="sun.rmi" level="WARN"/>
     <logger name="sun.rmi.transport" level="WARN"/>
     <logger name="com.zaxxer.hikari" level="WARN"/>
+    <logger name="sun.net.www." level="WARN"/>
     <logger name="_org.springframework.web.servlet.HandlerMapping.Mappings" level="ERROR"/>
 </configuration>
