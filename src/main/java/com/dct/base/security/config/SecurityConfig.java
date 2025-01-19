@@ -3,14 +3,12 @@ package com.dct.base.security.config;
 import com.dct.base.constants.SecurityConstants;
 import com.dct.base.security.exception.CustomAccessDeniedHandler;
 import com.dct.base.security.exception.CustomAuthenticationEntryPoint;
-import com.dct.base.security.exception.OAuth2AuthenticationFailureHandler;
-import com.dct.base.security.exception.OAuth2AuthenticationSuccessHandler;
-import com.dct.base.security.service.CustomOAuth2AuthorizationRequestResolver;
 import com.dct.base.security.service.CustomUserDetailsService;
 import com.dct.base.security.jwt.JwtTokenFilter;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -31,6 +29,8 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.security.web.header.writers.ReferrerPolicyHeaderWriter;
 import org.springframework.web.filter.CorsFilter;
 
+import java.util.Objects;
+
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity(securedEnabled = true)
@@ -41,24 +41,18 @@ public class SecurityConfig {
     private final JwtTokenFilter jwtTokenFilter;
     private final CustomAccessDeniedHandler accessDeniedHandler;
     private final CustomAuthenticationEntryPoint authenticationEntryPoint;
-    private final OAuth2AuthenticationSuccessHandler oAuth2AuthenticationSuccessHandler;
-    private final OAuth2AuthenticationFailureHandler oAuth2AuthenticationFailureHandler;
-    private final CustomOAuth2AuthorizationRequestResolver oAuth2AuthorizationRequestResolver;
+    private final OAuth2ClientConfig oAuth2ClientConfig;
 
     public SecurityConfig(CorsFilter corsFilter,
                           JwtTokenFilter jwtTokenFilter,
                           CustomAccessDeniedHandler accessDeniedHandler,
                           CustomAuthenticationEntryPoint authenticationEntryPoint,
-                          OAuth2AuthenticationSuccessHandler oAuth2AuthenticationSuccessHandler,
-                          OAuth2AuthenticationFailureHandler oAuth2AuthenticationFailureHandler,
-                          CustomOAuth2AuthorizationRequestResolver oAuth2AuthorizationRequestResolver) {
+                          @Autowired(required = false) OAuth2ClientConfig oAuth2ClientConfig) {
         this.corsFilter = corsFilter;
         this.jwtTokenFilter = jwtTokenFilter;
         this.accessDeniedHandler = accessDeniedHandler;
         this.authenticationEntryPoint = authenticationEntryPoint;
-        this.oAuth2AuthenticationSuccessHandler = oAuth2AuthenticationSuccessHandler;
-        this.oAuth2AuthenticationFailureHandler = oAuth2AuthenticationFailureHandler;
-        this.oAuth2AuthorizationRequestResolver = oAuth2AuthorizationRequestResolver;
+        this.oAuth2ClientConfig = oAuth2ClientConfig;
     }
 
     @Bean
@@ -68,7 +62,6 @@ public class SecurityConfig {
             .cors(Customizer.withDefaults())
             .addFilterBefore(jwtTokenFilter, UsernamePasswordAuthenticationFilter.class)
             .addFilterBefore(corsFilter, JwtTokenFilter.class)
-            .httpBasic(httpBasic -> httpBasic.authenticationEntryPoint(authenticationEntryPoint))
             .exceptionHandling(handler -> handler
                 .authenticationEntryPoint(authenticationEntryPoint)
                 .accessDeniedHandler(accessDeniedHandler)
@@ -93,12 +86,10 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.OPTIONS, SecurityConstants.REQUEST_MATCHERS.OPTIONS).permitAll()
                 .anyRequest().authenticated()
             )
-            .formLogin(AbstractHttpConfigurer::disable)
-            .oauth2Login(oAuth2Config -> oAuth2Config
-                .successHandler(oAuth2AuthenticationSuccessHandler)
-                .failureHandler(oAuth2AuthenticationFailureHandler)
-                .authorizationEndpoint(config -> config.authorizationRequestResolver(oAuth2AuthorizationRequestResolver))
-            );
+            .formLogin(AbstractHttpConfigurer::disable);
+
+        if (Objects.nonNull(oAuth2ClientConfig))
+            oAuth2ClientConfig.configure(http);
 
         return http.build();
     }
