@@ -7,26 +7,26 @@ import org.springframework.context.annotation.Configuration;
 import java.util.List;
 
 @Configuration
-@ConfigurationProperties(prefix = PropertiesConstants.OAUTH2_GOOGLE_PROPERTIES)
-public class OAuth2Properties {
+@ConfigurationProperties(prefix = PropertiesConstants.GOOGLE_OAUTH2_PROPERTIES)
+public class GoogleOAuth2Properties {
 
+    private String clientID;
     private String clientName;
-    private String baseUrlAuthenticate;
+    private String clientSecret;
+    private String baseAuthorizeUri;
     private String authorizationUri;
+    private String redirectUri;
     private String tokenUri;
     private String userInfoUri;
     private String usernameAttributeName;
-    private String googleClientID;
-    private String googleClientSecret;
-    private String googleAuthRedirectURL;
     private List<String> scope;
 
-    public String getBaseUrlAuthenticate() {
-        return baseUrlAuthenticate;
+    public String getClientID() {
+        return clientID;
     }
 
-    public void setBaseUrlAuthenticate(String baseUrlAuthenticate) {
-        this.baseUrlAuthenticate = baseUrlAuthenticate;
+    public void setClientID(String clientID) {
+        this.clientID = clientID;
     }
 
     public String getClientName() {
@@ -37,12 +37,36 @@ public class OAuth2Properties {
         this.clientName = clientName;
     }
 
+    public String getClientSecret() {
+        return clientSecret;
+    }
+
+    public void setClientSecret(String clientSecret) {
+        this.clientSecret = clientSecret;
+    }
+
+    public String getBaseAuthorizeUri() {
+        return baseAuthorizeUri;
+    }
+
+    public void setBaseAuthorizeUri(String baseAuthorizeUri) {
+        this.baseAuthorizeUri = baseAuthorizeUri;
+    }
+
     public String getAuthorizationUri() {
         return authorizationUri;
     }
 
     public void setAuthorizationUri(String authorizationUri) {
         this.authorizationUri = authorizationUri;
+    }
+
+    public String getRedirectUri() {
+        return redirectUri;
+    }
+
+    public void setRedirectUri(String redirectUri) {
+        this.redirectUri = redirectUri;
     }
 
     public String getTokenUri() {
@@ -67,30 +91,6 @@ public class OAuth2Properties {
 
     public void setUsernameAttributeName(String usernameAttributeName) {
         this.usernameAttributeName = usernameAttributeName;
-    }
-
-    public String getGoogleClientID() {
-        return googleClientID;
-    }
-
-    public void setGoogleClientID(String googleClientID) {
-        this.googleClientID = googleClientID;
-    }
-
-    public String getGoogleClientSecret() {
-        return googleClientSecret;
-    }
-
-    public void setGoogleClientSecret(String googleClientSecret) {
-        this.googleClientSecret = googleClientSecret;
-    }
-
-    public String getGoogleAuthRedirectURL() {
-        return googleAuthRedirectURL;
-    }
-
-    public void setGoogleAuthRedirectURL(String googleAuthRedirectURL) {
-        this.googleAuthRedirectURL = googleAuthRedirectURL;
     }
 
     public List<String> getScope() {

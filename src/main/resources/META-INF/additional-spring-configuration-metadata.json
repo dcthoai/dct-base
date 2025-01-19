@@ -81,59 +81,59 @@
       "description": "Description for dct-base.security.auth.token-validity-for-remember-me."
     },
     {
-      "name": "dct-base.security.oauth2.google-client-ID",
-      "type": "java.lang.String",
-      "description": "Description for dct-base.security.oauth2.google-client-ID."
-    },
-    {
-      "name": "dct-base.security.oauth2.google-client-secret",
-      "type": "java.lang.String",
-      "description": "Description for dct-base.security.oauth2.google-client-secret."
-    },
-    {
-      "name": "dct-base.security.oauth2.google-auth-redirect-URL",
-      "type": "java.lang.String",
-      "description": "Description for dct-base.security.oauth2.google-auth-redirect-URL."
-    },
-    {
-      "name": "dct-base.security.oauth2.scope",
-      "type": "java.lang.String",
-      "description": "Description for dct-base.security.oauth2.scope."
-    },
-    {
-      "name": "dct-base.security.oauth2.client-name",
-      "type": "java.lang.String",
-      "description": "Description for dct-base.security.oauth2.client-name."
-    },
-    {
-      "name": "dct-base.security.oauth2.authorization-uri",
-      "type": "java.lang.String",
-      "description": "Description for dct-base.security.oauth2.authorization-uri."
-    },
-    {
-      "name": "dct-base.security.oauth2.token-uri",
-      "type": "java.lang.String",
-      "description": "Description for dct-base.security.oauth2.token-uri."
-    },
-    {
-      "name": "dct-base.security.oauth2.user-info-uri",
-      "type": "java.lang.String",
-      "description": "Description for dct-base.security.oauth2.user-info-uri."
-    },
-    {
-      "name": "dct-base.security.oauth2.username-attribute-name",
-      "type": "java.lang.String",
-      "description": "Description for dct-base.security.oauth2.username-attribute-name."
-    },
-    {
       "name": "dct-base.domain",
       "type": "java.lang.String",
       "description": "Description for dct-base.domain."
     },
     {
-      "name": "dct-base.security.oauth2.base-url-authenticate",
+      "name": "dct-base.security.oauth2.google.base-authorize-uri",
       "type": "java.lang.String",
-      "description": "Description for dct-base.security.oauth2.base-url-authenticate."
+      "description": "Description for dct-base.security.oauth2.google.base-authorize-uri."
+    },
+    {
+      "name": "dct-base.security.oauth2.google.client-name",
+      "type": "java.lang.String",
+      "description": "Description for dct-base.security.oauth2.google.client-name."
+    },
+    {
+      "name": "dct-base.security.oauth2.google.client-ID",
+      "type": "java.lang.String",
+      "description": "Description for dct-base.security.oauth2.google.client-ID."
+    },
+    {
+      "name": "dct-base.security.oauth2.google.client-secret",
+      "type": "java.lang.String",
+      "description": "Description for dct-base.security.oauth2.google.client-secret."
+    },
+    {
+      "name": "dct-base.security.oauth2.google.scope",
+      "type": "java.lang.String",
+      "description": "Description for dct-base.security.oauth2.google.scope."
+    },
+    {
+      "name": "dct-base.security.oauth2.google.authorization-uri",
+      "type": "java.lang.String",
+      "description": "Description for dct-base.security.oauth2.google.authorization-uri."
+    },
+    {
+      "name": "dct-base.security.oauth2.google.redirect-uri",
+      "type": "java.lang.String",
+      "description": "Description for dct-base.security.oauth2.google.redirect-uri."
+    },
+    {
+      "name": "dct-base.security.oauth2.google.token-uri",
+      "type": "java.lang.String",
+      "description": "Description for dct-base.security.oauth2.google.token-uri."
+    },
+    {
+      "name": "dct-base.security.oauth2.google.user-info-uri",
+      "type": "java.lang.String",
+      "description": "Description for dct-base.security.oauth2.google.user-info-uri."
+    },
+    {
+      "name": "dct-base.security.oauth2.google.username-attribute-name",
+      "type": "java.lang.String",
+      "description": "Description for dct-base.security.oauth2.google.username-attribute-name."
     }
   ]
 }

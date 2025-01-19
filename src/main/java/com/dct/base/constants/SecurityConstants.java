@@ -35,7 +35,8 @@ public interface SecurityConstants {
             "/api/register",
             "/api/login",
             "/api/auth/**",
-            "/api/p/**"
+            "/api/p/**",
+            "/favicon.ico"
         };
     }
 
@@ -57,6 +58,11 @@ public interface SecurityConstants {
         String[] ALLOWED_REQUEST_METHODS = {"GET", "PUT", "POST", "DELETE"};
         String[] ALLOWED_ORIGIN_PATTERNS = {"*"};
         boolean ALLOW_CREDENTIALS = true;
+    }
+
+    interface OAUTH2_PROVIDER {
+        String GOOGLE = "google";
+        String FACEBOOK = "facebook";
     }
 
     interface COOKIES {
