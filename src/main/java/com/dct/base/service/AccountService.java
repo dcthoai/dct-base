@@ -11,6 +11,8 @@ public interface AccountService {
 
     Account findUserByUsername(String username);
 
+    Account findByID(int userID);
+
     Account findUserByEmail(String email);
 
     Account createUserAccount(RegisterRequestDTO requestDTO);

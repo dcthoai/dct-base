@@ -3,6 +3,7 @@ package com.dct.base.service.impl;
 import com.dct.base.common.CredentialGenerator;
 import com.dct.base.constants.ExceptionConstants;
 import com.dct.base.constants.HttpStatusConstants;
+import com.dct.base.constants.PropertiesConstants;
 import com.dct.base.constants.ResultConstants;
 import com.dct.base.constants.SecurityConstants;
 import com.dct.base.dto.BaseAuthTokenDTO;
@@ -20,6 +21,7 @@ import com.dct.base.service.GoogleAuthenticateService;
 import jakarta.servlet.http.Cookie;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -32,6 +34,7 @@ import java.util.Set;
 import static org.hibernate.id.IdentifierGenerator.ENTITY_NAME;
 
 @Service
+@ConditionalOnProperty(name = PropertiesConstants.OAUTH2_ACTIVE_STATUS, havingValue = "true")
 public class GoogleAuthenticateServiceImpl implements GoogleAuthenticateService {
 
     private static final Logger log = LoggerFactory.getLogger(GoogleAuthenticateServiceImpl.class);

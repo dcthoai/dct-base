@@ -3,6 +3,7 @@ package com.dct.base.security.service;
 import com.dct.base.common.JsonUtils;
 import com.dct.base.config.properties.GoogleOAuth2Properties;
 import com.dct.base.constants.ExceptionConstants;
+import com.dct.base.constants.PropertiesConstants;
 import com.dct.base.exception.BaseBadRequestException;
 import com.dct.base.security.model.OAuth2TokenResponse;
 import com.dct.base.security.model.OAuth2UserInfoResponse;
@@ -10,6 +11,7 @@ import com.dct.base.security.model.OAuth2UserInfoResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -25,6 +27,7 @@ import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.RestTemplate;
 
 @Service
+@ConditionalOnProperty(name = PropertiesConstants.OAUTH2_ACTIVE_STATUS, havingValue = "true")
 public class GoogleOAuth2Service {
 
     private static final Logger log = LoggerFactory.getLogger(GoogleOAuth2Service.class);
