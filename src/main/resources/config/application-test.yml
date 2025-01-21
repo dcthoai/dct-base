@@ -57,7 +57,7 @@ server:
 dct-base:
   domain: http://localhost:8080
   datasource:
-    database: jdbc:mysql://localhost:3306/nextgen_shop
+    database: jdbc:mysql://localhost:3306/nextgen_shop?serverTimezone=UTC
     username: admin-nextgen-shop
     password: 123456a@
     hikari:

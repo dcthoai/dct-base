@@ -1,5 +1,6 @@
 package com.dct.base.dto.response;
 
+import java.time.Instant;
 import java.util.Arrays;
 import java.util.List;
 
@@ -14,9 +15,9 @@ public class AccountDTO {
     private String deviceID;
     private List<String> roles;
     private String createdBy;
-//    private Instant createdDate;
+    private Instant createdDate;
     private String lastModifiedBy;
-//    private Instant lastModifiedDate;
+    private Instant lastModifiedDate;
 
     public int getID() {
         return ID;
@@ -82,15 +83,27 @@ public class AccountDTO {
         this.createdBy = createdBy;
     }
 
-    public void setRoles(List<String> roles) {
-        this.roles = roles;
-    }
-
     public String getLastModifiedBy() {
         return lastModifiedBy;
     }
 
     public void setLastModifiedBy(String lastModifiedBy) {
         this.lastModifiedBy = lastModifiedBy;
+    }
+
+    public Instant getCreatedDate() {
+        return createdDate;
+    }
+
+    public void setCreatedDate(Instant createdDate) {
+        this.createdDate = createdDate;
+    }
+
+    public Instant getLastModifiedDate() {
+        return lastModifiedDate;
+    }
+
+    public void setLastModifiedDate(Instant lastModifiedDate) {
+        this.lastModifiedDate = lastModifiedDate;
     }
 }
