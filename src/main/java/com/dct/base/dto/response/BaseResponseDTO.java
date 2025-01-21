@@ -11,6 +11,34 @@ public class BaseResponseDTO {
     private String message;
     private Object result;
 
+    public static class Builder {
+        private final BaseResponseDTO instance = new BaseResponseDTO();
+
+        public Builder code(int code) {
+            instance.code = code;
+            return this;
+        }
+
+        public Builder success(boolean status) {
+            instance.status = status;
+            return this;
+        }
+
+        public Builder message(String message) {
+            instance.message = message;
+            return this;
+        }
+
+        public Builder result(Object result) {
+            instance.result = result;
+            return this;
+        }
+
+        public BaseResponseDTO build() {
+            return instance;
+        }
+    }
+
     public BaseResponseDTO() {
         this.code = HttpStatusConstants.OK;
         this.status = HttpStatusConstants.STATUS.SUCCESS;

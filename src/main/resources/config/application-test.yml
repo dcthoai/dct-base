@@ -11,19 +11,6 @@
 # https://docs.spring.io/spring-boot/reference/features/profiles.html
 # ===================================================================
 
-# ===================================================================
-# Spring Boot configuration.
-#
-# This configuration will be overridden by the Spring profile you use
-# For example: application-dev.yml if you use the "dev" profile.
-# ===================================================================
-
-# ===================================================================
-# Standard Spring Boot properties.
-# Full reference is available at:
-# https://docs.spring.io/spring-boot/reference/features/profiles.html
-# ===================================================================
-
 logging:
   level:
     com.dct.base: debug
@@ -70,7 +57,7 @@ server:
 dct-base:
   domain: http://localhost:8080
   datasource:
-    database: jdbc:mysql://localhost:3306/nextgen_shop
+    database: jdbc:mysql://localhost:3306/nextgen_shop?serverTimezone=UTC
     username: admin-nextgen-shop
     password: 123456a@
     hikari:
@@ -98,6 +85,7 @@ dct-base:
       token-validity: 86400000 # milliseconds
       token-validity-for-remember-me: 86400000 # milliseconds
     oauth2:
+      enabled: true
       google:
         base-authorize-uri: /api/auth/oauth2/authorize
         client-name: Nextgen Creative

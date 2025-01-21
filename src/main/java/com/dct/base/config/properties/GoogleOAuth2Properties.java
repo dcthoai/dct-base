@@ -1,12 +1,14 @@
 package com.dct.base.config.properties;
 
 import com.dct.base.constants.PropertiesConstants;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 
 import java.util.List;
 
 @Configuration
+@ConditionalOnProperty(name = PropertiesConstants.OAUTH2_ACTIVE_STATUS, havingValue = "true")
 @ConfigurationProperties(prefix = PropertiesConstants.GOOGLE_OAUTH2_PROPERTIES)
 public class GoogleOAuth2Properties {
 
