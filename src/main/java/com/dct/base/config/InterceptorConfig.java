@@ -3,6 +3,7 @@ package com.dct.base.config;
 import com.dct.base.constants.SecurityConstants;
 import com.dct.base.constants.BaseConstants;
 import com.dct.base.interceptor.BaseHandlerInterceptor;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Bean;
@@ -41,6 +42,11 @@ public class InterceptorConfig implements WebMvcConfigurer {
                 .excludePathPatterns(BaseConstants.INTERCEPTOR_EXCLUDED_PATHS);
     }
 
+    /**
+     * Configures the CORS (Cross-Origin Resource Sharing) filter in the application <p>
+     * CORS is a security mechanism that allows or denies requests between different origins <p>
+     * View the details of the permissions or restrictions in {@link SecurityConstants.CORS}
+     */
     @Bean
     public CorsFilter corsFilter() {
         CorsConfiguration config = new CorsConfiguration();
@@ -48,7 +54,7 @@ public class InterceptorConfig implements WebMvcConfigurer {
         config.setAllowedOriginPatterns(List.of(SecurityConstants.CORS.ALLOWED_ORIGIN_PATTERNS));
         config.setAllowedHeaders(List.of(SecurityConstants.CORS.ALLOWED_HEADERS));
         config.setAllowedMethods(List.of(SecurityConstants.CORS.ALLOWED_REQUEST_METHODS));
-        config.setAllowCredentials(SecurityConstants.CORS.ALLOW_CREDENTIALS);  // Allow sending cookies or authentication information
+        config.setAllowCredentials(SecurityConstants.CORS.ALLOW_CREDENTIALS); // Allow sending cookies or authentication
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration(SecurityConstants.CORS.APPLY_FOR, config); // Apply CORS to all endpoints

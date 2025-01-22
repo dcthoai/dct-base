@@ -14,10 +14,29 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.sql.DataSource;
+import java.nio.charset.StandardCharsets;
 import java.util.Properties;
 
+/**
+ * Configures and initializes components related to database connection using HikariCP <p>
+ * Uses the configuration injected from the below class to configure
+ * <ul>
+ *   <li>{@link Datasource}</li>
+ *   <li>{@link DatasourceProperties}</li>
+ *   <li>{@link Hikari}</li>
+ * </ul>
+ * Therefore, it allows customization of the datasource configuration for each parent project <p>
+ *
+ * {@link EnableTransactionManagement} helps Spring auto manage transactions in methods annotated with @{@link Transactional}
+ *
+ * Provides {@link JdbcTemplate}, a utility class in Spring for working with databases<p>
+ * See <a href="">application-test.yml</a> for detail
+ *
+ * @author thoaidc
+ */
 @Configuration
 @EnableTransactionManagement
 public class DatabaseConfiguration {
@@ -58,8 +77,8 @@ public class DatabaseConfiguration {
         props.setProperty("prepStmtCacheSize", datasourceProperties.getPrepStmtCacheSize());
         props.setProperty("prepStmtCacheSqlLimit", datasourceProperties.getPrepStmtCacheSqlLimit());
         props.setProperty("useServerPrepStmts", datasourceProperties.getUseServerPrepStmts());
-        props.setProperty("passwordCharacterEncoding", "UTF-8");
-        props.setProperty("serverTimezone", "UTC");
+        props.setProperty("passwordCharacterEncoding", StandardCharsets.UTF_8.name());
+        props.setProperty("serverTimezone", "UTC"); // Uses the UTC standard for internationalized time
         config.setDataSourceProperties(props);
 
         return new HikariDataSource(config);

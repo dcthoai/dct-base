@@ -1,5 +1,6 @@
 package com.dct.base.config;
 
+import com.dct.base.config.properties.JpaProperties;
 import com.dct.base.constants.BaseConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,24 +13,37 @@ import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.data.annotation.CreatedBy;
+import org.springframework.data.annotation.LastModifiedBy;
 
 import javax.sql.DataSource;
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityManagerFactory;
 
 /**
+ * JPA (Java Persistence API) configurations <p>
+ * {@link EnableJpaAuditing} help JPA fills in information about the creator, the modifier in the entities <p>
+ * {@link EnableJpaRepositories} allows Spring to auto find and create repositories for entities in the basePackages <p>
+ * Helping to reduce the need to write code for basic CRUD operations
  *
  * @author thoaidc
  */
 @Configuration
 @EnableJpaAuditing(auditorAwareRef = "auditorProvider")
-@EnableJpaRepositories(basePackages = "com.dct.base.repositories")
 public class PersistenceConfig {
 
     private static final Logger log = LoggerFactory.getLogger(PersistenceConfig.class);
+    private final JpaProperties jpaProperties;
+
+    public PersistenceConfig(@Qualifier("jpaProperties") JpaProperties jpaProperties) {
+        this.jpaProperties = jpaProperties;
+    }
 
     /**
-     * Helps JPA automatically handle annotations like @CreatedBy, @LastModifiedBy,... in entities
+     * Helps JPA automatically handle annotations like @{@link CreatedBy}, @{@link LastModifiedBy},... in entities
      * @return {@link AuditorAware}
      */
     @Bean(name = "auditorProvider")
@@ -44,13 +58,21 @@ public class PersistenceConfig {
         };
     }
 
+    /**
+     * {@link EntityManagerFactory} is where {@link EntityManager} objects are created <p>
+     * Each {@link EntityManager} is a session with the database <p>
+     * Used to perform operations like `find`, `persist`, `merge`, `remove`, and queries on entities <p>
+     * Each {@link EntityManager} maintains a context for the entity objects and can perform CRUD operations
+     */
     @Bean(name = "entityManagerFactory")
     public LocalContainerEntityManagerFactoryBean entityManagerFactory(EntityManagerFactoryBuilder builder,
                                                                        @Qualifier("dataSource") DataSource dataSource) {
         log.debug("EntityManagerFactory initialized successful");
+        List<String> basePackages = jpaProperties.getBaseEntityPackages();
+
         return builder.dataSource(dataSource)
-                .packages("com.dct.base.entity")
-                .persistenceUnit("persistenceUnitName")
+                .packages(basePackages.toArray(new String[0])) // Convert List to string array
+                .persistenceUnit(jpaProperties.getPersistenceUnitName())
                 .build();
     }
 }
