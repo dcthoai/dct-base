@@ -54,7 +54,7 @@ public class InterceptorConfig implements WebMvcConfigurer {
         config.setAllowedOriginPatterns(List.of(SecurityConstants.CORS.ALLOWED_ORIGIN_PATTERNS));
         config.setAllowedHeaders(List.of(SecurityConstants.CORS.ALLOWED_HEADERS));
         config.setAllowedMethods(List.of(SecurityConstants.CORS.ALLOWED_REQUEST_METHODS));
-        config.setAllowCredentials(SecurityConstants.CORS.ALLOW_CREDENTIALS); // Allow sending cookies or authentication
+        config.setAllowCredentials(SecurityConstants.CORS.ALLOW_CREDENTIALS);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration(SecurityConstants.CORS.APPLY_FOR, config); // Apply CORS to all endpoints
