@@ -3,14 +3,24 @@ package com.dct.base.dto.response;
 import com.dct.base.constants.HttpStatusConstants;
 import com.dct.base.constants.ResultConstants;
 
+/**
+ * The format helps standardize the response for the client <p>
+ * Other response types can inherit from it and extend it as needed for specific cases <p>
+ * Normally only need this class for responses
+ *
+ * @author thoaidc
+ */
 @SuppressWarnings("unused")
 public class BaseResponseDTO {
 
-    private Integer code;
-    private Boolean status;
-    private String message;
-    private Object result;
+    private Integer code; // Http status
 
+    // The status indicating successful processing of the request (in the case of valid input data and no system errors)
+    private Boolean status;
+    private String message; // The response content follows the i18n standard
+    private Object result; // The data after processing the request, is not required and can be null
+
+    // The builder allows for faster response creation
     public static class Builder {
         private final BaseResponseDTO instance = new BaseResponseDTO();
 

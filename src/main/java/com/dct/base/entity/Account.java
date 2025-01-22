@@ -5,6 +5,12 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
 import org.hibernate.annotations.DynamicUpdate;
 
+/**
+ * Stores information about users in the system <p>
+ * Including those authenticated and authorized through third-party services like Google, Facebook
+ *
+ * @author thoaidc
+ */
 @Entity
 @DynamicUpdate // Hibernate only updates the changed columns to the database instead of updating the entire table
 @Table(name = "account")
