@@ -15,6 +15,12 @@ import org.springframework.http.server.ServerHttpResponse;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice;
 
+/**
+ * ResponseBodyAdvice is an interface that allows you to intervene with the response data <p>
+ * Executed after {@link BaseHandlerInterceptor#postHandle} and before the actual data is written into the response body
+ *
+ * @author thoaidc
+ */
 @ControllerAdvice
 public class BaseResponseFilter implements ResponseBodyAdvice<Object> {
 
@@ -25,6 +31,14 @@ public class BaseResponseFilter implements ResponseBodyAdvice<Object> {
         this.baseCommon = baseCommon;
     }
 
+    /**
+     * Check if the response is a {@link BaseResponseDTO} or {@link ResponseEntity}<{@link BaseResponseDTO}> <p>
+     * If true, the response will be processed by {@link BaseResponseFilter#beforeBodyWrite}
+     *
+     * @param returnType the return type
+     * @param converterType the selected converter type
+     * @return true if response type is supported by this filter
+     */
     @Override
     public boolean supports(MethodParameter returnType, Class<? extends HttpMessageConverter<?>> converterType) {
         boolean isBaseResponseDTOType = BaseResponseDTO.class.isAssignableFrom(returnType.getParameterType());
@@ -35,12 +49,15 @@ public class BaseResponseFilter implements ResponseBodyAdvice<Object> {
     }
 
     /**
-     * @param body Contents of the HTTP response being processed
-     * @param returnType Contains information about the return data type of the method that Spring is processing
+     * Override the response body to add internationalization (I18n) messages before it is returned
+     *
+     * @param body the body of HTTP request to be written
+     * @param returnType the return type of the controller method
      * @param selectedContentType Media type requested by the client, usually application/json, application/xml, etc
-     * @param selectedConverterType Type of converter that Spring will use to convert the response data (to JSON, XML,...)
-     * @param request ServerHttpRequest
-     * @param response ServerHttpResponse
+     * @param selectedConverterType Type of converter that Spring will use to convert the response body (to JSON, XML)
+     * @param request the current request
+     * @param response the current response
+     * @return ResponseEntity after modification
      */
     @Override
     public Object beforeBodyWrite(Object body,
