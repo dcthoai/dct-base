@@ -3,8 +3,8 @@ package com.dct.base.security.config;
 import com.dct.base.config.properties.GoogleOAuth2Properties;
 import com.dct.base.constants.PropertiesConstants;
 import com.dct.base.constants.SecurityConstants;
-import com.dct.base.security.exception.OAuth2AuthenticationFailureHandler;
-import com.dct.base.security.exception.OAuth2AuthenticationSuccessHandler;
+import com.dct.base.security.handler.OAuth2AuthenticationFailureHandler;
+import com.dct.base.security.handler.OAuth2AuthenticationSuccessHandler;
 import com.dct.base.security.service.CustomOAuth2AuthorizationRequestResolver;
 
 import org.slf4j.Logger;

@@ -11,9 +11,9 @@
 
 logging:
   level:
-    org.hibernate.sql: info
-    com.dct.base: info
     root: info
+    com.dct.base: info
+    org.hibernate.sql: info
   file:
     path: /mnt/logs
     name: ${logging.file.path}/clusterLogData.log # Used by default. Overridden by configuration in logback-spring.xml

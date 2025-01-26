@@ -2,8 +2,8 @@ package com.dct.base.security.config;
 
 import com.dct.base.config.InterceptorConfig;
 import com.dct.base.constants.SecurityConstants;
-import com.dct.base.security.exception.CustomAccessDeniedHandler;
-import com.dct.base.security.exception.CustomAuthenticationEntryPoint;
+import com.dct.base.security.handler.CustomAccessDeniedHandler;
+import com.dct.base.security.handler.CustomAuthenticationEntryPoint;
 import com.dct.base.security.service.CustomUserDetailsService;
 import com.dct.base.security.jwt.JwtTokenFilter;
 import com.dct.base.exception.handler.CustomExceptionHandler;
