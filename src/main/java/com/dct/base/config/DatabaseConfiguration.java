@@ -60,6 +60,7 @@ public class DatabaseConfiguration {
         HikariConfig config = new HikariConfig();
         Properties props = new Properties();
 
+        config.setDriverClassName(datasource.getDriverClassName());
         config.setJdbcUrl(datasource.getDatabase());
         config.setUsername(datasource.getUsername());
         config.setPassword(datasource.getPassword());

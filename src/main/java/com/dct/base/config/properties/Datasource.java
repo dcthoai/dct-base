@@ -22,9 +22,19 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 @ConfigurationProperties(prefix = PropertiesConstants.DATASOURCE)
 public class Datasource {
+
+    private String driverClassName;
     private String database;
     private String username;
     private String password;
+
+    public String getDriverClassName() {
+        return driverClassName;
+    }
+
+    public void setDriverClassName(String driverClassName) {
+        this.driverClassName = driverClassName;
+    }
 
     public String getDatabase() {
         return database;

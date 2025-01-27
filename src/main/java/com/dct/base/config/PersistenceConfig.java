@@ -67,8 +67,8 @@ public class PersistenceConfig {
     @Bean(name = "entityManagerFactory")
     public LocalContainerEntityManagerFactoryBean entityManagerFactory(EntityManagerFactoryBuilder builder,
                                                                        @Qualifier("dataSource") DataSource dataSource) {
-        log.debug("EntityManagerFactory initialized successful");
         List<String> basePackages = jpaProperties.getBaseEntityPackages();
+        log.debug("EntityManagerFactory initialized successful. Scan for packages: {}", basePackages);
 
         return builder.dataSource(dataSource)
                 .packages(basePackages.toArray(new String[0])) // Convert List to string array
