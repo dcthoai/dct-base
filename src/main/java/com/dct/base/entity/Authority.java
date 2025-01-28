@@ -5,6 +5,10 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
 import org.hibernate.annotations.DynamicUpdate;
 
+/**
+ * Each record corresponds to a permission in the application, and one account can match multiple permissions
+ * @author thoaidc
+ */
 @Entity
 @Table(name = "authority")
 @DynamicUpdate // Hibernate only updates the changed columns to the database instead of updating the entire table

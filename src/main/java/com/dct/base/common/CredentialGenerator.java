@@ -2,6 +2,16 @@ package com.dct.base.common;
 
 import java.security.SecureRandom;
 
+/**
+ * Create random account information for testing or authentication purposes via OAuth2 <p>
+ * Create a username and password with customizable lengths
+ * <ul>
+ *   <li>The username should only include letters and numbers</li>
+ *   <li>The password must contain at least one lowercase letter, one uppercase letter, one number, and one special character</li>
+ * </ul>
+ *
+ * @author thoaidc
+ */
 public class CredentialGenerator {
 
     private static final String CHARACTERS = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";

@@ -1,8 +1,13 @@
 package com.dct.base.constants;
 
+/**
+ * Contains the custom response codes for HTTP responses
+ * @author thoaidc
+ */
 @SuppressWarnings("unused")
 public interface HttpStatusConstants {
 
+    // The status indicating successful processing of the request (in the case of valid input data and no system errors)
     interface STATUS {
         boolean SUCCESS = true;
         boolean FAILED = false;

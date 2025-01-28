@@ -11,6 +11,10 @@ import org.modelmapper.convention.MatchingStrategies;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+/**
+ * Create beans to handle the conversion of values between objects and between objects and JSON
+ * @author thoaidc
+ */
 @Configuration
 public class MapperConfiguration {
 
@@ -18,7 +22,10 @@ public class MapperConfiguration {
     public ObjectMapper objectMapper() {
         ObjectMapper objectMapper = new ObjectMapper();
 
+        // Avoid errors when encountering undefined properties in JSON that are not present in the Java class being converted
         objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+
+        // Do not serialize (convert to JSON) fields with empty or null values
         objectMapper.setSerializationInclusion(JsonInclude.Include.NON_EMPTY);
 
         objectMapper.registerModule(new JavaTimeModule()); // To support Instant datatype of Java 8

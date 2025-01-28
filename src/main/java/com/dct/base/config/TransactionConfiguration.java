@@ -10,6 +10,7 @@ import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.transaction.support.TransactionTemplate;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Used to manage transactions with the database. Uses Hibernate/JPA as the ORM (Object-Relational Mapping) tool <p>
@@ -19,7 +20,7 @@ import org.springframework.transaction.support.TransactionTemplate;
  *     <li>Managing rollbacks (on errors) and commits (on success)</li>
  * </ul>
  * Customizing transaction parameters: Such as isolation level and propagation behavior <p>
- * Integrating Spring Transaction Management with JPA: Use JpaTransactionManager to connect to JPA
+ * Integrating Spring Transaction Management with JPA: Use {@link JpaTransactionManager} to connect to JPA
  * @author thoaidc
  */
 @Configuration
@@ -37,7 +38,7 @@ public class TransactionConfiguration {
 
     /**
      * Has the ability to manage opening, committing and rolling back transactions based on EntityManager <p>
-     * Automatically integrates with @Transactional in the application
+     * Automatically integrates with @{@link Transactional} in the application
      * @return {@link PlatformTransactionManager}
      */
     @Bean(name = "transactionManager")
@@ -48,7 +49,7 @@ public class TransactionConfiguration {
     }
 
     /**
-     * Provides a programmatic API to manage transactions explicitly (not relying on annotations like @Transactional)
+     * Provides a programmatic API to manage transactions explicitly (not relying on annotations like @{@link Transactional})
      * @return {@link TransactionTemplate}
      */
     @Bean

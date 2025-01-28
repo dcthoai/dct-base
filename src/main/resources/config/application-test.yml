@@ -13,8 +13,8 @@
 
 logging:
   level:
-    com.dct.base: debug
     root: debug
+    com.dct.base: debug
   charset:
     console: UTF-8
     file: UTF-8
@@ -56,7 +56,15 @@ server:
 
 dct-base:
   domain: http://localhost:8080
+  jpa:
+    persistence-unit-name: dct-base-persistence
+    base-entity-packages:
+      - com.dct.base.entity
+    base-repository-packages:
+      - com.dct.base.repositories
+
   datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
     database: jdbc:mysql://localhost:3306/nextgen_shop?serverTimezone=UTC
     username: admin-nextgen-shop
     password: 123456a@

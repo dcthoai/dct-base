@@ -51,6 +51,14 @@ public class JwtTokenFilter extends OncePerRequestFilter {
                                     @Nullable HttpServletResponse response,
                                     @Nullable FilterChain filterChain) throws ServletException, IOException {
         if (Objects.nonNull(request)) {
+            String url = request.getRequestURI();
+            log.debug("{}: {}", request.getMethod(), url);
+
+            if (Arrays.stream(SecurityConstants.REQUEST_MATCHERS.PUBLIC).anyMatch(url::startsWith)) {
+                doFilter(filterChain, request, response);
+                return;
+            }
+
             String jwt = resolveToken(request);
 
             try {
@@ -63,17 +71,14 @@ public class JwtTokenFilter extends OncePerRequestFilter {
                 resolveException(Objects.requireNonNull(response), e);
                 return;
             } catch (Exception e) {
-                log.error("Unexpected exception in JwtFilter. Unable to process response for BaseAuthenticationException", e);
+                log.error("JwtFilter unable to process response for BaseAuthenticationException", e);
                 throw e;
             }
+        } else {
+            log.error("Request is null");
         }
 
-        if (Objects.isNull(filterChain)) {
-            handleFilterChainNull(Objects.requireNonNull(response));
-            return;
-        }
-
-        filterChain.doFilter(request, response);
+        doFilter(filterChain, request, response);
     }
 
     private String resolveToken(HttpServletRequest request) {
@@ -103,7 +108,19 @@ public class JwtTokenFilter extends OncePerRequestFilter {
         return null;
     }
 
-    private void resolveException(HttpServletResponse response, BaseAuthenticationException exception) throws IOException {
+    private void doFilter(FilterChain filterChain,
+                          HttpServletRequest request,
+                          HttpServletResponse response) throws ServletException, IOException {
+        if (Objects.isNull(filterChain)) {
+            handleFilterChainNull(Objects.requireNonNull(response));
+            return;
+        }
+
+        filterChain.doFilter(request, response);
+    }
+
+    private void resolveException(HttpServletResponse response,
+                                  BaseAuthenticationException exception) throws IOException {
         response.setStatus(HttpStatusConstants.UNAUTHORIZED);
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
         response.setCharacterEncoding(StandardCharsets.UTF_8.name());
