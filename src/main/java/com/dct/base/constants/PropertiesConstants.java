@@ -15,4 +15,5 @@ public interface PropertiesConstants {
     String SECURITY_CONFIG = "dct-base.security.auth";
     String OAUTH2_ACTIVE_STATUS = "dct-base.security.oauth2.enabled";
     String GOOGLE_OAUTH2_PROPERTIES = "dct-base.security.oauth2.google";
+    String UPLOAD_RESOURCE_PROPERTIES = "dct-base.resources.upload";
 }
