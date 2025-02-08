@@ -3,7 +3,6 @@ package com.dct.base.common;
 import com.dct.base.config.properties.UploadResourceProperties;
 import com.dct.base.constants.BaseConstants;
 import com.dct.base.dto.ImageDTO;
-import com.dct.base.dto.ImageParameterDTO;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,13 +12,16 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
-import java.util.UUID;
 
 /**
  *
@@ -44,7 +46,7 @@ public class FileUtils {
         return files != null && files.length > 0;
     }
 
-    private File getFile(String fileName, boolean isMakeNew) {
+    private File getFileToSave(String fileName, boolean isMakeNew) {
         File file = new File(UPLOAD_PATH + File.separator + fileName);
 
         if (file.exists() || !isMakeNew)
@@ -67,12 +69,39 @@ public class FileUtils {
         return null;
     }
 
-    public static String generateUniqueFileName(String originalFileName) {
-        if (originalFileName.startsWith("."))
-            return UUID.randomUUID() + originalFileName;
+    public static String generateUniqueFileName(String fileNameOrFileExtension) {
+        String uniqueName = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd_HH-mm-ss-SSS"));
 
-        String extension = originalFileName.substring(originalFileName.lastIndexOf("."));
-        return UUID.randomUUID() + extension;
+        if (Objects.isNull(fileNameOrFileExtension))
+            return uniqueName + ".webp";
+
+        if (fileNameOrFileExtension.startsWith("."))
+            return uniqueName + fileNameOrFileExtension;
+
+        String fileExtension = fileNameOrFileExtension.substring(fileNameOrFileExtension.lastIndexOf("."));
+        return uniqueName + fileExtension;
+    }
+
+    public String save(ImageDTO imageDTO) {
+        try {
+            String fileName = generateUniqueFileName(imageDTO.getImageParameterDTO().getFileExtension());
+            File fileToSaveImage = getFileToSave(fileName, true);
+
+            if (imageDTO.getCompressedImage() != null && fileToSaveImage != null) {
+                Path sourcePath = imageDTO.getCompressedImage().toPath();
+                Path targetPath = fileToSaveImage.toPath();
+                Files.copy(sourcePath, targetPath, StandardCopyOption.REPLACE_EXISTING);
+
+                if (!imageDTO.getCompressedImage().delete())
+                    log.warn("Could not clean up temporary image file: {}", fileToSaveImage.getAbsolutePath());
+
+                return BaseConstants.UPLOAD_RESOURCES.PREFIX_PATH + fileName;
+            }
+        } catch (IOException e) {
+            log.error("Could not save file: {}", imageDTO.getImageParameterDTO().getOriginalImageFilename(), e);
+        }
+
+        return null;
     }
 
     public String save(MultipartFile file) {
@@ -85,7 +114,7 @@ public class FileUtils {
         }
 
         String fileName = generateUniqueFileName(file.getOriginalFilename());
-        File directory = getFile(fileName, true);
+        File directory = getFileToSave(fileName, true);
 
         if (Objects.isNull(directory))
             return null;
@@ -94,7 +123,7 @@ public class FileUtils {
             file.transferTo(directory);
             return BaseConstants.UPLOAD_RESOURCES.PREFIX_PATH + fileName;
         } catch (IOException e) {
-            log.error("Could not save this file to: {}", directory.getAbsolutePath());
+            log.error("Could not save this file to: {}", directory.getAbsolutePath(), e);
         }
 
         return null;
@@ -118,42 +147,11 @@ public class FileUtils {
         return filePaths;
     }
 
-    public String save(ImageDTO imageDTO) {
-        ImageParameterDTO imageParameter = imageDTO.getImageParameterDTO();
-        String fileName = generateUniqueFileName(imageParameter.getImageFileExtension());
-        File directory = getFile(fileName, true);
-
-        if (Objects.isNull(directory))
-            return null;
-
-        try (FileOutputStream fileOutputStream = new FileOutputStream(directory)) {
-            imageDTO.getByteArrayOutputStream().writeTo(fileOutputStream);
-            return BaseConstants.UPLOAD_RESOURCES.PREFIX_PATH + fileName;
-        } catch (IOException e) {
-            log.error(
-                "Could not save image: {} to: {}",
-                imageParameter.getOriginalImageFilename(),
-                directory.getAbsolutePath()
-            );
-        }
-
-        return null;
-    }
-
-    public String autoCompressImageAndSave(MultipartFile image) {
+    public String autoCompressImageAndSave(MultipartFile image) throws IOException {
         if (!ImageConverter.isValidImageFormat(image))
             return null;
 
-        if (ImageConverter.isCompressibleImage(image)) {
-            try {
-                ImageDTO imageDTO = ImageConverter.compressImage(image);
-                return save(imageDTO);
-            } catch (IOException e) {
-                log.error("Cannot compress image: {}", image.getOriginalFilename());
-            }
-        }
-
-        return save(image);
+        return save(ImageConverter.compressImage(image));
     }
 
     public boolean delete(String filePath) {
@@ -161,7 +159,7 @@ public class FileUtils {
             return false;
 
         String fileName = filePath.substring(filePath.lastIndexOf(File.separator) + 1);
-        File file = getFile(fileName, false);
+        File file = getFileToSave(fileName, false);
 
         if (Objects.isNull(file))
             return false;

@@ -62,4 +62,7 @@ public interface ExceptionConstants {
     String FULL_NAME_INVALID = "exception.account.fullName.invalid";
     String ADDRESS_NOT_BLANK = "exception.account.address.notBlank";
     String ADDRESS_INVALID = "exception.account.address.invalid";
+
+    // Upload file request
+    String MAXIMUM_UPLOAD_SIZE_EXCEEDED = "exception.upload.maximumSizeExceed";
 }

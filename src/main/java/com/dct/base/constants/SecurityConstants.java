@@ -86,7 +86,7 @@ public interface SecurityConstants {
     interface COOKIES {
         // The key of the cookie storing the JWT token, which is HTTP-only
         // This cookie is automatically sent with requests by browser but cannot be accessed by JavaScript
-        String OAUTH2_GOOGLE_ACCESS_TOKEN = "oauth2_google_access_token";
+        String HTTP_ONLY_COOKIE_ACCESS_TOKEN = "dct_access_token";
     }
 
     interface HEADER {

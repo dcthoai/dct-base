@@ -7,6 +7,7 @@ import com.dct.base.constants.HttpStatusConstants;
 import com.dct.base.constants.SecurityConstants;
 import com.dct.base.dto.response.BaseResponseDTO;
 import com.dct.base.exception.BaseAuthenticationException;
+import com.dct.base.constants.SecurityConstants.REQUEST_MATCHERS;
 
 import jakarta.annotation.Nullable;
 import jakarta.servlet.FilterChain;
@@ -21,6 +22,7 @@ import org.springframework.http.MediaType;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
+import org.springframework.util.AntPathMatcher;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -50,15 +52,17 @@ public class JwtTokenFilter extends OncePerRequestFilter {
     protected void doFilterInternal(@Nullable HttpServletRequest request,
                                     @Nullable HttpServletResponse response,
                                     @Nullable FilterChain filterChain) throws ServletException, IOException {
-        if (Objects.nonNull(request)) {
-            String url = request.getRequestURI();
-            log.debug("{}: {}", request.getMethod(), url);
+        if (Objects.isNull(request)) {
+            resolveResponse(response, HttpStatusConstants.INTERNAL_SERVER_ERROR, "");
+            return;
+        }
 
-            if (Arrays.stream(SecurityConstants.REQUEST_MATCHERS.PUBLIC).anyMatch(url::startsWith)) {
-                doFilter(filterChain, request, response);
-                return;
-            }
+        AntPathMatcher antPathMatcher = new AntPathMatcher();
+        String requestURI = request.getRequestURI();
+        log.debug("{}: {}", request.getMethod(), requestURI);
 
+        // If request is required authenticate
+        if (Arrays.stream(REQUEST_MATCHERS.PUBLIC).noneMatch(pattern -> antPathMatcher.match(pattern, requestURI))) {
             String jwt = resolveToken(request);
 
             try {
@@ -68,17 +72,26 @@ public class JwtTokenFilter extends OncePerRequestFilter {
                 }
             } catch (BaseAuthenticationException e) {
                 log.error("Handling response for {} in: {}", e.getClass().getName(), ENTITY_NAME);
-                resolveException(Objects.requireNonNull(response), e);
+                resolveResponse(
+                    response,
+                    HttpStatusConstants.UNAUTHORIZED,
+                    baseCommon.getMessageI18n(ExceptionConstants.UNAUTHORIZED, e.getArgs())
+                );
                 return;
             } catch (Exception e) {
                 log.error("JwtFilter unable to process response for BaseAuthenticationException", e);
                 throw e;
             }
-        } else {
-            log.error("Request is null");
         }
 
-        doFilter(filterChain, request, response);
+        if (Objects.nonNull(filterChain))
+            filterChain.doFilter(request, response);
+        else
+            resolveResponse(
+                response,
+                HttpStatusConstants.INTERNAL_SERVER_ERROR,
+                baseCommon.getMessageI18n(ExceptionConstants.FILTER_CHAIN_NOT_FOUND)
+            );
     }
 
     private String resolveToken(HttpServletRequest request) {
@@ -87,7 +100,7 @@ public class JwtTokenFilter extends OncePerRequestFilter {
 
         if (Objects.nonNull(cookies)) {
             bearerToken = Arrays.stream(cookies)
-                    .filter(cookie -> SecurityConstants.COOKIES.OAUTH2_GOOGLE_ACCESS_TOKEN.equals(cookie.getName()))
+                    .filter(cookie -> SecurityConstants.COOKIES.HTTP_ONLY_COOKIE_ACCESS_TOKEN.equals(cookie.getName()))
                     .findFirst()
                     .map(Cookie::getValue)
                     .orElse(null);
@@ -108,44 +121,15 @@ public class JwtTokenFilter extends OncePerRequestFilter {
         return null;
     }
 
-    private void doFilter(FilterChain filterChain,
-                          HttpServletRequest request,
-                          HttpServletResponse response) throws ServletException, IOException {
-        if (Objects.isNull(filterChain)) {
-            handleFilterChainNull(Objects.requireNonNull(response));
+    private void resolveResponse(HttpServletResponse response, int code, String message) throws IOException {
+        if (Objects.isNull(response))
             return;
-        }
 
-        filterChain.doFilter(request, response);
-    }
-
-    private void resolveException(HttpServletResponse response,
-                                  BaseAuthenticationException exception) throws IOException {
-        response.setStatus(HttpStatusConstants.UNAUTHORIZED);
+        response.setStatus(code);
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
         response.setCharacterEncoding(StandardCharsets.UTF_8.name());
 
-        BaseResponseDTO responseDTO = new BaseResponseDTO(
-            HttpStatusConstants.UNAUTHORIZED,
-            HttpStatusConstants.STATUS.FAILED,
-            baseCommon.getMessageI18n(exception.getErrorKey(), exception.getArgs())
-        );
-
-        response.getWriter().write(JsonUtils.toJsonString(responseDTO));
-        response.flushBuffer();
-    }
-
-    private void handleFilterChainNull(HttpServletResponse response) throws IOException {
-        response.setStatus(HttpStatusConstants.INTERNAL_SERVER_ERROR);
-        response.setContentType(MediaType.APPLICATION_JSON_VALUE);
-        response.setCharacterEncoding(StandardCharsets.UTF_8.name());
-
-        BaseResponseDTO responseDTO = new BaseResponseDTO(
-            HttpStatusConstants.INTERNAL_SERVER_ERROR,
-            HttpStatusConstants.STATUS.FAILED,
-            baseCommon.getMessageI18n(ExceptionConstants.FILTER_CHAIN_NOT_FOUND)
-        );
-
+        BaseResponseDTO responseDTO = new BaseResponseDTO(code, HttpStatusConstants.STATUS.FAILED, message);
         response.getWriter().write(JsonUtils.toJsonString(responseDTO));
         response.flushBuffer();
     }

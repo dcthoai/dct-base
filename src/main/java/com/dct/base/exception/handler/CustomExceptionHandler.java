@@ -22,6 +22,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
+import org.springframework.web.multipart.MaxUploadSizeExceededException;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 import java.util.Objects;
@@ -145,7 +146,20 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
         return new ResponseEntity<>(responseDTO, HttpStatus.BAD_REQUEST);
     }
 
-    @ExceptionHandler(NullPointerException.class)
+    @ExceptionHandler({ MaxUploadSizeExceededException.class })
+    public ResponseEntity<Object> handleNullPointerException(MaxUploadSizeExceededException exception, WebRequest request) {
+        log.error("[{}] Maximum upload size exceeded: {}", request.getClass().getName(), exception.getMessage());
+
+        BaseResponseDTO responseDTO = new BaseResponseDTO(
+                HttpStatusConstants.BAD_REQUEST,
+                HttpStatusConstants.STATUS.FAILED,
+                ExceptionConstants.MAXIMUM_UPLOAD_SIZE_EXCEEDED
+        );
+
+        return new ResponseEntity<>(responseDTO, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler({ NullPointerException.class })
     public ResponseEntity<Object> handleNullPointerException(NullPointerException exception, WebRequest request) {
         // Handle NullPointerException (include of Objects.requireNonNull())
         log.error("[{}] Null pointer exception occurred: {}", request.getClass().getName(), exception.getMessage());

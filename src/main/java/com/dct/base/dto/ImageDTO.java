@@ -1,24 +1,26 @@
 package com.dct.base.dto;
 
-import java.io.ByteArrayOutputStream;
+import java.io.File;
 
 @SuppressWarnings("unused")
 public class ImageDTO {
 
-    private ByteArrayOutputStream byteArrayOutputStream;
+    private File compressedImage;
     private ImageParameterDTO imageParameterDTO;
 
-    public ImageDTO(ByteArrayOutputStream byteArrayOutputStream, ImageParameterDTO imageParameterDTO) {
-        this.byteArrayOutputStream = byteArrayOutputStream;
+    public ImageDTO() {}
+
+    public ImageDTO(File compressedImage, ImageParameterDTO imageParameterDTO) {
+        this.compressedImage = compressedImage;
         this.imageParameterDTO = imageParameterDTO;
     }
 
-    public ByteArrayOutputStream getByteArrayOutputStream() {
-        return byteArrayOutputStream;
+    public File getCompressedImage() {
+        return compressedImage;
     }
 
-    public void setByteArrayOutputStream(ByteArrayOutputStream byteArrayOutputStream) {
-        this.byteArrayOutputStream = byteArrayOutputStream;
+    public void setCompressedImage(File compressedImage) {
+        this.compressedImage = compressedImage;
     }
 
     public ImageParameterDTO getImageParameterDTO() {

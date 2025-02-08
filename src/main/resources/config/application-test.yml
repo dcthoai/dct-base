@@ -39,9 +39,9 @@ spring:
   servlet:
     multipart:
       # Maximum size of the entire HTTP request when uploading multipart data (including files and other parameters)
-      max-request-size: 10MB
+      max-request-size: 100MB
       # Maximum size for each file that a user can upload
-      max-file-size: 10MB
+      max-file-size: 20MB
 
 server:
   servlet:

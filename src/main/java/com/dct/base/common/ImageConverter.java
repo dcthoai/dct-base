@@ -3,7 +3,6 @@ package com.dct.base.common;
 import com.dct.base.constants.BaseConstants;
 import com.dct.base.dto.ImageDTO;
 import com.dct.base.dto.ImageParameterDTO;
-import com.dct.base.exception.BaseBadRequestException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,13 +10,17 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.imageio.IIOImage;
 import javax.imageio.ImageIO;
+import javax.imageio.ImageReader;
 import javax.imageio.ImageWriteParam;
 import javax.imageio.ImageWriter;
+import javax.imageio.metadata.IIOMetadata;
+import javax.imageio.stream.FileImageOutputStream;
+import javax.imageio.stream.ImageInputStream;
 import javax.imageio.stream.ImageOutputStream;
 
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
-import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.util.Iterator;
 import java.util.Optional;
@@ -52,18 +55,59 @@ public class ImageConverter {
     }
 
     public static ImageDTO compressImage(MultipartFile image) throws IOException {
-        if (!isCompressibleImage(image))
-            throw new BaseBadRequestException(ENTITY_NAME, "Image format does not support compression!");
+        log.debug("Trying compressing `{}`", image.getOriginalFilename());
 
-        ImageParameterDTO imageParameterDTO = getImageCompressionFactor(image);
+        if (!isCompressibleImage(image))
+            return new ImageDTO(getTemporaryImageFile(image), getImageParameter(image));
+
+        ImageParameterDTO imageParameterDTO = getImageParameterWithCompressionFactor(image);
 
         if (imageParameterDTO.isCompressed())
-            throw new BaseBadRequestException(ENTITY_NAME, "Image cannot be compressed further!");
+            return new ImageDTO(getTemporaryImageFile(image), imageParameterDTO);
 
+        File compressedImage = switch (imageParameterDTO.getImageType()) {
+            case BaseConstants.UPLOAD_RESOURCES.GIF -> gifLosslessCompression(imageParameterDTO);
+            case BaseConstants.UPLOAD_RESOURCES.PNG,
+                 BaseConstants.UPLOAD_RESOURCES.WEBP -> webpLossyCompression(imageParameterDTO);
+            case BaseConstants.UPLOAD_RESOURCES.JPEG,
+                 BaseConstants.UPLOAD_RESOURCES.JPG -> jpegLossyCompression(imageParameterDTO);
+            default -> null;
+        };
+
+        return new ImageDTO(compressedImage, imageParameterDTO);
+    }
+
+    private static File getTemporaryImageFile(MultipartFile image) throws IOException {
+        String fileName = "_" + image.getOriginalFilename();
+        String fileExtension = fileName.substring(fileName.lastIndexOf('.')).toLowerCase();
+        File temporaryImageFile = File.createTempFile("temporary_", fileExtension);
+        image.transferTo(temporaryImageFile);
+        return temporaryImageFile;
+    }
+
+    private static File webpLossyCompression(ImageParameterDTO imageParameterDTO) throws IOException {
+        log.debug("Compressing image `{}` using `webpLossyCompression`", imageParameterDTO.getOriginalImageFilename());
+        ImageWriter writer = getImageWriter(BaseConstants.UPLOAD_RESOURCES.WEBP);
+        File temporaryCompressedImage = File.createTempFile("compressed_", imageParameterDTO.getFileExtension());
+
+        try (FileImageOutputStream output = new FileImageOutputStream(temporaryCompressedImage)) {
+            log.debug("Compress with quality factor: {}", writer.getDefaultWriteParam().getCompressionQuality());
+            log.debug("Writing compressed image to `{}`", temporaryCompressedImage.getAbsolutePath());
+            writer.setOutput(output);
+            writer.write(imageParameterDTO.getBufferedImage());
+        }
+
+        writer.dispose();
+        return temporaryCompressedImage;
+    }
+
+    private static File jpegLossyCompression(ImageParameterDTO imageParameterDTO) throws IOException {
+        log.debug("Compressing image `{}` using `jpegLossyCompression`", imageParameterDTO.getOriginalImageFilename());
         int originalImageWidth = imageParameterDTO.getOriginalImageWidth();
         int originalImageHeight = imageParameterDTO.getOriginalImageHeight();
         int newImageWidth = (int) (originalImageWidth * imageParameterDTO.getSizeCompressionFactor());
         int newImageHeight = (int) (originalImageHeight * imageParameterDTO.getSizeCompressionFactor());
+        log.debug("Resize from {}x{} to {}x{}", originalImageWidth, originalImageHeight, newImageWidth, newImageHeight);
 
         BufferedImage bufferedImage = imageParameterDTO.getBufferedImage();
         BufferedImage resizedImage = new BufferedImage(newImageWidth, newImageHeight, bufferedImage.getType());
@@ -71,24 +115,75 @@ public class ImageConverter {
         g.drawImage(bufferedImage, 0, 0, newImageWidth, newImageHeight, null);
         g.dispose();
 
-        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-        ImageOutputStream imageOutputStream = ImageIO.createImageOutputStream(byteArrayOutputStream);
         IIOImage iioImage = new IIOImage(resizedImage, null, null);
-        String imageExtension = imageParameterDTO.getImageFileExtension().substring(1);
-        ImageWriter imageWriter = getImageWriter(imageExtension);
+        ImageWriter imageWriter = getImageWriter(imageParameterDTO.getImageType());
         ImageWriteParam imageWriteParam = imageWriter.getDefaultWriteParam();
+        File temporaryCompressedImage = File.createTempFile("compressed_", imageParameterDTO.getFileExtension());
 
-        imageWriteParam.setCompressionMode(ImageWriteParam.MODE_EXPLICIT);
-        imageWriteParam.setCompressionQuality(imageParameterDTO.getQualityCompressionFactor());
+        try (FileImageOutputStream output = new FileImageOutputStream(temporaryCompressedImage)) {
+            log.debug("Compress with quality factor: {}", imageParameterDTO.getQualityCompressionFactor());
+            log.debug("Writing compressed image to `{}`", temporaryCompressedImage.getAbsolutePath());
+            imageWriteParam.setCompressionMode(ImageWriteParam.MODE_EXPLICIT);
+            imageWriteParam.setCompressionQuality(imageParameterDTO.getQualityCompressionFactor());
+            imageWriter.setOutput(output);
+            imageWriter.write(null, iioImage, imageWriteParam);
+        }
 
-        imageWriter.setOutput(imageOutputStream);
-        imageWriter.write(null, iioImage, imageWriteParam);
         imageWriter.dispose();
-
-        return new ImageDTO(byteArrayOutputStream, imageParameterDTO);
+        return temporaryCompressedImage;
     }
 
-    public static ImageParameterDTO getImageCompressionFactor(MultipartFile image) {
+    private static File gifLosslessCompression(ImageParameterDTO imageParameterDTO) throws IOException {
+        File temporaryCompressedImage = File.createTempFile("compressed_.", imageParameterDTO.getFileExtension());
+        ImageInputStream imageInputStream = ImageIO.createImageInputStream(imageParameterDTO.getImage());
+        ImageWriter writer = getImageWriter(BaseConstants.UPLOAD_RESOURCES.GIF);
+        ImageReader reader = getGIFImageReader();
+        reader.setInput(imageInputStream);
+        int numFrames = reader.getNumImages(true);
+
+        try (ImageOutputStream output = new FileImageOutputStream(temporaryCompressedImage)) {
+            writer.setOutput(output);
+
+            // Lấy thông tin metadata
+            ImageWriteParam param = writer.getDefaultWriteParam();
+            IIOMetadata metadata = reader.getImageMetadata(0);
+            writer.prepareWriteSequence(null); // Bắt đầu ghi GIF động
+
+            for (int i = 0; i < numFrames; i++) {
+                BufferedImage frame = reader.read(i);
+                IIOImage iioImage = new IIOImage(frame, null, metadata);
+                writer.writeToSequence(iioImage, param);
+            }
+
+            writer.endWriteSequence(); // Kết thúc GIF động
+        }
+
+        writer.dispose();
+        return temporaryCompressedImage;
+    }
+
+    // Helper method to get ImageWriter for specific format
+    private static ImageWriter getImageWriter(String format) {
+        Iterator<ImageWriter> imageWriters = ImageIO.getImageWritersByFormatName(format);
+
+        if (!imageWriters.hasNext()) {
+            throw new IllegalStateException("Not found ImageWriter for: " + format);
+        }
+
+        return imageWriters.next();
+    }
+
+    private static ImageReader getGIFImageReader() throws IOException {
+        Iterator<ImageReader> readers = ImageIO.getImageReadersByFormatName(BaseConstants.UPLOAD_RESOURCES.GIF);
+
+        if (!readers.hasNext()) {
+            throw new IOException("No ImageReader found for format: " + BaseConstants.UPLOAD_RESOURCES.GIF);
+        }
+
+        return readers.next();
+    }
+
+    public static ImageParameterDTO getImageParameterWithCompressionFactor(MultipartFile image) {
         ImageParameterDTO imageParameterDTO = getImageParameter(image);
 
         long imageFileSize = imageParameterDTO.getOriginalImageFileSize();
@@ -102,7 +197,6 @@ public class ImageConverter {
     }
 
     public static ImageParameterDTO getImageParameter(MultipartFile image) {
-        ImageParameterDTO imageParameter = new ImageParameterDTO();
         BufferedImage bufferedImage;
 
         try {
@@ -110,11 +204,11 @@ public class ImageConverter {
 
             if (bufferedImage == null) {
                 log.error("Could not read image: {}. Invalid format!", image.getOriginalFilename());
-                return imageParameter;
+                return new ImageParameterDTO();
             }
         } catch (IOException e) {
             log.error("Could not read image: {}. I/O error!", image.getOriginalFilename());
-            return imageParameter;
+            return new ImageParameterDTO();
         }
 
         int imageWidth = bufferedImage.getWidth();
@@ -122,19 +216,26 @@ public class ImageConverter {
         long imageFileSize = image.getSize();
         String imageFileName = Optional.ofNullable(image.getOriginalFilename()).orElse("");
         String defaultImageFormat = BaseConstants.UPLOAD_RESOURCES.DEFAULT_IMAGE_FORMAT;
+        String defaultImageType = BaseConstants.UPLOAD_RESOURCES.WEBP;
         String imageFileExtension = "";
+        String imageType = "";
 
-        if (!imageFileName.isBlank() && imageFileName.contains("."))
-            imageFileExtension = imageFileName.substring(imageFileName.lastIndexOf('.')).toLowerCase();
+        if (!imageFileName.isBlank() && imageFileName.contains(".")) {
+            int lastDotIndex = imageFileName.lastIndexOf('.');
+            imageFileExtension = imageFileName.substring(lastDotIndex).toLowerCase();
+            imageType = imageFileExtension.substring(1).toLowerCase();
+        }
 
-        imageParameter.setBufferedImage(bufferedImage);
-        imageParameter.setOriginalImageWidth(imageWidth);
-        imageParameter.setOriginalImageHeight(imageHeight);
-        imageParameter.setOriginalImageFileSize(imageFileSize);
-        imageParameter.setOriginalImageFilename(image.getOriginalFilename());
-        imageParameter.setImageFileExtension(imageFileExtension.length() > 1 ? imageFileExtension : defaultImageFormat);
-
-        return imageParameter;
+        return new ImageParameterDTO.Builder()
+                .setImage(image)
+                .setBufferedImage(bufferedImage)
+                .setOriginalImageWidth(imageWidth)
+                .setOriginalImageHeight(imageHeight)
+                .setOriginalImageFileSize(imageFileSize)
+                .setOriginalImageFilename(image.getOriginalFilename())
+                .setFileExtension(imageFileExtension.length() > 1 ? imageFileExtension : defaultImageFormat)
+                .setImageType(imageType.length() > 1 ? imageType : defaultImageType)
+                .build();
     }
 
     private static float getImageQualityCompressionFactor(long originalImageFileSize) {
@@ -165,16 +266,5 @@ public class ImageConverter {
         }
 
         return sizeCompressionFactor;
-    }
-
-    // Phương thức hỗ trợ để lấy ImageWriter cho định dạng cụ thể
-    private static ImageWriter getImageWriter(String format) {
-        Iterator<ImageWriter> imageWriters = ImageIO.getImageWritersByFormatName(format);
-
-        if (!imageWriters.hasNext()) {
-            throw new IllegalStateException("Not found ImageWriter for: " + format);
-        }
-
-        return imageWriters.next();
     }
 }

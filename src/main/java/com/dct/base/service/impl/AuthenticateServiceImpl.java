@@ -3,6 +3,7 @@ package com.dct.base.service.impl;
 import com.dct.base.constants.ExceptionConstants;
 import com.dct.base.constants.HttpStatusConstants;
 import com.dct.base.constants.ResultConstants;
+import com.dct.base.constants.SecurityConstants;
 import com.dct.base.dto.BaseAuthTokenDTO;
 import com.dct.base.dto.request.AuthRequestDTO;
 import com.dct.base.dto.response.BaseResponseDTO;
@@ -12,6 +13,7 @@ import com.dct.base.security.model.CustomUserDetails;
 import com.dct.base.security.jwt.JwtTokenProvider;
 import com.dct.base.service.AuthenticationService;
 
+import jakarta.servlet.http.Cookie;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -72,11 +74,14 @@ public class AuthenticateServiceImpl implements AuthenticationService {
             authRequestDTO.getRememberMe()
         );
 
+        String jwtToken = tokenProvider.createToken(authTokenDTO);
+        Cookie tokenCookie = new Cookie(SecurityConstants.COOKIES.HTTP_ONLY_COOKIE_ACCESS_TOKEN, jwtToken);
+
         return new BaseResponseDTO(
             HttpStatusConstants.ACCEPTED,
             HttpStatusConstants.STATUS.SUCCESS,
             ResultConstants.LOGIN_SUCCESS,
-            tokenProvider.createToken(authTokenDTO)
+            tokenCookie
         );
     }
 }
