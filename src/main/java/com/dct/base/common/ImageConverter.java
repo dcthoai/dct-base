@@ -10,7 +10,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.imageio.IIOImage;
 import javax.imageio.ImageIO;
-import javax.imageio.ImageReader;
 import javax.imageio.ImageWriteParam;
 import javax.imageio.ImageWriter;
 import javax.imageio.stream.FileImageOutputStream;
@@ -28,14 +27,6 @@ public class ImageConverter {
     private static final Logger log = LoggerFactory.getLogger(ImageConverter.class);
     private static final String ENTITY_NAME = "ImageConverter";
 
-    public static boolean isCompressibleImage(MultipartFile file) {
-        return isValidImageFormat(file, BaseConstants.UPLOAD_RESOURCES.COMPRESSIBLE_IMAGE_FORMATS);
-    }
-
-    public static boolean isValidImageFormat(MultipartFile file) {
-        return isValidImageFormat(file, BaseConstants.UPLOAD_RESOURCES.VALID_IMAGE_FORMATS);
-    }
-
     public static boolean isValidImageFormat(MultipartFile file, String[] fileTypesAllowed) {
         if (FileUtils.invalidUploadFile(file))
             return false;
@@ -51,6 +42,14 @@ public class ImageConverter {
         return false;
     }
 
+    public static boolean isValidImageFormat(MultipartFile file) {
+        return isValidImageFormat(file, BaseConstants.UPLOAD_RESOURCES.VALID_IMAGE_FORMATS);
+    }
+
+    public static boolean isCompressibleImage(MultipartFile file) {
+        return isValidImageFormat(file, BaseConstants.UPLOAD_RESOURCES.COMPRESSIBLE_IMAGE_FORMATS);
+    }
+
     public static ImageDTO compressImage(MultipartFile image) throws IOException {
         log.debug("Trying compressing `{}`", image.getOriginalFilename());
 
@@ -63,7 +62,6 @@ public class ImageConverter {
             return null;
 
         File compressedImage = switch (imageParameterDTO.getImageType()) {
-            case BaseConstants.UPLOAD_RESOURCES.GIF -> gifLossyCompression(imageParameterDTO);
             case BaseConstants.UPLOAD_RESOURCES.PNG,
                  BaseConstants.UPLOAD_RESOURCES.WEBP -> webpLossyCompression(imageParameterDTO);
             case BaseConstants.UPLOAD_RESOURCES.JPEG,
@@ -125,31 +123,17 @@ public class ImageConverter {
         return temporaryCompressedImage;
     }
 
-    private static File gifLossyCompression(ImageParameterDTO imageParameter) throws IOException {
-        File temporaryCompressedImage = File.createTempFile("compressed_", BaseConstants.UPLOAD_RESOURCES.GIF);
+    // Helper method to get ImageWriter for specific file type
+    private static ImageWriter getImageWriter(String fileType) {
+        Iterator<ImageWriter> imageWriters = ImageIO.getImageWritersByMIMEType("image/" + fileType);
 
-        return temporaryCompressedImage;
-    }
+        if (!imageWriters.hasNext())
+            imageWriters = ImageIO.getImageWritersByFormatName(fileType);
 
-    // Helper method to get ImageWriter for specific format
-    private static ImageWriter getImageWriter(String format) {
-        Iterator<ImageWriter> imageWriters = ImageIO.getImageWritersByFormatName(format);
-
-        if (!imageWriters.hasNext()) {
-            throw new IllegalStateException("Not found ImageWriter for: " + format);
-        }
+        if (!imageWriters.hasNext())
+            throw new IllegalStateException("Not found ImageWriter for: " + fileType);
 
         return imageWriters.next();
-    }
-
-    private static ImageReader getGIFImageReader() throws IOException {
-        Iterator<ImageReader> readers = ImageIO.getImageReadersByFormatName(BaseConstants.UPLOAD_RESOURCES.GIF);
-
-        if (!readers.hasNext()) {
-            throw new IOException("No ImageReader found for format: " + BaseConstants.UPLOAD_RESOURCES.GIF);
-        }
-
-        return readers.next();
     }
 
     public static ImageParameterDTO getImageParameterWithCompressionFactor(MultipartFile image) {

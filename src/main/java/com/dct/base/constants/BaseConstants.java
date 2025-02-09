@@ -32,12 +32,12 @@ public interface BaseConstants {
 
     interface UPLOAD_RESOURCES {
         String PREFIX_PATH = "/uploads/";
-        String[] VALID_IMAGE_FORMATS = { ".png", ".jpg", ".jpeg", ".gif", ".svg", ".webp" };
-        String[] COMPRESSIBLE_IMAGE_FORMATS = { ".png", ".jpg", ".jpeg", ".webp", ".gif" };
-        String DEFAULT_IMAGE_FORMAT = "webp";
+        String[] VALID_IMAGE_FORMATS = { ".png", ".jpg", ".jpeg", ".gif", ".svg", ".webp", ".webm" };
+        String[] COMPRESSIBLE_IMAGE_FORMATS = { ".png", ".jpg", ".jpeg", ".webp" };
+        String DEFAULT_IMAGE_FORMAT = ".webp";
+        String DEFAULT_IMAGE_PATH_FOR_ERROR = PREFIX_PATH + "error/error_image.webp";
         String PNG = "png";
         String WEBP = "webp";
-        String GIF = "gif";
         String JPG = "jpg";
         String JPEG = "jpeg";
     }

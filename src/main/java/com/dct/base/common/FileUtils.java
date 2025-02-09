@@ -78,13 +78,10 @@ public class FileUtils {
     }
 
     public static String generateUniqueFileName(String fileNameOrFileExtension) {
-        String uniqueName = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd_HH-mm-ss-SSS"));
+        String uniqueName = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd_HH-mm-ss_SSS"));
 
         if (Objects.isNull(fileNameOrFileExtension))
-            return uniqueName + ".webp";
-
-        if (fileNameOrFileExtension.startsWith("."))
-            return uniqueName + fileNameOrFileExtension;
+            return uniqueName + BaseConstants.UPLOAD_RESOURCES.DEFAULT_IMAGE_FORMAT;
 
         String fileExtension = fileNameOrFileExtension.substring(fileNameOrFileExtension.lastIndexOf("."));
         return uniqueName + fileExtension;
@@ -147,7 +144,7 @@ public class FileUtils {
             String filePath = save(file);
 
             if (Objects.isNull(filePath))
-                filePaths.add("");
+                filePaths.add(BaseConstants.UPLOAD_RESOURCES.DEFAULT_IMAGE_PATH_FOR_ERROR);
             else
                 filePaths.add(filePath);
         }
