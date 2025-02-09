@@ -75,52 +75,63 @@ public class ImageConverter {
         return new ImageDTO(compressedImage, imageParameterDTO);
     }
 
-    private static File webpLossyCompression(ImageParameterDTO imageParameterDTO) throws IOException {
-        log.debug("Compressing image `{}` using `webpLossyCompression`", imageParameterDTO.getOriginalImageFilename());
-        ImageWriter writer = getImageWriter(BaseConstants.UPLOAD_RESOURCES.WEBP);
-        File temporaryCompressedImage = File.createTempFile("compressed_", imageParameterDTO.getFileExtension());
+    private static File webpLossyCompression(ImageParameterDTO imageParameter) throws IOException {
+        log.debug("Compressing image `{}` using `webpLossyCompression`", imageParameter.getOriginalImageFilename());
+        File temporaryCompressedImage = File.createTempFile("compressed_", imageParameter.getFileExtension());
 
         try (FileImageOutputStream output = new FileImageOutputStream(temporaryCompressedImage)) {
+            ImageWriter writer = getImageWriter(BaseConstants.UPLOAD_RESOURCES.WEBP);
+            BufferedImage resizedImage = resizeImage(imageParameter);
+
             log.debug("Compress with quality factor: {}", writer.getDefaultWriteParam().getCompressionQuality());
             log.debug("Writing compressed image to `{}`", temporaryCompressedImage.getAbsolutePath());
+
             writer.setOutput(output);
-            writer.write(imageParameterDTO.getBufferedImage());
+            writer.write(resizedImage);
+            writer.dispose();
         }
 
-        writer.dispose();
         return temporaryCompressedImage;
     }
 
-    private static File jpegLossyCompression(ImageParameterDTO imageParameterDTO) throws IOException {
-        log.debug("Compressing image `{}` using `jpegLossyCompression`", imageParameterDTO.getOriginalImageFilename());
-        int originalImageWidth = imageParameterDTO.getOriginalImageWidth();
-        int originalImageHeight = imageParameterDTO.getOriginalImageHeight();
-        int newImageWidth = (int) (originalImageWidth * imageParameterDTO.getSizeCompressionFactor());
-        int newImageHeight = (int) (originalImageHeight * imageParameterDTO.getSizeCompressionFactor());
-        log.debug("Resize from {}x{} to {}x{}", originalImageWidth, originalImageHeight, newImageWidth, newImageHeight);
-
-        BufferedImage bufferedImage = imageParameterDTO.getBufferedImage();
-        BufferedImage resizedImage = new BufferedImage(newImageWidth, newImageHeight, bufferedImage.getType());
-        Graphics2D g = resizedImage.createGraphics();
-        g.drawImage(bufferedImage, 0, 0, newImageWidth, newImageHeight, null);
-        g.dispose();
-
-        IIOImage iioImage = new IIOImage(resizedImage, null, null);
-        ImageWriter imageWriter = getImageWriter(imageParameterDTO.getImageType());
-        ImageWriteParam imageWriteParam = imageWriter.getDefaultWriteParam();
-        File temporaryCompressedImage = File.createTempFile("compressed_", imageParameterDTO.getFileExtension());
+    private static File jpegLossyCompression(ImageParameterDTO imageParameter) throws IOException {
+        log.debug("Compressing image `{}` using `jpegLossyCompression`", imageParameter.getOriginalImageFilename());
+        File temporaryCompressedImage = File.createTempFile("compressed_", imageParameter.getFileExtension());
 
         try (FileImageOutputStream output = new FileImageOutputStream(temporaryCompressedImage)) {
-            log.debug("Compress with quality factor: {}", imageParameterDTO.getQualityCompressionFactor());
-            log.debug("Writing compressed image to `{}`", temporaryCompressedImage.getAbsolutePath());
+            ImageWriter imageWriter = getImageWriter(imageParameter.getImageType());
+            ImageWriteParam imageWriteParam = imageWriter.getDefaultWriteParam();
+            BufferedImage resizedImage = resizeImage(imageParameter);
+            IIOImage iioImage = new IIOImage(resizedImage, null, null);
+
+            log.debug("Compress with quality factor: {}", imageParameter.getQualityCompressionFactor());
+            log.debug("Writing compressed image to: `{}`", temporaryCompressedImage.getAbsolutePath());
+
             imageWriteParam.setCompressionMode(ImageWriteParam.MODE_EXPLICIT);
-            imageWriteParam.setCompressionQuality(imageParameterDTO.getQualityCompressionFactor());
+            imageWriteParam.setCompressionQuality(imageParameter.getQualityCompressionFactor());
             imageWriter.setOutput(output);
             imageWriter.write(null, iioImage, imageWriteParam);
+            imageWriter.dispose();
         }
 
-        imageWriter.dispose();
         return temporaryCompressedImage;
+    }
+
+    private static BufferedImage resizeImage(ImageParameterDTO imageParameter) {
+        int originalImageWidth = imageParameter.getOriginalImageWidth();
+        int originalImageHeight = imageParameter.getOriginalImageHeight();
+        int newImageWidth = (int) (originalImageWidth * imageParameter.getSizeCompressionFactor());
+        int newImageHeight = (int) (originalImageHeight * imageParameter.getSizeCompressionFactor());
+        log.debug("Resize from {}x{} to {}x{}", originalImageWidth, originalImageHeight, newImageWidth, newImageHeight);
+
+        BufferedImage originalImage = imageParameter.getBufferedImage();
+        BufferedImage resizedImage = new BufferedImage(newImageWidth, newImageHeight, originalImage.getType());
+        Graphics2D g = resizedImage.createGraphics();
+
+        g.drawImage(originalImage, 0, 0, newImageWidth, newImageHeight, null);
+        g.dispose();
+
+        return resizedImage;
     }
 
     // Helper method to get ImageWriter for specific file type
