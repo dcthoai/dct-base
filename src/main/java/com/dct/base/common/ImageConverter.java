@@ -13,10 +13,7 @@ import javax.imageio.ImageIO;
 import javax.imageio.ImageReader;
 import javax.imageio.ImageWriteParam;
 import javax.imageio.ImageWriter;
-import javax.imageio.metadata.IIOMetadata;
 import javax.imageio.stream.FileImageOutputStream;
-import javax.imageio.stream.ImageInputStream;
-import javax.imageio.stream.ImageOutputStream;
 
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
@@ -39,13 +36,13 @@ public class ImageConverter {
         return isValidImageFormat(file, BaseConstants.UPLOAD_RESOURCES.VALID_IMAGE_FORMATS);
     }
 
-    public static boolean isValidImageFormat(MultipartFile file, String[] fileTypes) {
-        if (FileUtils.isInvalidUploadFile(file))
+    public static boolean isValidImageFormat(MultipartFile file, String[] fileTypesAllowed) {
+        if (FileUtils.invalidUploadFile(file))
             return false;
 
         String lowerCaseFileName = Optional.ofNullable(file.getOriginalFilename()).orElse("").toLowerCase();
 
-        for (String format : fileTypes) {
+        for (String format : fileTypesAllowed) {
             if (lowerCaseFileName.endsWith(format)) {
                 return true;
             }
@@ -58,31 +55,26 @@ public class ImageConverter {
         log.debug("Trying compressing `{}`", image.getOriginalFilename());
 
         if (!isCompressibleImage(image))
-            return new ImageDTO(getTemporaryImageFile(image), getImageParameter(image));
+            return null;
 
         ImageParameterDTO imageParameterDTO = getImageParameterWithCompressionFactor(image);
 
         if (imageParameterDTO.isCompressed())
-            return new ImageDTO(getTemporaryImageFile(image), imageParameterDTO);
+            return null;
 
         File compressedImage = switch (imageParameterDTO.getImageType()) {
-            case BaseConstants.UPLOAD_RESOURCES.GIF -> gifLosslessCompression(imageParameterDTO);
+            case BaseConstants.UPLOAD_RESOURCES.GIF -> gifLossyCompression(imageParameterDTO);
             case BaseConstants.UPLOAD_RESOURCES.PNG,
                  BaseConstants.UPLOAD_RESOURCES.WEBP -> webpLossyCompression(imageParameterDTO);
             case BaseConstants.UPLOAD_RESOURCES.JPEG,
                  BaseConstants.UPLOAD_RESOURCES.JPG -> jpegLossyCompression(imageParameterDTO);
-            default -> null;
+            default -> {
+                log.error("Could not compress image `{}`", image.getOriginalFilename());
+                yield null;
+            }
         };
 
         return new ImageDTO(compressedImage, imageParameterDTO);
-    }
-
-    private static File getTemporaryImageFile(MultipartFile image) throws IOException {
-        String fileName = "_" + image.getOriginalFilename();
-        String fileExtension = fileName.substring(fileName.lastIndexOf('.')).toLowerCase();
-        File temporaryImageFile = File.createTempFile("temporary_", fileExtension);
-        image.transferTo(temporaryImageFile);
-        return temporaryImageFile;
     }
 
     private static File webpLossyCompression(ImageParameterDTO imageParameterDTO) throws IOException {
@@ -133,32 +125,9 @@ public class ImageConverter {
         return temporaryCompressedImage;
     }
 
-    private static File gifLosslessCompression(ImageParameterDTO imageParameterDTO) throws IOException {
-        File temporaryCompressedImage = File.createTempFile("compressed_.", imageParameterDTO.getFileExtension());
-        ImageInputStream imageInputStream = ImageIO.createImageInputStream(imageParameterDTO.getImage());
-        ImageWriter writer = getImageWriter(BaseConstants.UPLOAD_RESOURCES.GIF);
-        ImageReader reader = getGIFImageReader();
-        reader.setInput(imageInputStream);
-        int numFrames = reader.getNumImages(true);
+    private static File gifLossyCompression(ImageParameterDTO imageParameter) throws IOException {
+        File temporaryCompressedImage = File.createTempFile("compressed_", BaseConstants.UPLOAD_RESOURCES.GIF);
 
-        try (ImageOutputStream output = new FileImageOutputStream(temporaryCompressedImage)) {
-            writer.setOutput(output);
-
-            // Lấy thông tin metadata
-            ImageWriteParam param = writer.getDefaultWriteParam();
-            IIOMetadata metadata = reader.getImageMetadata(0);
-            writer.prepareWriteSequence(null); // Bắt đầu ghi GIF động
-
-            for (int i = 0; i < numFrames; i++) {
-                BufferedImage frame = reader.read(i);
-                IIOImage iioImage = new IIOImage(frame, null, metadata);
-                writer.writeToSequence(iioImage, param);
-            }
-
-            writer.endWriteSequence(); // Kết thúc GIF động
-        }
-
-        writer.dispose();
         return temporaryCompressedImage;
     }
 

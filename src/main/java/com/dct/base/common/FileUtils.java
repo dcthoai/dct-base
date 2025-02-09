@@ -38,12 +38,20 @@ public class FileUtils {
         UPLOAD_PATH = uploadResourceProperties.getUploadPath();
     }
 
-    public static boolean isInvalidUploadFile(MultipartFile file) {
+    public static boolean invalidUploadFile(MultipartFile file) {
         return file == null || file.isEmpty() || !Objects.nonNull(file.getOriginalFilename());
     }
 
-    public static boolean isInvalidUploadFile(MultipartFile[] files) {
-        return files != null && files.length > 0;
+    public static boolean invalidUploadFiles(MultipartFile[] files) {
+        if (files == null || files.length == 0)
+            return true;
+
+        for (MultipartFile file : files) {
+            if (invalidUploadFile(file))
+                return true;
+        }
+
+        return false;
     }
 
     private File getFileToSave(String fileName, boolean isMakeNew) {
@@ -105,7 +113,7 @@ public class FileUtils {
     }
 
     public String save(MultipartFile file) {
-        if (isInvalidUploadFile(file))
+        if (invalidUploadFile(file))
             return null;
 
         if (Objects.isNull(file.getOriginalFilename())) {
@@ -130,7 +138,7 @@ public class FileUtils {
     }
 
     public List<String> save(MultipartFile[] files) {
-        if (isInvalidUploadFile(files))
+        if (invalidUploadFiles(files))
             return Collections.emptyList();
 
         List<String> filePaths = new ArrayList<>();
@@ -147,11 +155,22 @@ public class FileUtils {
         return filePaths;
     }
 
-    public String autoCompressImageAndSave(MultipartFile image) throws IOException {
+    public String autoCompressImageAndSave(MultipartFile image) {
         if (!ImageConverter.isValidImageFormat(image))
             return null;
 
-        return save(ImageConverter.compressImage(image));
+        try {
+            ImageDTO compressedImageFile = ImageConverter.compressImage(image);
+
+            if (Objects.nonNull(compressedImageFile))
+                return save(compressedImageFile);
+
+            return save(image);
+        } catch (IOException e) {
+            log.error("Could not auto compress image and save: {}", image.getOriginalFilename(), e);
+        }
+
+        return null;
     }
 
     public boolean delete(String filePath) {
