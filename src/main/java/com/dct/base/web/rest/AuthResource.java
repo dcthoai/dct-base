@@ -11,6 +11,8 @@ import com.dct.base.exception.BaseBadRequestException;
 import com.dct.base.service.AccountService;
 import com.dct.base.service.AuthenticationService;
 
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -52,8 +54,19 @@ public class AuthResource {
     }
 
     @PostMapping("/login")
-    public BaseResponseDTO login(@Valid @RequestBody AuthRequestDTO requestDTO) {
+    public BaseResponseDTO login(@Valid @RequestBody AuthRequestDTO requestDTO, HttpServletResponse response) {
         log.debug("REST request to authenticate account. POST: /api/auth/login");
+
+        BaseResponseDTO responseDTO = authService.authenticate(requestDTO);
+        Cookie tokenCookie = (Cookie) responseDTO.getResult();
+
+        tokenCookie.setHttpOnly(true);
+        tokenCookie.setSecure(false); // Set true for HTTPS protocol only
+        tokenCookie.setPath("/");
+
+        response.addCookie(tokenCookie);
+        log.debug("Set token in secure cookie successful");
+
         return authService.authenticate(requestDTO);
     }
 }

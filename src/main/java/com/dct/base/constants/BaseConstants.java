@@ -30,6 +30,18 @@ public interface BaseConstants {
         "/common/i18n/**"
     };
 
+    interface UPLOAD_RESOURCES {
+        String PREFIX_PATH = "/uploads/";
+        String[] VALID_IMAGE_FORMATS = { ".png", ".jpg", ".jpeg", ".gif", ".svg", ".webp", ".webm" };
+        String[] COMPRESSIBLE_IMAGE_FORMATS = { ".png", ".jpg", ".jpeg", ".webp" };
+        String DEFAULT_IMAGE_FORMAT = ".webp";
+        String DEFAULT_IMAGE_PATH_FOR_ERROR = PREFIX_PATH + "error/error_image.webp";
+        String PNG = "png";
+        String WEBP = "webp";
+        String JPG = "jpg";
+        String JPEG = "jpeg";
+    }
+
     /**
      * Configures the handling of static resources <p>
      * Static resource requests listed in the {@link STATIC_RESOURCES#PATHS} section will be automatically searched for
