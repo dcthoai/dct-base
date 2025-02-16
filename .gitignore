@@ -37,3 +37,6 @@ mnt/logs/**.log
 
 ### Ignore secret key file
 src/main/resources/secret/
+
+### Ignore local tamporary test file
+src/main/java/com/dct/base/web/rest/test

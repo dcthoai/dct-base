@@ -24,7 +24,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.Objects;
 
 @RestController
-@RequestMapping("/api/auth")
+@RequestMapping("/api/common/auth")
 public class AuthResource {
 
     private static final Logger log = LoggerFactory.getLogger(AuthResource.class);

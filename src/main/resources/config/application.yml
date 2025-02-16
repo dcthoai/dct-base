@@ -22,8 +22,12 @@ spring:
     properties:
       hibernate:
         dialect: org.hibernate.dialect.MySQLDialect
+        jdbc:
+          time_zone: UTC
   thymeleaf:
     cache: false
+  jackson:
+    time-zone: UTC
 
 server:
   servlet:
