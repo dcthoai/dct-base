@@ -70,10 +70,10 @@ public class GoogleAuthenticateServiceImpl implements GoogleAuthenticateService 
         String username, password;
 
         if (Objects.isNull(account)) {
-            log.debug("Account is null. Creating a new account for user authenticate from Google");
             username = CredentialGenerator.generateUsername(8);
             password = CredentialGenerator.generatePassword(8);
-            account = accountService.createUserAccount(new RegisterRequestDTO(username, userInfo.getEmail(), password));
+            log.debug("Authenticate for user '{}' via Google, no account yet", username);
+            account = accountService.create(new RegisterRequestDTO(username, userInfo.getEmail(), password));
         } else {
             username = account.getUsername();
         }

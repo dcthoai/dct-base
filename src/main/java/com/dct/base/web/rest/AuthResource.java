@@ -24,7 +24,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.Objects;
 
 @RestController
-@RequestMapping("/api/common/auth")
+@RequestMapping("/api/p/common/auth")
 public class AuthResource {
 
     private static final Logger log = LoggerFactory.getLogger(AuthResource.class);
@@ -65,8 +65,9 @@ public class AuthResource {
         tokenCookie.setPath("/");
 
         response.addCookie(tokenCookie);
+        responseDTO.setResult(null);
         log.debug("Set token in secure cookie successful");
 
-        return authService.authenticate(requestDTO);
+        return responseDTO;
     }
 }

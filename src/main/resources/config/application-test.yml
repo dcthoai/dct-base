@@ -55,7 +55,7 @@ server:
   port: 8081
 
 dct-base:
-  domain: http://localhost:8080
+  domain: http://localhost:${server.port}
 
   jpa:
     persistence-unit-name: dct-base-persistence
@@ -97,7 +97,7 @@ dct-base:
     oauth2:
       enabled: true
       google:
-        base-authorize-uri: /api/auth/oauth2/authorize
+        base-authorize-uri: /api/p/auth/oauth2/authorize
         client-name: Nextgen Creative
         client-ID: ${GOOGLE_CLIENT_ID}
         client-secret: ${GOOGLE_CLIENT_SECRET}

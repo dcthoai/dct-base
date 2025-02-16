@@ -50,14 +50,14 @@ public interface BaseConstants {
     interface STATIC_RESOURCES {
 
         String[] PATHS = {
-            "/*.js",
-            "/*.css",
-            "/*.svg",
-            "/*.png",
-            "/*.ico",
+            "/**.js",
+            "/**.css",
+            "/**.svg",
+            "/**.png",
+            "/**.ico",
             "/content/**",
-            "/i18n/*",
-            "/common/i18n/*"
+            "/i18n/**",
+            "/common/i18n/**"
         };
 
         String[] LOCATIONS = {

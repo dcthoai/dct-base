@@ -57,7 +57,7 @@ public class OAuth2ClientConfig extends SecurityConfigurerAdapter<DefaultSecurit
         http.oauth2Login(oAuth2Config -> oAuth2Config
             .successHandler(oAuth2AuthenticationSuccessHandler)
             .failureHandler(oAuth2AuthenticationFailureHandler)
-            .authorizationEndpoint(config -> config.authorizationRequestResolver(customOAuth2AuthorizationRequestResolver()))
+            .authorizationEndpoint(config -> config.authorizationRequestResolver(oAuth2AuthorizationRequestResolver()))
         );
     }
 
@@ -66,7 +66,7 @@ public class OAuth2ClientConfig extends SecurityConfigurerAdapter<DefaultSecurit
      * before sending it to the provider (such as Google)
      */
     @Bean
-    public CustomOAuth2AuthorizationRequestResolver customOAuth2AuthorizationRequestResolver() {
+    public CustomOAuth2AuthorizationRequestResolver oAuth2AuthorizationRequestResolver() {
         return new CustomOAuth2AuthorizationRequestResolver(clientRegistrationRepository(), googleOAuth2Properties);
     }
 
@@ -78,7 +78,7 @@ public class OAuth2ClientConfig extends SecurityConfigurerAdapter<DefaultSecurit
     public ClientRegistrationRepository clientRegistrationRepository() {
         log.debug("Configuring OAuth2Client with Google info");
 
-        // Create additional ClientRegistration and use the code below if you want to register using multiple OAuth2 providers
+        // Create additional ClientRegistration and use the code below if you want to register using multiple providers
         // return new InMemoryClientRegistrationRepository(googleClientRegistration(), facebookClientRegistration());
 
         return new InMemoryClientRegistrationRepository(googleClientRegistration());
@@ -90,6 +90,9 @@ public class OAuth2ClientConfig extends SecurityConfigurerAdapter<DefaultSecurit
      * See {@link GoogleOAuth2Properties} for details
      */
     private ClientRegistration googleClientRegistration() {
+        log.debug("Google OAuth2 redirect URI: {}", googleOAuth2Properties.getRedirectUri());
+        log.debug("Google OAuth2 authorization URI: {}", googleOAuth2Properties.getAuthorizationUri());
+
         return ClientRegistration.withRegistrationId(SecurityConstants.OAUTH2_PROVIDER.GOOGLE)
                 .clientId(googleOAuth2Properties.getClientID())
                 .clientName(googleOAuth2Properties.getClientName())
