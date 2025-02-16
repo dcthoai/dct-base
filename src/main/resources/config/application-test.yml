@@ -52,7 +52,7 @@ server:
         # Cookies will still be sent with each HTTP request (and can therefore be used for session authentication)
         # But Cookies cannot be accessed from the client side using JavaScript (e.g. via document.cookie)
         http-only: true
-  port: 8080
+  port: 8081
 
 dct-base:
   domain: http://localhost:8080

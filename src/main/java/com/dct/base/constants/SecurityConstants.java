@@ -39,20 +39,23 @@ public interface SecurityConstants {
         String[] ADMIN = { "/api/admin**", "/admin**" };
         String[] USER = { "/api/users**", "/users**" };
         String[] PUBLIC = {
-            "*.js",
-            "*.html",
             "/",
+            "*.html",
+            "*.css",
+            "*.js",
+            "*.ico",
+            "/favicon.ico",
             "/i18n/**",
             "/common/i18n/**",
             "/resources/**",
-            "/p/**",
-            "/login",
+            "/static/**",
             "/register",
+            "/login",
+            "/p/**",
             "/api/register",
             "/api/login",
             "/api/auth/**",
-            "/api/p/**",
-            "/favicon.ico"
+            "/api/p/**"
         };
     }
 

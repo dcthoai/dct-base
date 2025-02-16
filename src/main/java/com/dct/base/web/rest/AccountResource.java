@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api/users")
+@RequestMapping("/api/common/users")
 public class AccountResource {
 
     private static final Logger log = LoggerFactory.getLogger(AccountResource.class);
