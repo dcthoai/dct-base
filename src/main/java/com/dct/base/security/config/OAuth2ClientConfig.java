@@ -7,6 +7,7 @@ import com.dct.base.security.handler.OAuth2AuthenticationFailureHandler;
 import com.dct.base.security.handler.OAuth2AuthenticationSuccessHandler;
 import com.dct.base.security.service.CustomOAuth2AuthorizationRequestResolver;
 
+import jakarta.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -18,7 +19,9 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.oauth2.client.registration.ClientRegistration;
 import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
 import org.springframework.security.oauth2.client.registration.InMemoryClientRegistrationRepository;
+import org.springframework.security.oauth2.client.web.OAuth2AuthorizationRequestResolver;
 import org.springframework.security.oauth2.core.AuthorizationGrantType;
+import org.springframework.security.oauth2.core.endpoint.OAuth2AuthorizationRequest;
 import org.springframework.security.web.DefaultSecurityFilterChain;
 
 /**
@@ -61,12 +64,36 @@ public class OAuth2ClientConfig extends SecurityConfigurerAdapter<DefaultSecurit
         );
     }
 
+    private OAuth2AuthorizationRequestResolver oAuth2AuthorizationRequestResolver() {
+        OAuth2AuthorizationRequestResolver customResolver = customOAuth2AuthorizationRequestResolver();
+
+        return new OAuth2AuthorizationRequestResolver() {
+
+            @Override
+            public OAuth2AuthorizationRequest resolve(HttpServletRequest request) {
+                if (request.getRequestURI().startsWith(googleOAuth2Properties.getBaseAuthorizeUri())) {
+                    return customResolver.resolve(request);
+                }
+
+                return null;
+            }
+
+            @Override
+            public OAuth2AuthorizationRequest resolve(HttpServletRequest request, String clientRegistrationId) {
+                if (request.getRequestURI().startsWith(googleOAuth2Properties.getBaseAuthorizeUri())) {
+                    return customResolver.resolve(request, clientRegistrationId);
+                }
+
+                return null;
+            }
+        };
+    }
+
     /**
      * Register {@link CustomOAuth2AuthorizationRequestResolver} to adjust the parameters of the OAuth2 request
      * before sending it to the provider (such as Google)
      */
-    @Bean
-    public CustomOAuth2AuthorizationRequestResolver oAuth2AuthorizationRequestResolver() {
+    private CustomOAuth2AuthorizationRequestResolver customOAuth2AuthorizationRequestResolver() {
         return new CustomOAuth2AuthorizationRequestResolver(clientRegistrationRepository(), googleOAuth2Properties);
     }
 
@@ -75,7 +102,7 @@ public class OAuth2ClientConfig extends SecurityConfigurerAdapter<DefaultSecurit
      * {@link InMemoryClientRegistrationRepository} is used to store the client registration information in memory
      */
     @Bean
-    public ClientRegistrationRepository clientRegistrationRepository() {
+    protected ClientRegistrationRepository clientRegistrationRepository() {
         log.debug("Configuring OAuth2Client with Google info");
 
         // Create additional ClientRegistration and use the code below if you want to register using multiple providers
