@@ -2,13 +2,27 @@ package com.dct.base.dto.request;
 
 import com.dct.base.constants.BaseConstants;
 import com.dct.base.constants.ExceptionConstants;
+import com.dct.base.exception.handler.CustomExceptionHandler;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
+import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.io.Serial;
 import java.io.Serializable;
 
+/**
+ * Used to map with register requests in a manual authenticate flow <p>
+ * The @{@link Valid} annotation is used along with @{@link ResponseBody} to validate input data format <p>
+ * Annotations like @{@link Pattern}, @{@link NotBlank} will be automatically handled by Spring <p>
+ * {@link MethodArgumentNotValidException} will be thrown with the predefined message key
+ * if any of the validated fields contain invalid data <p>
+ * This exception is configured to be handled by {@link CustomExceptionHandler}.handleMethodArgumentNotValid()
+ *
+ * @author thoaidc
+ */
 public class RegisterRequestDTO extends BaseRequestDTO implements Serializable {
 
     @Serial
@@ -32,6 +46,13 @@ public class RegisterRequestDTO extends BaseRequestDTO implements Serializable {
     public RegisterRequestDTO() {}
 
     public RegisterRequestDTO(String username, String email, String password) {
+        this.username = username;
+        this.email = email;
+        this.password = password;
+    }
+
+    public RegisterRequestDTO(String username, String email, String password, String deviceID) {
+        super(deviceID);
         this.username = username;
         this.email = email;
         this.password = password;

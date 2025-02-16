@@ -4,9 +4,26 @@ import com.dct.base.constants.PropertiesConstants;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.beans.factory.annotation.Value;
 
 import java.util.List;
 
+/**
+ * Contains configuration properties related to Google OAuth2 in the application<p>
+ * When the application starts, Spring will automatically create an instance of this class
+ * and load the values from configuration files like application.properties or application.yml <p>
+ *
+ * {@link ConfigurationProperties} helps Spring map config properties to fields,
+ * instead of using @{@link Value} for each property individually <p>
+ * {@link PropertiesConstants#GOOGLE_OAUTH2_PROPERTIES} decides the prefix for the configurations that will be mapped<p>
+ *
+ * {@link ConditionalOnProperty} mark this class to be initialized only if the property OAUTH2_ACTIVE_STATUS is "true"<p>
+ * {@link PropertiesConstants#OAUTH2_ACTIVE_STATUS} helps turn on/off the OAuth2 feature based on the configuration <p>
+ *
+ * See <a href="">application-test.yml</a> for detail
+ *
+ * @author thoaidc
+ */
 @Configuration
 @ConditionalOnProperty(name = PropertiesConstants.OAUTH2_ACTIVE_STATUS, havingValue = "true")
 @ConfigurationProperties(prefix = PropertiesConstants.GOOGLE_OAUTH2_PROPERTIES)

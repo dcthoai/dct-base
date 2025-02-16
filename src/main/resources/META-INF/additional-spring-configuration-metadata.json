@@ -139,6 +139,11 @@
       "name": "dct-base.security.oauth2.enabled",
       "type": "java.lang.String",
       "description": "Description for dct-base.security.oauth2.enabled."
+    },
+    {
+      "name": "dct-base.datasource.driver-class-name",
+      "type": "java.lang.String",
+      "description": "Description for dct-base.datasource.driver-class-name."
     }
   ]
 }

@@ -2,6 +2,8 @@ package com.dct.base.common;
 
 import com.dct.base.constants.ExceptionConstants;
 import com.dct.base.dto.response.BaseResponseDTO;
+import com.dct.base.interceptor.BaseResponseFilter;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.MessageSource;
@@ -61,14 +63,21 @@ public class BaseCommon {
         return null;
     }
 
+    /**
+     * Set the translated message I18n for the response body. Used by {@link BaseResponseFilter}
+     * @param responseDTO response before sending to client
+     * @return response after it has been translated and is ready to be sent to the client
+     */
     public BaseResponseDTO setResponseMessageI18n(BaseResponseDTO responseDTO) {
         String messageKey = responseDTO.getMessage();
 
         if (StringUtils.hasText(messageKey)) {
-            String messageTranslated = getMessageI18n(messageKey);
+            String messageTranslated = checkMessageI18n(messageKey);
 
             if (StringUtils.hasText(messageTranslated))
                 responseDTO.setMessage(messageTranslated);
+        } else {
+            responseDTO.setMessage(getMessageI18n(ExceptionConstants.TRANSLATE_NOT_FOUND));
         }
 
         return responseDTO;

@@ -25,6 +25,16 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+/**
+ * An AOP (Aspect-Oriented Programming) class in Spring <p>
+ * AOP helps to separate business logic (e.g., access control checks) from the main logic of the application <p>
+ * Used to check user access (authorization) before executing a method annotated with @{@link CheckAuthorize} <p>
+ *
+ * `@{@link Aspect}` mark this class as an Aspect in AOP <p>
+ * `@{@link Component}` mark this class as a component for Spring to manage automatically
+ *
+ * @author thoaidc
+ */
 @Aspect
 @Component
 public class CheckAuthorizeAspect {
@@ -46,11 +56,20 @@ public class CheckAuthorizeAspect {
     @Pointcut("@annotation(com.dct.base.aop.CheckAuthorize)") // Full path to CustomAnnotation class
     public void checkAuthorizeByJwt() {}
 
+    /**
+     * {@link Around} is a type of advice in AOP that allows you to surround the target method <p>
+     * It can control the execution flow of the method (decide whether method should be executed or not)
+     *
+     * @return Forward the request to the target method for processing if the user has sufficient permissions
+     * @throws BaseAuthenticationException If the user does not have the required permissions
+     */
     @Around("checkAuthorizeByJwt()")
     public Object aroundCheckAuthorizeByJwt(ProceedingJoinPoint pjp) throws Throwable {
+        // Retrieve the annotation to check the list of required permissions for the current method
         MethodSignature methodSignature = (MethodSignature) pjp.getStaticPart().getSignature();
         CheckAuthorize annotation = methodSignature.getMethod().getAnnotation(CheckAuthorize.class);
 
+        // Check against the list of permissions of the current user in security context
         List<String> requiredAuthorities = Arrays.asList(annotation.authorities().split(","));
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Set<String> userAuthorities = authentication.getAuthorities()
@@ -58,10 +77,12 @@ public class CheckAuthorizeAspect {
                 .map(GrantedAuthority::getAuthority)
                 .collect(Collectors.toSet());
 
+        // If the user has sufficient permissions, allow the request to proceed
         if (userAuthorities.containsAll(requiredAuthorities))
             return pjp.proceed();
 
         try {
+            // Try to log the user's access attempt if they do not have permission to access the method
             ServletRequestAttributes servletRequest = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
             HttpServletRequest request = Objects.requireNonNull(servletRequest).getRequest();
             String url = request.getRequestURL().toString();
@@ -69,6 +90,7 @@ public class CheckAuthorizeAspect {
             log.error("User '{}' does not have any permission to access this function: {}", username, url);
         } catch (Exception ignore) {}
 
+        // Throw an exception to allow CustomExceptionHandler handling and return a response to the client
         throw new BaseAuthenticationException(ENTITY_NAME, ExceptionConstants.FORBIDDEN);
     }
 }

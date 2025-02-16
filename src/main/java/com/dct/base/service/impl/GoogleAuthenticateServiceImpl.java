@@ -85,7 +85,7 @@ public class GoogleAuthenticateServiceImpl implements GoogleAuthenticateService 
         log.debug("Authorize successful. Generating token for user '{}'", username);
 
         String jwtToken = tokenProvider.createToken(authTokenDTO);
-        Cookie tokenCookie = new Cookie(SecurityConstants.COOKIES.OAUTH2_GOOGLE_ACCESS_TOKEN, jwtToken);
+        Cookie tokenCookie = new Cookie(SecurityConstants.COOKIES.HTTP_ONLY_COOKIE_ACCESS_TOKEN, jwtToken);
 
         return new BaseResponseDTO(
             HttpStatusConstants.ACCEPTED,

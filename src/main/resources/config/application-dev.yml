@@ -11,8 +11,8 @@
 
 logging:
   level:
-    com.dct.base: debug
     root: debug
+    com.dct.base: debug
   charset:
     console: UTF-8
     file: UTF-8

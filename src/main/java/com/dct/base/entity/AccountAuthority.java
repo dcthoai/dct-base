@@ -5,6 +5,12 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
 import org.hibernate.annotations.DynamicUpdate;
 
+/**
+ * A bridge entity to map the list of user permissions <p>
+ * Each instance will reference an {@link Account} and an {@link Authority} corresponding to the userID and authorityID
+ *
+ * @author thoaidc
+ */
 @Entity
 @Table(name = "account_authority")
 @DynamicUpdate // Hibernate only updates the changed columns to the database instead of updating the entire table

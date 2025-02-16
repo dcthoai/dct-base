@@ -1,5 +1,12 @@
 package com.dct.base.constants;
 
+import com.dct.base.config.InterceptorConfig;
+import com.dct.base.dto.BaseAuthTokenDTO;
+import com.dct.base.security.jwt.JwtTokenProvider;
+import com.dct.base.security.config.SecurityConfig;
+import com.dct.base.aop.CheckAuthorize;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+
 /**
  * Security configuration parameters
  * @author thoaidc
@@ -11,6 +18,10 @@ public interface SecurityConstants {
     // Higher values mean the password is harder to attack, but too high will reduce performance
     int BCRYPT_COST_FACTOR = 12;
 
+    /**
+     * The corresponding keys to store information in the payload of a JWT token <p>
+     * See {@link JwtTokenProvider#createToken(BaseAuthTokenDTO)} for details
+     */
     interface TOKEN_PAYLOAD {
         String USER_ID = "userID";
         String USERNAME = "username";
@@ -18,6 +29,11 @@ public interface SecurityConstants {
         String AUTHORITIES = "auth";
     }
 
+    /**
+     * The paths for security configuration in {@link SecurityConfig#securityFilterChain(HttpSecurity)} <p>
+     * Requests matching the patterns below will have their own specific security rules applied <p>
+     * Requests not listed will require authentication by default
+     */
     interface REQUEST_MATCHERS {
         String[] OPTIONS = { "/**" };
         String[] ADMIN = { "/api/admin**", "/admin**" };
@@ -40,9 +56,11 @@ public interface SecurityConstants {
         };
     }
 
+    /**
+     * The configurations applied in the CORS filter in {@link InterceptorConfig#corsFilter()}
+     */
     interface CORS {
-
-        String APPLY_FOR = "/**";
+        String APPLY_FOR = "/**"; // CORS filter is applied to all requests
         String[] ALLOWED_HEADERS = {
             "Content-Type",     // Content format
             "Authorization",    // Authentication token
@@ -52,12 +70,12 @@ public interface SecurityConstants {
             "X-Requested-With", // Ajax request markup
             "Access-Control-Allow-Origin", // Server response header
             "X-App-Version",    // Application version (optional)
-            "X-Device-ID"
+            "X-Device-ID"       // Device ID (optional)
         };
 
         String[] ALLOWED_REQUEST_METHODS = {"GET", "PUT", "POST", "DELETE"};
-        String[] ALLOWED_ORIGIN_PATTERNS = {"*"};
-        boolean ALLOW_CREDENTIALS = true;
+        String[] ALLOWED_ORIGIN_PATTERNS = {"*"}; // The list of domains allowed to access the resources. * means all
+        boolean ALLOW_CREDENTIALS = true; // Allow sending cookies or authentication information
     }
 
     interface OAUTH2_PROVIDER {
@@ -66,10 +84,14 @@ public interface SecurityConstants {
     }
 
     interface COOKIES {
-        String OAUTH2_GOOGLE_ACCESS_TOKEN = "oauth2_google_access_token";
+        // The key of the cookie storing the JWT token, which is HTTP-only
+        // This cookie is automatically sent with requests by browser but cannot be accessed by JavaScript
+        String HTTP_ONLY_COOKIE_ACCESS_TOKEN = "dct_access_token";
     }
 
     interface HEADER {
+
+        // The request header storing the JWT token, used in cases where the token is not found in the HTTP-only cookies
         String AUTHORIZATION_HEADER = "Authorization";
         String AUTHORIZATION_GATEWAY_HEADER = "Authorization-Gateway";
         String TOKEN_TYPE = "Bearer "; // JWT token type
@@ -101,6 +123,12 @@ public interface SecurityConstants {
                 "sync-xhr=()"; // Prevent use of synchronous XMLHttpRequest requests
     }
 
+    /**
+     * The list of ROLES used in this application <p>
+     * Constants starting with the "ROLE" prefix are used for storing in the database or with @{@link CheckAuthorize}<p>
+     * Constants without the "ROLE" prefix are used for {@link SecurityConfig#securityFilterChain(HttpSecurity)} <p>
+     * Spring Security automatically adds the "ROLE" prefix by default
+     */
     interface ROLES {
         String ADMIN = "ADMIN";
         String USER = "USER";
