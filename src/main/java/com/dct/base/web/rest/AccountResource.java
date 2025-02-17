@@ -28,7 +28,7 @@ public class AccountResource {
 
     @GetMapping("{userID}")
     public BaseResponseDTO getAccountInfo(@PathVariable int userID) {
-        log.debug("REST request to get account info. GET: /api/users/{}", userID);
+        log.debug("REST request to get account info: {}", userID);
         Account account = accountService.findByID(userID);
         AccountDTO accountDTO = objectMapper.convertValue(account, AccountDTO.class);
         return new BaseResponseDTO(accountDTO);

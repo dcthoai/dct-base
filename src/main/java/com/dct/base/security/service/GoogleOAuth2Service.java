@@ -2,6 +2,7 @@ package com.dct.base.security.service;
 
 import com.dct.base.common.JsonUtils;
 import com.dct.base.config.properties.GoogleOAuth2Properties;
+import com.dct.base.config.properties.OAuth2ConfigProperties;
 import com.dct.base.constants.ExceptionConstants;
 import com.dct.base.constants.PropertiesConstants;
 import com.dct.base.exception.BaseBadRequestException;
@@ -32,11 +33,14 @@ public class GoogleOAuth2Service {
 
     private static final Logger log = LoggerFactory.getLogger(GoogleOAuth2Service.class);
     private static final String ENTITY_NAME = "GoogleOAuth2Service";
+    private final OAuth2ConfigProperties oAuth2Configs;
     private final GoogleOAuth2Properties googleOAuth2Properties;
     private final RestTemplate restTemplate;
 
-    public GoogleOAuth2Service(@Qualifier("googleOAuth2Properties") GoogleOAuth2Properties googleOAuth2Properties,
+    public GoogleOAuth2Service(@Qualifier("OAuth2ConfigProperties") OAuth2ConfigProperties oAuth2ConfigProperties,
+                               @Qualifier("googleOAuth2Properties") GoogleOAuth2Properties googleOAuth2Properties,
                                RestTemplate restTemplate) {
+        this.oAuth2Configs = oAuth2ConfigProperties;
         this.googleOAuth2Properties = googleOAuth2Properties;
         this.restTemplate = restTemplate;
     }
@@ -47,7 +51,7 @@ public class GoogleOAuth2Service {
         config.add("code", authorizationCode);
         config.add("client_id", googleOAuth2Properties.getClientID());
         config.add("client_secret", googleOAuth2Properties.getClientSecret());
-        config.add("redirect_uri", googleOAuth2Properties.getRedirectUri());
+        config.add("redirect_uri", oAuth2Configs.getRedirectUri() + googleOAuth2Properties.getClientRegistrationId());
         config.add("grant_type", AuthorizationGrantType.AUTHORIZATION_CODE.getValue());
 
         return config;

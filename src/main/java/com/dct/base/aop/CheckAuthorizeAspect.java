@@ -64,9 +64,9 @@ public class CheckAuthorizeAspect {
      * @throws BaseAuthenticationException If the user does not have the required permissions
      */
     @Around("checkAuthorizeByJwt()")
-    public Object aroundCheckAuthorizeByJwt(ProceedingJoinPoint pjp) throws Throwable {
+    public Object aroundCheckAuthorizeByJwt(ProceedingJoinPoint proceedingJoinPoint) throws Throwable {
         // Retrieve the annotation to check the list of required permissions for the current method
-        MethodSignature methodSignature = (MethodSignature) pjp.getStaticPart().getSignature();
+        MethodSignature methodSignature = (MethodSignature) proceedingJoinPoint.getStaticPart().getSignature();
         CheckAuthorize annotation = methodSignature.getMethod().getAnnotation(CheckAuthorize.class);
 
         // Check against the list of permissions of the current user in security context
@@ -79,13 +79,13 @@ public class CheckAuthorizeAspect {
 
         // If the user has sufficient permissions, allow the request to proceed
         if (userAuthorities.containsAll(requiredAuthorities))
-            return pjp.proceed();
+            return proceedingJoinPoint.proceed();
 
         try {
             // Try to log the user's access attempt if they do not have permission to access the method
-            ServletRequestAttributes servletRequest = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
-            HttpServletRequest request = Objects.requireNonNull(servletRequest).getRequest();
-            String url = request.getRequestURL().toString();
+            ServletRequestAttributes request = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
+            HttpServletRequest httpServletRequest = Objects.requireNonNull(request).getRequest();
+            String url = httpServletRequest.getRequestURL().toString();
             String username = Objects.nonNull(authentication.getName()) ? authentication.getName() : "Anonymous";
             log.error("User '{}' does not have any permission to access this function: {}", username, url);
         } catch (Exception ignore) {}

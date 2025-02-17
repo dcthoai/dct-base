@@ -27,7 +27,7 @@ public class ImageUploadResource {
 
     @PostMapping("/images")
     public BaseResponseDTO saveImages(@RequestParam("images") MultipartFile[] images) {
-        log.debug("REST request to save files");
+        log.debug("REST request to save images");
         List<String> filePaths = new ArrayList<>();
 
         for (MultipartFile image : images) {

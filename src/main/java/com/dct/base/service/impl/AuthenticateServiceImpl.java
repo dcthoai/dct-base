@@ -43,30 +43,12 @@ public class AuthenticateServiceImpl implements AuthenticationService {
     @Override
     public BaseResponseDTO authenticate(AuthRequestDTO authRequestDTO) {
         log.debug("Authenticating user: {}", authRequestDTO.getUsername());
-
         String username = authRequestDTO.getUsername().trim();
         String rawPassword = authRequestDTO.getPassword().trim();
-        UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(username, rawPassword);
-        Authentication authentication;
-
-        try {
-            authentication = authenticationManager.authenticate(token);
-        } catch (UsernameNotFoundException e) {
-            log.error("[{}] Account '{}' does not exists", e.getClass().getSimpleName(), username);
-            throw new BaseBadRequestException(ENTITY_NAME, ExceptionConstants.ACCOUNT_NOT_FOUND);
-        } catch (BadCredentialsException e) {
-            log.error("[{}] - {}", e.getClass().getSimpleName(), e.getMessage());
-            throw new BaseBadRequestException(ENTITY_NAME, ExceptionConstants.BAD_CREDENTIALS);
-        } catch (CredentialsExpiredException e) {
-            log.error("[{}] - {}", e.getClass().getSimpleName(), e.getMessage());
-            throw new BaseBadRequestException(ENTITY_NAME, ExceptionConstants.ACCOUNT_EXPIRED);
-        } catch (AuthenticationException e) {
-            log.error("[{}] Authentication failed: {}", e.getClass().getSimpleName(), e.getMessage());
-            throw new BaseAuthenticationException(ENTITY_NAME, ExceptionConstants.UNAUTHORIZED);
-        }
-
+        Authentication authentication = authenticate(username, rawPassword);
         SecurityContextHolder.getContext().setAuthentication(authentication);
         CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
+
         BaseAuthTokenDTO authTokenDTO = new BaseAuthTokenDTO(
             authentication,
             userDetails.getAccount(),
@@ -83,5 +65,25 @@ public class AuthenticateServiceImpl implements AuthenticationService {
             ResultConstants.LOGIN_SUCCESS,
             tokenCookie
         );
+    }
+
+    private Authentication authenticate(String username, String rawPassword) {
+        UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(username, rawPassword);
+
+        try {
+            return authenticationManager.authenticate(token);
+        } catch (UsernameNotFoundException e) {
+            log.error("[{}] Account '{}' does not exists", e.getClass().getSimpleName(), username);
+            throw new BaseBadRequestException(ENTITY_NAME, ExceptionConstants.ACCOUNT_NOT_FOUND);
+        } catch (BadCredentialsException e) {
+            log.error("[{}] - {}", e.getClass().getSimpleName(), e.getMessage());
+            throw new BaseBadRequestException(ENTITY_NAME, ExceptionConstants.BAD_CREDENTIALS);
+        } catch (CredentialsExpiredException e) {
+            log.error("[{}] - {}", e.getClass().getSimpleName(), e.getMessage());
+            throw new BaseBadRequestException(ENTITY_NAME, ExceptionConstants.ACCOUNT_EXPIRED);
+        } catch (AuthenticationException e) {
+            log.error("[{}] Authentication failed: {}", e.getClass().getSimpleName(), e.getMessage());
+            throw new BaseAuthenticationException(ENTITY_NAME, ExceptionConstants.UNAUTHORIZED);
+        }
     }
 }

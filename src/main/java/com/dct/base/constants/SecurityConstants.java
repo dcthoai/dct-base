@@ -40,21 +40,17 @@ public interface SecurityConstants {
         String[] USER = { "/api/users**", "/users**" };
         String[] PUBLIC = {
             "/",
-            "*.html",
-            "*.css",
-            "*.js",
-            "*.ico",
-            "/favicon.ico",
+            "/**.html",
+            "/**.css",
+            "/**.js",
+            "/**.ico",
             "/i18n/**",
             "/common/i18n/**",
-            "/resources/**",
+            "/content/**",
             "/static/**",
             "/register",
             "/login",
             "/p/**",
-            "/api/register",
-            "/api/login",
-            "/api/auth/**",
             "/api/p/**"
         };
     }
@@ -79,11 +75,6 @@ public interface SecurityConstants {
         String[] ALLOWED_REQUEST_METHODS = {"GET", "PUT", "POST", "DELETE"};
         String[] ALLOWED_ORIGIN_PATTERNS = {"*"}; // The list of domains allowed to access the resources. * means all
         boolean ALLOW_CREDENTIALS = true; // Allow sending cookies or authentication information
-    }
-
-    interface OAUTH2_PROVIDER {
-        String GOOGLE = "google";
-        String FACEBOOK = "facebook";
     }
 
     interface COOKIES {

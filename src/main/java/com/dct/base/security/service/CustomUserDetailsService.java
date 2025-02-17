@@ -48,12 +48,8 @@ public class CustomUserDetailsService implements UserDetailsService {
         Set<String> userPermissions = authorityRepository.findAllByUserID(account.getId());
 
         Collection<SimpleGrantedAuthority> userAuthorities = Stream.concat(
-            Arrays.stream(userRoles)
-                .filter(StringUtils::hasText)
-                .map(SimpleGrantedAuthority::new),
-            userPermissions.stream()
-                .filter(StringUtils::hasText)
-                .map(SimpleGrantedAuthority::new)
+            Arrays.stream(userRoles).filter(StringUtils::hasText).map(SimpleGrantedAuthority::new),
+            userPermissions.stream().filter(StringUtils::hasText).map(SimpleGrantedAuthority::new)
         ).collect(Collectors.toSet());
 
         return new CustomUserDetails(account, userAuthorities);

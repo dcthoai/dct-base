@@ -55,21 +55,23 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
-    public Account createUserAccount(RegisterRequestDTO requestDTO) {
+    public Account create(RegisterRequestDTO requestDTO) {
         log.debug("Creating a new account for user: {}", requestDTO.getUsername());
-        String username = requestDTO.getUsername();
-        String email = requestDTO.getEmail();
+        String rawPassword = requestDTO.getPassword();
+        String hashedPassword = passwordEncoder.encode(rawPassword);
+
+        Account account = new Account(requestDTO.getUsername(), requestDTO.getEmail(), hashedPassword);
+        account.setRoles(SecurityConstants.ROLES.ROLE_USER);
+
+        return accountRepository.save(account);
+    }
+
+    @Override
+    public Account createUserAccount(RegisterRequestDTO requestDTO) {
         Account account = isExistsUser(requestDTO);
 
         if (Objects.isNull(account)) {
-            String rawPassword = requestDTO.getPassword();
-            String hashedPassword = passwordEncoder.encode(rawPassword);
-
-            account = new Account(username, hashedPassword);
-            account.setEmail(email);
-            account.setRoles(SecurityConstants.ROLES.ROLE_USER);
-
-            return accountRepository.save(account);
+            return create(requestDTO);
         }
 
         throw new BaseBadRequestException(ENTITY_NAME, ExceptionConstants.ACCOUNT_EXISTED);

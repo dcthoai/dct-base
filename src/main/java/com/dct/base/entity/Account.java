@@ -48,6 +48,12 @@ public class Account extends AbstractAuditingEntity {
         this.password = password;
     }
 
+    public Account(String username, String email, String password) {
+        this.username = username;
+        this.email = email;
+        this.password = password;
+    }
+
     public String getUsername() {
         return username;
     }

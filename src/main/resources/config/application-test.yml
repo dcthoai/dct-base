@@ -15,6 +15,7 @@ logging:
   level:
     root: debug
     com.dct.base: debug
+    org.springframework.security: debug
   charset:
     console: UTF-8
     file: UTF-8
@@ -55,7 +56,7 @@ server:
   port: 8081
 
 dct-base:
-  domain: http://localhost:8080
+  domain: http://localhost:${server.port}
 
   jpa:
     persistence-unit-name: dct-base-persistence
@@ -96,8 +97,11 @@ dct-base:
       token-validity-for-remember-me: 86400000 # milliseconds
     oauth2:
       enabled: true
+      base-authorize-uri: /api/p/common/auth/oauth2/authorize
+      default-redirect-uri: ${dct-base.domain}/login/oauth2/code/
+      redirect-uri: ${dct-base.domain}/api/p/common/callback/auth/oauth2/code/
       google:
-        base-authorize-uri: /api/auth/oauth2/authorize
+        client-registration-id: google
         client-name: Nextgen Creative
         client-ID: ${GOOGLE_CLIENT_ID}
         client-secret: ${GOOGLE_CLIENT_SECRET}
@@ -107,8 +111,6 @@ dct-base:
         # - https://www.googleapis.com/auth/user.phonenumbers.read
         # - https://www.googleapis.com/auth/drive.file
         authorization-uri: https://accounts.google.com/o/oauth2/auth
-        # redirect-uri: ${dct-base.domain}/api/p/callback/oauth2/google/authenticate
-        redirect-uri: ${dct-base.domain}/login/oauth2/code/google
         token-uri: https://oauth2.googleapis.com/token
         user-info-uri: https://openidconnect.googleapis.com/v1/userinfo
         username-attribute-name: sub
