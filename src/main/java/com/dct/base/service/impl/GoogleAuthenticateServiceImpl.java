@@ -82,8 +82,8 @@ public class GoogleAuthenticateServiceImpl implements GoogleAuthenticateService 
         UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(username, username, authorities);
         SecurityContextHolder.getContext().setAuthentication(token);
         BaseAuthTokenDTO authTokenDTO = new BaseAuthTokenDTO(token, account);
-        log.debug("Authorize successful. Generating token for user '{}'", username);
 
+        log.debug("Authorize successful. Generating token for user '{}'", username);
         String jwtToken = tokenProvider.createToken(authTokenDTO);
         Cookie tokenCookie = new Cookie(SecurityConstants.COOKIES.HTTP_ONLY_COOKIE_ACCESS_TOKEN, jwtToken);
 

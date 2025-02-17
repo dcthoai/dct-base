@@ -9,7 +9,7 @@ import org.springframework.beans.factory.annotation.Value;
 import java.util.List;
 
 /**
- * Contains configuration properties related to Google OAuth2 in the application<p>
+ * Contains configuration properties related to OAuth2 via Google in the application<p>
  * When the application starts, Spring will automatically create an instance of this class
  * and load the values from configuration files like application.properties or application.yml <p>
  *
@@ -29,16 +29,23 @@ import java.util.List;
 @ConfigurationProperties(prefix = PropertiesConstants.GOOGLE_OAUTH2_PROPERTIES)
 public class GoogleOAuth2Properties {
 
+    private String clientRegistrationId;
     private String clientID;
     private String clientName;
     private String clientSecret;
-    private String baseAuthorizeUri;
     private String authorizationUri;
-    private String redirectUri;
     private String tokenUri;
     private String userInfoUri;
     private String usernameAttributeName;
     private List<String> scope;
+
+    public String getClientRegistrationId() {
+        return clientRegistrationId;
+    }
+
+    public void setClientRegistrationId(String clientRegistrationId) {
+        this.clientRegistrationId = clientRegistrationId;
+    }
 
     public String getClientID() {
         return clientID;
@@ -64,28 +71,12 @@ public class GoogleOAuth2Properties {
         this.clientSecret = clientSecret;
     }
 
-    public String getBaseAuthorizeUri() {
-        return baseAuthorizeUri;
-    }
-
-    public void setBaseAuthorizeUri(String baseAuthorizeUri) {
-        this.baseAuthorizeUri = baseAuthorizeUri;
-    }
-
     public String getAuthorizationUri() {
         return authorizationUri;
     }
 
     public void setAuthorizationUri(String authorizationUri) {
         this.authorizationUri = authorizationUri;
-    }
-
-    public String getRedirectUri() {
-        return redirectUri;
-    }
-
-    public void setRedirectUri(String redirectUri) {
-        this.redirectUri = redirectUri;
     }
 
     public String getTokenUri() {

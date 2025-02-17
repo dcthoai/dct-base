@@ -1,8 +1,8 @@
 package com.dct.base.security.config;
 
 import com.dct.base.config.properties.GoogleOAuth2Properties;
+import com.dct.base.config.properties.OAuth2ConfigProperties;
 import com.dct.base.constants.PropertiesConstants;
-import com.dct.base.constants.SecurityConstants;
 import com.dct.base.security.handler.OAuth2AuthenticationFailureHandler;
 import com.dct.base.security.handler.OAuth2AuthenticationSuccessHandler;
 import com.dct.base.security.service.CustomOAuth2AuthorizationRequestResolver;
@@ -33,13 +33,16 @@ import org.springframework.security.web.DefaultSecurityFilterChain;
 public class OAuth2ClientConfig extends SecurityConfigurerAdapter<DefaultSecurityFilterChain, HttpSecurity> {
 
     private static final Logger log = LoggerFactory.getLogger(OAuth2ClientConfig.class);
+    private final OAuth2ConfigProperties oAuth2Configs;
     private final GoogleOAuth2Properties googleOAuth2Properties;
     private final OAuth2AuthenticationSuccessHandler oAuth2AuthenticationSuccessHandler;
     private final OAuth2AuthenticationFailureHandler oAuth2AuthenticationFailureHandler;
 
-    public OAuth2ClientConfig(@Qualifier("googleOAuth2Properties") GoogleOAuth2Properties googleOAuth2Properties,
+    public OAuth2ClientConfig(@Qualifier("OAuth2ConfigProperties") OAuth2ConfigProperties oAuth2Configs,
+                              @Qualifier("googleOAuth2Properties") GoogleOAuth2Properties googleOAuth2Properties,
                               OAuth2AuthenticationSuccessHandler oAuth2AuthenticationSuccessHandler,
                               OAuth2AuthenticationFailureHandler oAuth2AuthenticationFailureHandler) {
+        this.oAuth2Configs = oAuth2Configs;
         this.googleOAuth2Properties = googleOAuth2Properties;
         this.oAuth2AuthenticationSuccessHandler = oAuth2AuthenticationSuccessHandler;
         this.oAuth2AuthenticationFailureHandler = oAuth2AuthenticationFailureHandler;
@@ -58,7 +61,7 @@ public class OAuth2ClientConfig extends SecurityConfigurerAdapter<DefaultSecurit
             .successHandler(oAuth2AuthenticationSuccessHandler)
             .failureHandler(oAuth2AuthenticationFailureHandler)
             .authorizationEndpoint(config -> config
-                .baseUri(googleOAuth2Properties.getBaseAuthorizeUri())
+                .baseUri(oAuth2Configs.getBaseAuthorizeUri())
                 .authorizationRequestResolver(oAuth2AuthorizationRequestResolver())
             )
         );
@@ -69,7 +72,7 @@ public class OAuth2ClientConfig extends SecurityConfigurerAdapter<DefaultSecurit
      * before sending it to the provider (such as Google)
      */
     private CustomOAuth2AuthorizationRequestResolver oAuth2AuthorizationRequestResolver() {
-        return new CustomOAuth2AuthorizationRequestResolver(clientRegistrationRepository(), googleOAuth2Properties);
+        return new CustomOAuth2AuthorizationRequestResolver(clientRegistrationRepository(), oAuth2Configs);
     }
 
     /**
@@ -92,16 +95,18 @@ public class OAuth2ClientConfig extends SecurityConfigurerAdapter<DefaultSecurit
      * See {@link GoogleOAuth2Properties} for details
      */
     private ClientRegistration googleClientRegistration() {
-        log.debug("Google OAuth2 redirect URI: {}", googleOAuth2Properties.getRedirectUri());
+        String redirectUri = oAuth2Configs.getRedirectUri() + googleOAuth2Properties.getClientRegistrationId();
+        log.debug("Google OAuth2 redirect URI: {}", redirectUri);
 
-        return ClientRegistration.withRegistrationId(SecurityConstants.OAUTH2_PROVIDER.GOOGLE)
+        return ClientRegistration
+                .withRegistrationId(googleOAuth2Properties.getClientRegistrationId())
                 .clientId(googleOAuth2Properties.getClientID())
                 .clientName(googleOAuth2Properties.getClientName())
                 .clientSecret(googleOAuth2Properties.getClientSecret())
                 .scope(googleOAuth2Properties.getScope())
                 .authorizationGrantType(AuthorizationGrantType.AUTHORIZATION_CODE)
                 .authorizationUri(googleOAuth2Properties.getAuthorizationUri())
-                .redirectUri(googleOAuth2Properties.getRedirectUri())
+                .redirectUri(redirectUri)
                 .tokenUri(googleOAuth2Properties.getTokenUri())
                 .userInfoUri(googleOAuth2Properties.getUserInfoUri())
                 .userNameAttributeName(googleOAuth2Properties.getUsernameAttributeName())

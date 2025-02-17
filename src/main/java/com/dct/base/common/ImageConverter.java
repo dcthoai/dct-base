@@ -181,8 +181,7 @@ public class ImageConverter {
         String imageFileName = Optional.ofNullable(image.getOriginalFilename()).orElse("");
         String defaultImageFormat = BaseConstants.UPLOAD_RESOURCES.DEFAULT_IMAGE_FORMAT;
         String defaultImageType = BaseConstants.UPLOAD_RESOURCES.WEBP;
-        String imageFileExtension = "";
-        String imageType = "";
+        String imageFileExtension = "", imageType = "";
 
         if (!imageFileName.isBlank() && imageFileName.contains(".")) {
             int lastDotIndex = imageFileName.lastIndexOf('.');

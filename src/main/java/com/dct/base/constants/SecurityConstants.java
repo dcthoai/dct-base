@@ -77,11 +77,6 @@ public interface SecurityConstants {
         boolean ALLOW_CREDENTIALS = true; // Allow sending cookies or authentication information
     }
 
-    interface OAUTH2_PROVIDER {
-        String GOOGLE = "google";
-        String FACEBOOK = "facebook";
-    }
-
     interface COOKIES {
         // The key of the cookie storing the JWT token, which is HTTP-only
         // This cookie is automatically sent with requests by browser but cannot be accessed by JavaScript
