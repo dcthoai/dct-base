@@ -9,9 +9,11 @@ import org.springframework.security.oauth2.client.web.OAuth2AuthorizationRequest
 import org.springframework.security.oauth2.core.endpoint.OAuth2AuthorizationRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component;
 
 import java.util.Objects;
 
+@Component
 public class CustomOAuth2AuthorizationRequestResolver implements OAuth2AuthorizationRequestResolver {
 
     private static final Logger log = LoggerFactory.getLogger(CustomOAuth2AuthorizationRequestResolver.class);
@@ -39,8 +41,8 @@ public class CustomOAuth2AuthorizationRequestResolver implements OAuth2Authoriza
 
     @Override
     public OAuth2AuthorizationRequest resolve(HttpServletRequest request, String clientRegistrationId) {
-        if (!request.getRequestURI().startsWith(googleOAuth2Properties.getBaseAuthorizeUri()))
-            return null;
+//        if (!request.getRequestURI().startsWith(googleOAuth2Properties.getBaseAuthorizeUri()))
+//            return null;
 
         log.debug("Authenticating via {} from: {}", clientRegistrationId, request.getRequestURI());
         OAuth2AuthorizationRequest authorizationRequest = delegate.resolve(request, clientRegistrationId);
@@ -55,7 +57,12 @@ public class CustomOAuth2AuthorizationRequestResolver implements OAuth2Authoriza
         log.debug("Modifying request, require issue additional refresh token after successful authentication");
 
         return OAuth2AuthorizationRequest.from(authorizationRequest)
-                .additionalParameters(params -> params.put("access_type", "offline"))
-                .build();
+            .additionalParameters(params -> {
+                params.put("access_type", "offline");
+                params.put("display", "popup");
+                params.put("width", 500);
+                params.put("height", 400);
+            })
+            .build();
     }
 }

@@ -144,6 +144,16 @@
       "name": "dct-base.datasource.driver-class-name",
       "type": "java.lang.String",
       "description": "Description for dct-base.datasource.driver-class-name."
+    },
+    {
+      "name": "dct-base.security.oauth2.google.client-registration-id",
+      "type": "java.lang.String",
+      "description": "Description for dct-base.security.oauth2.google.client-registration-id."
+    },
+    {
+      "name": "dct-base.security.oauth2.google.default-redirect-uri",
+      "type": "java.lang.String",
+      "description": "Description for dct-base.security.oauth2.google.default-redirect-uri."
     }
   ]
 }

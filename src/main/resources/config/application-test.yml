@@ -102,8 +102,8 @@ dct-base:
         client-name: Nextgen Creative
         client-ID: ${GOOGLE_CLIENT_ID}
         client-secret: ${GOOGLE_CLIENT_SECRET}
-        redirect-uri: ${dct-base.domain}/login/oauth2/code/google
-#        redirect-uri: ${dct-base.domain}/api/p/common/callback/auth/oauth2/code/google
+#        redirect-uri: ${dct-base.domain}/login/oauth2/code/google
+        redirect-uri: ${dct-base.domain}/api/p/common/callback/auth/oauth2/code/google
         scope:
           - https://www.googleapis.com/auth/userinfo.email
           - https://www.googleapis.com/auth/userinfo.profile
