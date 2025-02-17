@@ -15,6 +15,7 @@ logging:
   level:
     root: debug
     com.dct.base: debug
+    org.springframework.security: debug
   charset:
     console: UTF-8
     file: UTF-8
@@ -97,18 +98,18 @@ dct-base:
     oauth2:
       enabled: true
       google:
-        base-authorize-uri: /api/p/auth/oauth2/authorize
+        base-authorize-uri: /api/p/common/auth/oauth2/authorize
         client-name: Nextgen Creative
         client-ID: ${GOOGLE_CLIENT_ID}
         client-secret: ${GOOGLE_CLIENT_SECRET}
+        redirect-uri: ${dct-base.domain}/login/oauth2/code/google
+#        redirect-uri: ${dct-base.domain}/api/p/common/callback/auth/oauth2/code/google
         scope:
           - https://www.googleapis.com/auth/userinfo.email
           - https://www.googleapis.com/auth/userinfo.profile
         # - https://www.googleapis.com/auth/user.phonenumbers.read
         # - https://www.googleapis.com/auth/drive.file
         authorization-uri: https://accounts.google.com/o/oauth2/auth
-        # redirect-uri: ${dct-base.domain}/api/p/callback/oauth2/google/authenticate
-        redirect-uri: ${dct-base.domain}/login/oauth2/code/google
         token-uri: https://oauth2.googleapis.com/token
         user-info-uri: https://openidconnect.googleapis.com/v1/userinfo
         username-attribute-name: sub
