@@ -23,7 +23,6 @@ public interface ExceptionConstants {
     // Runtime exception OR undetermined error
     String UNCERTAIN_ERROR = "exception.uncertain";
     String NULL_EXCEPTION = "exception.nullPointer";
-    String FILTER_CHAIN_NOT_FOUND = "exception.filterChain.notFound";
 
     // Authentication exception
     String BAD_CREDENTIALS = "exception.auth.badCredentials";

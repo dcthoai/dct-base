@@ -39,7 +39,7 @@ public class AuthResource {
 
     @PostMapping("/register")
     public BaseResponseDTO register(@Valid @RequestBody RegisterRequestDTO requestDTO) {
-        log.debug("REST request to create an account. POST: /api/auth/register");
+        log.debug("REST request to create an account: {}", requestDTO.getUsername());
         Account account = accountService.createUserAccount(requestDTO);
 
         if (Objects.isNull(account) || Objects.isNull(account.getId()) || account.getId() < 1)
@@ -55,7 +55,7 @@ public class AuthResource {
 
     @PostMapping("/login")
     public BaseResponseDTO login(@Valid @RequestBody AuthRequestDTO requestDTO, HttpServletResponse response) {
-        log.debug("REST request to authenticate account. POST: /api/auth/login");
+        log.debug("REST request to authenticate account: {}", requestDTO.getUsername());
 
         BaseResponseDTO responseDTO = authService.authenticate(requestDTO);
         Cookie tokenCookie = (Cookie) responseDTO.getResult();

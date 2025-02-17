@@ -2,14 +2,14 @@ package com.dct.base.security.jwt;
 
 import com.dct.base.common.BaseCommon;
 import com.dct.base.common.JsonUtils;
-import com.dct.base.constants.ExceptionConstants;
 import com.dct.base.constants.HttpStatusConstants;
 import com.dct.base.constants.SecurityConstants;
 import com.dct.base.dto.response.BaseResponseDTO;
 import com.dct.base.exception.BaseAuthenticationException;
 import com.dct.base.constants.SecurityConstants.REQUEST_MATCHERS;
 
-import jakarta.annotation.Nullable;
+import com.dct.base.exception.BaseException;
+import jakarta.annotation.Nonnull;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.Cookie;
@@ -49,49 +49,32 @@ public class JwtTokenFilter extends OncePerRequestFilter {
     }
 
     @Override
-    protected void doFilterInternal(@Nullable HttpServletRequest request,
-                                    @Nullable HttpServletResponse response,
-                                    @Nullable FilterChain filterChain) throws ServletException, IOException {
-        if (Objects.isNull(request)) {
-            resolveResponse(response, HttpStatusConstants.INTERNAL_SERVER_ERROR, "");
-            return;
-        }
-
-        AntPathMatcher antPathMatcher = new AntPathMatcher();
-        String requestURI = request.getRequestURI();
-        log.debug("{}: {}", request.getMethod(), requestURI);
-
-        // If request is required authenticate
-        if (Arrays.stream(REQUEST_MATCHERS.PUBLIC).noneMatch(pattern -> antPathMatcher.match(pattern, requestURI))) {
-            String jwt = resolveToken(request);
-
+    protected void doFilterInternal(@Nonnull HttpServletRequest request,
+                                    @Nonnull HttpServletResponse response,
+                                    @Nonnull FilterChain filterChain) throws ServletException, IOException {
+        if (ifAuthenticationRequired(request)) {
             try {
-                if (StringUtils.hasText(jwt) && this.jwtTokenProvider.validateToken(jwt)) {
-                    Authentication authentication = this.jwtTokenProvider.getAuthentication(jwt);
-                    SecurityContextHolder.getContext().setAuthentication(authentication);
-                }
-            } catch (BaseAuthenticationException e) {
-                log.error("Handling response for {} in: {}", e.getClass().getName(), ENTITY_NAME);
-                resolveResponse(
-                    response,
-                    HttpStatusConstants.UNAUTHORIZED,
-                    baseCommon.getMessageI18n(ExceptionConstants.UNAUTHORIZED, e.getArgs())
-                );
+                String token = resolveToken(request);
+                Authentication authentication = this.jwtTokenProvider.validateToken(token);
+                SecurityContextHolder.getContext().setAuthentication(authentication);
+            } catch (BaseAuthenticationException exception) {
+                handleException(response, exception);
                 return;
-            } catch (Exception e) {
-                log.error("JwtFilter unable to process response for BaseAuthenticationException", e);
-                throw e;
+            } catch (Exception exception) {
+                log.error("JwtFilter unable to process response for BaseAuthenticationException", exception);
+                throw exception;
             }
         }
 
-        if (Objects.nonNull(filterChain))
-            filterChain.doFilter(request, response);
-        else
-            resolveResponse(
-                response,
-                HttpStatusConstants.INTERNAL_SERVER_ERROR,
-                baseCommon.getMessageI18n(ExceptionConstants.FILTER_CHAIN_NOT_FOUND)
-            );
+        filterChain.doFilter(request, response);
+    }
+
+    private boolean ifAuthenticationRequired(HttpServletRequest request) {
+        AntPathMatcher antPathMatcher = new AntPathMatcher();
+        String requestURI = request.getRequestURI();
+        log.info("JWT filter {}: {}", request.getMethod(), requestURI);
+
+        return Arrays.stream(REQUEST_MATCHERS.PUBLIC).noneMatch(pattern -> antPathMatcher.match(pattern, requestURI));
     }
 
     private String resolveToken(HttpServletRequest request) {
@@ -104,9 +87,6 @@ public class JwtTokenFilter extends OncePerRequestFilter {
                     .findFirst()
                     .map(Cookie::getValue)
                     .orElse(null);
-
-            if (StringUtils.hasText(bearerToken))
-                return bearerToken;
         }
 
         if (!StringUtils.hasText(bearerToken))
@@ -118,18 +98,21 @@ public class JwtTokenFilter extends OncePerRequestFilter {
         if (StringUtils.hasText(bearerToken) && bearerToken.startsWith(SecurityConstants.HEADER.TOKEN_TYPE))
             return bearerToken.substring(7);
 
-        return null;
+        return bearerToken;
     }
 
-    private void resolveResponse(HttpServletResponse response, int code, String message) throws IOException {
-        if (Objects.isNull(response))
-            return;
-
-        response.setStatus(code);
+    private void handleException(HttpServletResponse response, BaseException exception) throws IOException {
+        log.error("{} handling exception {}", ENTITY_NAME, exception.getClass().getName());
+        response.setStatus(HttpStatusConstants.UNAUTHORIZED);
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
         response.setCharacterEncoding(StandardCharsets.UTF_8.name());
 
-        BaseResponseDTO responseDTO = new BaseResponseDTO(code, HttpStatusConstants.STATUS.FAILED, message);
+        BaseResponseDTO responseDTO = new BaseResponseDTO(
+            HttpStatusConstants.UNAUTHORIZED,
+            HttpStatusConstants.STATUS.FAILED,
+            baseCommon.getMessageI18n(exception.getErrorKey(), exception.getArgs())
+        );
+
         response.getWriter().write(JsonUtils.toJsonString(responseDTO));
         response.flushBuffer();
     }

@@ -6,6 +6,7 @@ import com.dct.base.constants.SecurityConstants;
 import com.dct.base.dto.BaseAuthTokenDTO;
 import com.dct.base.exception.BaseAuthenticationException;
 
+import com.dct.base.exception.BaseBadRequestException;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.JwtParser;
@@ -18,18 +19,16 @@ import io.jsonwebtoken.security.SecurityException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.context.annotation.Bean;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
-import org.springframework.security.oauth2.jwt.Jwt;
-import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
 import javax.crypto.SecretKey;
+import java.time.Instant;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
@@ -49,23 +48,17 @@ public class JwtTokenProvider {
     public JwtTokenProvider(@Qualifier("security") Security securityProperties) {
         this.TOKEN_VALIDITY = securityProperties.getTokenValidity();
         this.TOKEN_VALIDITY_FOR_REMEMBER_ME = securityProperties.getTokenValidityForRememberMe();
-
         String base64SecretKey = securityProperties.getBase64SecretKey();
 
         if (!StringUtils.hasText(base64SecretKey)) {
-            throw new RuntimeException("Secret key not found to sign JWT");
+            throw new RuntimeException("Could not found secret key to sign JWT");
         }
 
         log.debug("Using a Base64-encoded JWT secret key");
         byte[] keyBytes = Decoders.BASE64.decode(base64SecretKey);
         secretKey = Keys.hmacShaKeyFor(keyBytes);
         jwtParser = Jwts.parser().verifyWith(secretKey).build();
-        log.debug("Encoded secret key with algorithm: {}", secretKey.getAlgorithm());
-    }
-
-    @Bean
-    public JwtDecoder jwtDecoder() {
-        return (String token) -> (Jwt) jwtParser.parse(token);
+        log.debug("Sign JWT with algorithm: {}", secretKey.getAlgorithm());
     }
 
     public String createToken(BaseAuthTokenDTO authTokenDTO) {
@@ -75,14 +68,12 @@ public class JwtTokenProvider {
                 .map(GrantedAuthority::getAuthority)
                 .collect(Collectors.toSet());
 
-        long now = (new Date()).getTime();
-        Date validity;
+        long validityInMiliseconds = Instant.now().toEpochMilli();
 
-        if (authTokenDTO.isRememberMe()) {
-            validity = new Date(now + this.TOKEN_VALIDITY_FOR_REMEMBER_ME);
-        } else {
-            validity = new Date(now + this.TOKEN_VALIDITY);
-        }
+        if (authTokenDTO.isRememberMe())
+            validityInMiliseconds += this.TOKEN_VALIDITY_FOR_REMEMBER_ME;
+        else
+            validityInMiliseconds += this.TOKEN_VALIDITY;
 
         return Jwts.builder()
                    .subject(authTokenDTO.getAuthentication().getName())
@@ -92,14 +83,16 @@ public class JwtTokenProvider {
                    .claim(SecurityConstants.TOKEN_PAYLOAD.AUTHORITIES, String.join(",", userAuthorities))
                    .signWith(secretKey)
                    .issuedAt(new Date())
-                   .expiration(validity)
+                   .expiration(new Date(validityInMiliseconds))
                    .compact();
     }
 
-    public boolean validateToken(String authToken) {
+    public Authentication validateToken(String authToken) {
+        if (!StringUtils.hasText(authToken))
+            throw new BaseBadRequestException(ENTITY_NAME, ExceptionConstants.BAD_CREDENTIALS);
+
         try {
-            jwtParser.parse(authToken);
-            return true;
+            return getAuthentication(authToken);
         } catch (ExpiredJwtException | MalformedJwtException | SecurityException e) {
             log.error("Invalid JWT token: {} - {}", e.getClass().getName(), e.getMessage());
         } catch (IllegalArgumentException e) {
@@ -109,12 +102,12 @@ public class JwtTokenProvider {
         throw new BaseAuthenticationException(ENTITY_NAME, ExceptionConstants.TOKEN_INVALID_OR_EXPIRED);
     }
 
-    public Authentication getAuthentication(String token) {
+    private Authentication getAuthentication(String token) {
         Claims claims = (Claims) jwtParser.parse(token).getPayload();
         String authorities = (String) claims.get(SecurityConstants.TOKEN_PAYLOAD.AUTHORITIES);
 
         if (!StringUtils.hasText(authorities)) {
-            throw new BaseAuthenticationException(ENTITY_NAME, ExceptionConstants.TOKEN_INVALID_OR_EXPIRED);
+            throw new BaseAuthenticationException(ENTITY_NAME, ExceptionConstants.FORBIDDEN);
         }
 
         Collection<SimpleGrantedAuthority> userAuthorities = Arrays.stream(authorities.split(","))
