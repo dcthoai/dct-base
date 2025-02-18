@@ -36,19 +36,19 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 @Component
-public class JwtTokenProvider {
+public class JwtProvider {
 
-    private static final Logger log = LoggerFactory.getLogger(JwtTokenProvider.class);
+    private static final Logger log = LoggerFactory.getLogger(JwtProvider.class);
     private static final String ENTITY_NAME = "JwtTokenProvider";
     private final SecretKey secretKey;
     private final JwtParser jwtParser;
     private final long TOKEN_VALIDITY;
     private final long TOKEN_VALIDITY_FOR_REMEMBER_ME;
 
-    public JwtTokenProvider(@Qualifier("security") Security securityProperties) {
-        this.TOKEN_VALIDITY = securityProperties.getTokenValidity();
-        this.TOKEN_VALIDITY_FOR_REMEMBER_ME = securityProperties.getTokenValidityForRememberMe();
-        String base64SecretKey = securityProperties.getBase64SecretKey();
+    public JwtProvider(@Qualifier("security") Security security) {
+        this.TOKEN_VALIDITY = security.getTokenValidity();
+        this.TOKEN_VALIDITY_FOR_REMEMBER_ME = security.getTokenValidityForRememberMe();
+        String base64SecretKey = security.getBase64SecretKey();
 
         if (!StringUtils.hasText(base64SecretKey)) {
             throw new RuntimeException("Could not found secret key to sign JWT");
@@ -68,12 +68,12 @@ public class JwtTokenProvider {
                 .map(GrantedAuthority::getAuthority)
                 .collect(Collectors.toSet());
 
-        long validityInMiliseconds = Instant.now().toEpochMilli();
+        long validityInMilliseconds = Instant.now().toEpochMilli();
 
         if (authTokenDTO.isRememberMe())
-            validityInMiliseconds += this.TOKEN_VALIDITY_FOR_REMEMBER_ME;
+            validityInMilliseconds += this.TOKEN_VALIDITY_FOR_REMEMBER_ME;
         else
-            validityInMiliseconds += this.TOKEN_VALIDITY;
+            validityInMilliseconds += this.TOKEN_VALIDITY;
 
         return Jwts.builder()
                    .subject(authTokenDTO.getAuthentication().getName())
@@ -83,7 +83,7 @@ public class JwtTokenProvider {
                    .claim(SecurityConstants.TOKEN_PAYLOAD.AUTHORITIES, String.join(",", userAuthorities))
                    .signWith(secretKey)
                    .issuedAt(new Date())
-                   .expiration(new Date(validityInMiliseconds))
+                   .expiration(new Date(validityInMilliseconds))
                    .compact();
     }
 

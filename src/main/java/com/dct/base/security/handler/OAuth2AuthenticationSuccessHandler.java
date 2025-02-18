@@ -3,7 +3,7 @@ package com.dct.base.security.handler;
 import com.dct.base.constants.PropertiesConstants;
 import com.dct.base.dto.response.BaseResponseDTO;
 import com.dct.base.security.model.OAuth2UserInfoResponse;
-import com.dct.base.service.GoogleAuthenticateService;
+import com.dct.base.service.GoogleAuthenticationService;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.Cookie;
@@ -33,12 +33,12 @@ import java.util.Map;
 public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
 
     private static final Logger log = LoggerFactory.getLogger(OAuth2AuthenticationSuccessHandler.class);
-    private final GoogleAuthenticateService googleAuthenticateService;
+    private final GoogleAuthenticationService googleAuthenticationService;
     private final ObjectMapper objectMapper;
 
-    public OAuth2AuthenticationSuccessHandler(@Lazy GoogleAuthenticateService googleAuthenticateService,
+    public OAuth2AuthenticationSuccessHandler(@Lazy GoogleAuthenticationService googleAuthenticationService,
                                               ObjectMapper objectMapper) {
-        this.googleAuthenticateService = googleAuthenticateService;
+        this.googleAuthenticationService = googleAuthenticationService;
         this.objectMapper = objectMapper;
         log.debug("Configured 'OAuth2AuthenticationSuccessHandler' for use");
     }
@@ -65,7 +65,7 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
         OAuth2UserInfoResponse userInfoResponse = objectMapper.convertValue(userInfo, OAuth2UserInfoResponse.class);
 
         // Check and create default account information for the user and create an access token stored in cookies
-        BaseResponseDTO responseDTO = googleAuthenticateService.authorize(userInfoResponse);
+        BaseResponseDTO responseDTO = googleAuthenticationService.authorize(userInfoResponse);
         Cookie tokenCookie = (Cookie) responseDTO.getResult();
 
         tokenCookie.setHttpOnly(true);

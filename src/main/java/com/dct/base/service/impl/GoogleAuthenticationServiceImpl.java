@@ -11,12 +11,12 @@ import com.dct.base.dto.request.RegisterRequestDTO;
 import com.dct.base.dto.response.BaseResponseDTO;
 import com.dct.base.entity.Account;
 import com.dct.base.exception.BaseAuthenticationException;
-import com.dct.base.security.jwt.JwtTokenProvider;
+import com.dct.base.security.jwt.JwtProvider;
 import com.dct.base.security.model.OAuth2TokenResponse;
 import com.dct.base.security.model.OAuth2UserInfoResponse;
 import com.dct.base.security.service.GoogleOAuth2Service;
 import com.dct.base.service.AccountService;
-import com.dct.base.service.GoogleAuthenticateService;
+import com.dct.base.service.GoogleAuthenticationService;
 
 import jakarta.servlet.http.Cookie;
 import org.slf4j.Logger;
@@ -35,16 +35,16 @@ import static org.hibernate.id.IdentifierGenerator.ENTITY_NAME;
 
 @Service
 @ConditionalOnProperty(name = PropertiesConstants.OAUTH2_ACTIVE_STATUS, havingValue = "true")
-public class GoogleAuthenticateServiceImpl implements GoogleAuthenticateService {
+public class GoogleAuthenticationServiceImpl implements GoogleAuthenticationService {
 
-    private static final Logger log = LoggerFactory.getLogger(GoogleAuthenticateServiceImpl.class);
+    private static final Logger log = LoggerFactory.getLogger(GoogleAuthenticationServiceImpl.class);
     private final AccountService accountService;
-    private final JwtTokenProvider tokenProvider;
+    private final JwtProvider tokenProvider;
     private final GoogleOAuth2Service googleOAuth2Service;
 
-    public GoogleAuthenticateServiceImpl(AccountService accountService,
-                                         JwtTokenProvider tokenProvider,
-                                         GoogleOAuth2Service googleOAuth2Service) {
+    public GoogleAuthenticationServiceImpl(AccountService accountService,
+                                           JwtProvider tokenProvider,
+                                           GoogleOAuth2Service googleOAuth2Service) {
         this.accountService = accountService;
         this.tokenProvider = tokenProvider;
         this.googleOAuth2Service = googleOAuth2Service;

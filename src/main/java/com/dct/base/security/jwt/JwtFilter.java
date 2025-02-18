@@ -36,15 +36,15 @@ import java.util.Objects;
  * @author thoaidc
  */
 @Component
-public class JwtTokenFilter extends OncePerRequestFilter {
+public class JwtFilter extends OncePerRequestFilter {
 
-    private static final Logger log = LoggerFactory.getLogger(JwtTokenFilter.class);
+    private static final Logger log = LoggerFactory.getLogger(JwtFilter.class);
     private static final String ENTITY_NAME = "JwtTokenFilter";
-    private final JwtTokenProvider jwtTokenProvider;
+    private final JwtProvider jwtProvider;
     private final BaseCommon baseCommon;
 
-    public JwtTokenFilter(JwtTokenProvider jwtTokenProvider, BaseCommon baseCommon) {
-        this.jwtTokenProvider = jwtTokenProvider;
+    public JwtFilter(JwtProvider jwtProvider, BaseCommon baseCommon) {
+        this.jwtProvider = jwtProvider;
         this.baseCommon = baseCommon;
     }
 
@@ -55,7 +55,7 @@ public class JwtTokenFilter extends OncePerRequestFilter {
         if (ifAuthenticationRequired(request)) {
             try {
                 String token = resolveToken(request);
-                Authentication authentication = this.jwtTokenProvider.validateToken(token);
+                Authentication authentication = this.jwtProvider.validateToken(token);
                 SecurityContextHolder.getContext().setAuthentication(authentication);
             } catch (BaseAuthenticationException exception) {
                 handleException(response, exception);

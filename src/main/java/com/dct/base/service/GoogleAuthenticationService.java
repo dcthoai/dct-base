@@ -4,7 +4,7 @@ import com.dct.base.dto.response.BaseResponseDTO;
 import com.dct.base.security.model.OAuth2UserInfoResponse;
 
 @SuppressWarnings("unused")
-public interface GoogleAuthenticateService {
+public interface GoogleAuthenticationService {
 
     BaseResponseDTO authorize(String code);
     BaseResponseDTO authorize(OAuth2UserInfoResponse userInfo);

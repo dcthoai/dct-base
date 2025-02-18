@@ -10,7 +10,7 @@ import org.springframework.context.annotation.Configuration;
  */
 @Configuration
 @ConfigurationProperties(prefix = PropertiesConstants.UPLOAD_RESOURCE_PROPERTIES)
-public class UploadResourceProperties {
+public class UploadResourceConfig {
 
     private String uploadPath;
 

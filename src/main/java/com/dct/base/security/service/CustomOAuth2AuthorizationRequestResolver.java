@@ -1,8 +1,9 @@
 package com.dct.base.security.service;
 
-import com.dct.base.config.properties.OAuth2ConfigProperties;
+import com.dct.base.config.properties.OAuth2Config;
 import jakarta.servlet.http.HttpServletRequest;
 
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
 import org.springframework.security.oauth2.client.web.DefaultOAuth2AuthorizationRequestResolver;
 import org.springframework.security.oauth2.client.web.OAuth2AuthorizationRequestResolver;
@@ -22,10 +23,10 @@ public class CustomOAuth2AuthorizationRequestResolver implements OAuth2Authoriza
 
     private static final Logger log = LoggerFactory.getLogger(CustomOAuth2AuthorizationRequestResolver.class);
     private final DefaultOAuth2AuthorizationRequestResolver delegate;
-    private final OAuth2ConfigProperties oAuth2Configs;
+    private final OAuth2Config oAuth2Configs;
 
     public CustomOAuth2AuthorizationRequestResolver(ClientRegistrationRepository client,
-                                                    OAuth2ConfigProperties oAuth2Configs) {
+                                                    @Qualifier("OAuth2Config") OAuth2Config oAuth2Configs) {
         this.oAuth2Configs = oAuth2Configs;
         this.delegate = new DefaultOAuth2AuthorizationRequestResolver(client, this.oAuth2Configs.getBaseAuthorizeUri());
         log.debug("'CustomOAuth2AuthorizationRequestResolver' is configured for use");

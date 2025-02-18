@@ -4,8 +4,8 @@ import com.dct.base.config.InterceptorConfig;
 import com.dct.base.constants.SecurityConstants;
 import com.dct.base.security.handler.CustomAccessDeniedHandler;
 import com.dct.base.security.handler.CustomAuthenticationEntryPoint;
+import com.dct.base.security.jwt.JwtFilter;
 import com.dct.base.security.service.CustomUserDetailsService;
-import com.dct.base.security.jwt.JwtTokenFilter;
 import com.dct.base.exception.handler.CustomExceptionHandler;
 
 import org.slf4j.Logger;
@@ -64,18 +64,18 @@ public class SecurityConfig {
 
     private static final Logger log = LoggerFactory.getLogger(SecurityConfig.class);
     private final CorsFilter corsFilter;
-    private final JwtTokenFilter jwtTokenFilter;
+    private final JwtFilter jwtFilter;
     private final CustomAccessDeniedHandler accessDeniedHandler;
     private final CustomAuthenticationEntryPoint authenticationEntryPoint;
     private final OAuth2ClientConfig oAuth2ClientConfig;
 
     public SecurityConfig(CorsFilter corsFilter,
-                          JwtTokenFilter jwtTokenFilter,
+                          JwtFilter jwtFilter,
                           CustomAccessDeniedHandler accessDeniedHandler,
                           CustomAuthenticationEntryPoint authenticationEntryPoint,
                           @Autowired(required = false) OAuth2ClientConfig oAuth2ClientConfig) {
         this.corsFilter = corsFilter;
-        this.jwtTokenFilter = jwtTokenFilter;
+        this.jwtFilter = jwtFilter;
         this.accessDeniedHandler = accessDeniedHandler;
         this.authenticationEntryPoint = authenticationEntryPoint;
         this.oAuth2ClientConfig = oAuth2ClientConfig;
@@ -89,8 +89,8 @@ public class SecurityConfig {
      *   <li>
      *     Config filters:
      *     <ul>
-     *       <li>Places the {@link InterceptorConfig#corsFilter()} before the {@link JwtTokenFilter}</li>
-     *       <li>Places the {@link JwtTokenFilter} before the {@link UsernamePasswordAuthenticationFilter}</li>
+     *       <li>Places the {@link InterceptorConfig#corsFilter()} before the {@link JwtFilter}</li>
+     *       <li>Places the {@link JwtFilter} before the {@link UsernamePasswordAuthenticationFilter}</li>
      *     </ul>
      *   </li>
      *   <li>
@@ -159,8 +159,8 @@ public class SecurityConfig {
         log.debug("Configuring SecurityFilterChain");
         http.csrf(AbstractHttpConfigurer::disable) // Because of using JWT, CSRF is not required
             .cors(Customizer.withDefaults())
-            .addFilterBefore(jwtTokenFilter, UsernamePasswordAuthenticationFilter.class)
-            .addFilterBefore(corsFilter, JwtTokenFilter.class)
+            .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
+            .addFilterBefore(corsFilter, JwtFilter.class)
             .exceptionHandling(handler -> handler
                 .authenticationEntryPoint(authenticationEntryPoint)
                 .accessDeniedHandler(accessDeniedHandler)

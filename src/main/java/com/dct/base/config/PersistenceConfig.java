@@ -1,6 +1,6 @@
 package com.dct.base.config;
 
-import com.dct.base.config.properties.JpaProperties;
+import com.dct.base.config.properties.JpaConfig;
 import com.dct.base.constants.BaseConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,10 +36,10 @@ import jakarta.persistence.EntityManagerFactory;
 public class PersistenceConfig {
 
     private static final Logger log = LoggerFactory.getLogger(PersistenceConfig.class);
-    private final JpaProperties jpaProperties;
+    private final JpaConfig jpaConfig;
 
-    public PersistenceConfig(@Qualifier("jpaProperties") JpaProperties jpaProperties) {
-        this.jpaProperties = jpaProperties;
+    public PersistenceConfig(@Qualifier("jpaConfig") JpaConfig jpaConfig) {
+        this.jpaConfig = jpaConfig;
     }
 
     /**
@@ -67,12 +67,12 @@ public class PersistenceConfig {
     @Bean(name = "entityManagerFactory")
     public LocalContainerEntityManagerFactoryBean entityManagerFactory(EntityManagerFactoryBuilder builder,
                                                                        @Qualifier("dataSource") DataSource dataSource) {
-        List<String> basePackages = jpaProperties.getBaseEntityPackages();
+        List<String> basePackages = jpaConfig.getBaseEntityPackages();
         log.debug("EntityManagerFactory initialized successful. Scan for packages: {}", basePackages);
 
         return builder.dataSource(dataSource)
                 .packages(basePackages.toArray(new String[0])) // Convert List to string array
-                .persistenceUnit(jpaProperties.getPersistenceUnitName())
+                .persistenceUnit(jpaConfig.getPersistenceUnitName())
                 .build();
     }
 }

@@ -1,7 +1,7 @@
 package com.dct.base.web.rest;
 
-import com.dct.base.config.properties.GoogleOAuth2Properties;
-import com.dct.base.config.properties.OAuth2ConfigProperties;
+import com.dct.base.config.properties.GoogleOAuth2Config;
+import com.dct.base.config.properties.OAuth2Config;
 import com.dct.base.dto.response.BaseResponseDTO;
 import com.dct.base.security.service.CustomOAuth2AuthorizationRequestResolver;
 import jakarta.servlet.http.HttpServletRequest;
@@ -26,15 +26,15 @@ public class GoogleOAuth2Resource {
 
     private static final Logger log = LoggerFactory.getLogger(GoogleOAuth2Resource.class);
     private final CustomOAuth2AuthorizationRequestResolver authorizationRequestResolver;
-    private final OAuth2ConfigProperties oAuth2Configs;
-    private final GoogleOAuth2Properties googleOAuth2Properties;
+    private final OAuth2Config oAuth2Configs;
+    private final GoogleOAuth2Config googleOAuth2Config;
 
     public GoogleOAuth2Resource(CustomOAuth2AuthorizationRequestResolver authorizationRequestResolver,
-                                @Qualifier("OAuth2ConfigProperties") OAuth2ConfigProperties oAuth2Configs,
-                                @Qualifier("googleOAuth2Properties") GoogleOAuth2Properties googleOAuth2Properties) {
+                                @Qualifier("OAuth2Config") OAuth2Config oAuth2Configs,
+                                @Qualifier("googleOAuth2Config") GoogleOAuth2Config googleOAuth2Config) {
         this.authorizationRequestResolver = authorizationRequestResolver;
         this.oAuth2Configs = oAuth2Configs;
-        this.googleOAuth2Properties = googleOAuth2Properties;
+        this.googleOAuth2Config = googleOAuth2Config;
     }
 
     @GetMapping("/p/common/auth/oauth2/authorize/url/google")
@@ -42,7 +42,7 @@ public class GoogleOAuth2Resource {
     public BaseResponseDTO getGoogleAuthUrl(HttpServletRequest request) {
         OAuth2AuthorizationRequest authorizationRequest = authorizationRequestResolver.resolve(
             request,
-            googleOAuth2Properties.getClientRegistrationId()
+            googleOAuth2Config.getClientRegistrationId()
         );
 
         if (authorizationRequest == null) {
@@ -71,7 +71,7 @@ public class GoogleOAuth2Resource {
         }
 
         // Redirect to Spring Security default URL, keeping all query params intact
-        String redirectUrl = oAuth2Configs.getDefaultRedirectUri() + googleOAuth2Properties.getClientRegistrationId();
+        String redirectUrl = oAuth2Configs.getDefaultRedirectUri() + googleOAuth2Config.getClientRegistrationId();
         response.sendRedirect(redirectUrl + '?' + request.getQueryString());
     }
 }

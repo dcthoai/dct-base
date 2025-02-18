@@ -1,6 +1,6 @@
 package com.dct.base.common;
 
-import com.dct.base.config.properties.UploadResourceProperties;
+import com.dct.base.config.properties.UploadResourceConfig;
 import com.dct.base.constants.BaseConstants;
 import com.dct.base.dto.ImageDTO;
 
@@ -34,8 +34,8 @@ public class FileUtils {
     private static final Logger log = LoggerFactory.getLogger(FileUtils.class);
     private final String UPLOAD_PATH;
 
-    public FileUtils(@Qualifier("uploadResourceProperties") UploadResourceProperties uploadResourceProperties) {
-        UPLOAD_PATH = uploadResourceProperties.getUploadPath();
+    public FileUtils(@Qualifier("uploadResourceConfig") UploadResourceConfig uploadResourceConfig) {
+        UPLOAD_PATH = uploadResourceConfig.getUploadPath();
     }
 
     public static boolean invalidUploadFile(MultipartFile file) {

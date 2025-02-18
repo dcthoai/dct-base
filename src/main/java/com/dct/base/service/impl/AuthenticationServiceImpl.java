@@ -10,7 +10,7 @@ import com.dct.base.dto.response.BaseResponseDTO;
 import com.dct.base.exception.BaseAuthenticationException;
 import com.dct.base.exception.BaseBadRequestException;
 import com.dct.base.security.model.CustomUserDetails;
-import com.dct.base.security.jwt.JwtTokenProvider;
+import com.dct.base.security.jwt.JwtProvider;
 import com.dct.base.service.AuthenticationService;
 
 import jakarta.servlet.http.Cookie;
@@ -27,15 +27,14 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 @Service
-public class AuthenticateServiceImpl implements AuthenticationService {
+public class AuthenticationServiceImpl implements AuthenticationService {
 
-    private static final Logger log = LoggerFactory.getLogger(AuthenticateServiceImpl.class);
-    private static final String ENTITY_NAME = "AuthServiceImpl";
-    private final JwtTokenProvider tokenProvider;
+    private static final Logger log = LoggerFactory.getLogger(AuthenticationServiceImpl.class);
+    private static final String ENTITY_NAME = "AuthenticationServiceImpl";
+    private final JwtProvider tokenProvider;
     private final AuthenticationManager authenticationManager;
 
-    public AuthenticateServiceImpl(JwtTokenProvider tokenProvider,
-                           AuthenticationManager authenticationManager) {
+    public AuthenticationServiceImpl(JwtProvider tokenProvider, AuthenticationManager authenticationManager) {
         this.tokenProvider = tokenProvider;
         this.authenticationManager = authenticationManager;
     }

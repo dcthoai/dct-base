@@ -27,7 +27,7 @@ import java.util.List;
 @Configuration
 @ConditionalOnProperty(name = PropertiesConstants.OAUTH2_ACTIVE_STATUS, havingValue = "true")
 @ConfigurationProperties(prefix = PropertiesConstants.GOOGLE_OAUTH2_PROPERTIES)
-public class GoogleOAuth2Properties {
+public class GoogleOAuth2Config {
 
     private String clientRegistrationId;
     private String clientID;

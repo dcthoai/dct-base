@@ -2,7 +2,7 @@ package com.dct.base.constants;
 
 import com.dct.base.config.InterceptorConfig;
 import com.dct.base.dto.BaseAuthTokenDTO;
-import com.dct.base.security.jwt.JwtTokenProvider;
+import com.dct.base.security.jwt.JwtProvider;
 import com.dct.base.security.config.SecurityConfig;
 import com.dct.base.aop.CheckAuthorize;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -20,7 +20,7 @@ public interface SecurityConstants {
 
     /**
      * The corresponding keys to store information in the payload of a JWT token <p>
-     * See {@link JwtTokenProvider#createToken(BaseAuthTokenDTO)} for details
+     * See {@link JwtProvider#createToken(BaseAuthTokenDTO)} for details
      */
     interface TOKEN_PAYLOAD {
         String USER_ID = "userID";

@@ -23,7 +23,7 @@ import java.util.List;
  */
 @Component
 @ConfigurationProperties(prefix = PropertiesConstants.JPA_PROPERTIES)
-public class JpaProperties {
+public class JpaConfig {
 
     private List<String> baseRepositoryPackages;
     private List<String> baseEntityPackages;

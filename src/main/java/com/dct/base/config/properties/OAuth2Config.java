@@ -25,7 +25,7 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 @ConditionalOnProperty(name = PropertiesConstants.OAUTH2_ACTIVE_STATUS, havingValue = "true")
 @ConfigurationProperties(prefix = PropertiesConstants.OAUTH2_CONFIG_PROPERTIES)
-public class OAuth2ConfigProperties {
+public class OAuth2Config {
 
     private boolean enabled;
     private String baseAuthorizeUri;

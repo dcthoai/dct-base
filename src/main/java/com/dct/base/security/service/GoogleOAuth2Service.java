@@ -1,8 +1,8 @@
 package com.dct.base.security.service;
 
 import com.dct.base.common.JsonUtils;
-import com.dct.base.config.properties.GoogleOAuth2Properties;
-import com.dct.base.config.properties.OAuth2ConfigProperties;
+import com.dct.base.config.properties.GoogleOAuth2Config;
+import com.dct.base.config.properties.OAuth2Config;
 import com.dct.base.constants.ExceptionConstants;
 import com.dct.base.constants.PropertiesConstants;
 import com.dct.base.exception.BaseBadRequestException;
@@ -33,15 +33,15 @@ public class GoogleOAuth2Service {
 
     private static final Logger log = LoggerFactory.getLogger(GoogleOAuth2Service.class);
     private static final String ENTITY_NAME = "GoogleOAuth2Service";
-    private final OAuth2ConfigProperties oAuth2Configs;
-    private final GoogleOAuth2Properties googleOAuth2Properties;
+    private final OAuth2Config oAuth2Configs;
+    private final GoogleOAuth2Config googleOAuth2Config;
     private final RestTemplate restTemplate;
 
-    public GoogleOAuth2Service(@Qualifier("OAuth2ConfigProperties") OAuth2ConfigProperties oAuth2ConfigProperties,
-                               @Qualifier("googleOAuth2Properties") GoogleOAuth2Properties googleOAuth2Properties,
+    public GoogleOAuth2Service(@Qualifier("OAuth2Config") OAuth2Config oAuth2Config,
+                               @Qualifier("googleOAuth2Config") GoogleOAuth2Config googleOAuth2Config,
                                RestTemplate restTemplate) {
-        this.oAuth2Configs = oAuth2ConfigProperties;
-        this.googleOAuth2Properties = googleOAuth2Properties;
+        this.oAuth2Configs = oAuth2Config;
+        this.googleOAuth2Config = googleOAuth2Config;
         this.restTemplate = restTemplate;
     }
 
@@ -49,9 +49,9 @@ public class GoogleOAuth2Service {
         MultiValueMap<String, String> config = new LinkedMultiValueMap<>();
 
         config.add("code", authorizationCode);
-        config.add("client_id", googleOAuth2Properties.getClientID());
-        config.add("client_secret", googleOAuth2Properties.getClientSecret());
-        config.add("redirect_uri", oAuth2Configs.getRedirectUri() + googleOAuth2Properties.getClientRegistrationId());
+        config.add("client_id", googleOAuth2Config.getClientID());
+        config.add("client_secret", googleOAuth2Config.getClientSecret());
+        config.add("redirect_uri", oAuth2Configs.getRedirectUri() + googleOAuth2Config.getClientRegistrationId());
         config.add("grant_type", AuthorizationGrantType.AUTHORIZATION_CODE.getValue());
 
         return config;
@@ -65,7 +65,7 @@ public class GoogleOAuth2Service {
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
             HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(getGoogleOAuth2Config(code), headers);
-            ResponseEntity<String> response = restTemplate.postForEntity(googleOAuth2Properties.getTokenUri(), request, String.class);
+            ResponseEntity<String> response = restTemplate.postForEntity(googleOAuth2Config.getTokenUri(), request, String.class);
 
             if (response.getStatusCode().isError()) {
                 log.error("Failed to get access token. Status: {} - {}", response.getStatusCode(), response.getBody());
@@ -100,7 +100,7 @@ public class GoogleOAuth2Service {
         try {
             HttpHeaders headers = new HttpHeaders();
             headers.setBearerAuth(accessToken);
-            String url = googleOAuth2Properties.getUserInfoUri();
+            String url = googleOAuth2Config.getUserInfoUri();
             HttpEntity<Void> request = new HttpEntity<>(headers);
             ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.GET, request, String.class);
 
