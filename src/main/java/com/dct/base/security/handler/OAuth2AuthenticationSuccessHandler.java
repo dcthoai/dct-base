@@ -19,6 +19,7 @@ import org.springframework.security.oauth2.client.authentication.OAuth2Authentic
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
 
+import java.io.IOException;
 import java.util.Map;
 
 /**
@@ -56,7 +57,7 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request,
                                         HttpServletResponse response,
-                                        Authentication authentication) {
+                                        Authentication authentication) throws IOException {
         log.debug("OAuth2AuthenticationSuccessHandler is active");
         OAuth2AuthenticationToken authToken = (OAuth2AuthenticationToken) authentication;
 
@@ -74,5 +75,9 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
 
         response.addCookie(tokenCookie);
         log.debug("Set token in secure cookie successful");
+
+        response.setHeader("Content-Type", "text/html");
+        response.getWriter().write("<script>window.opener.postMessage('auth-success', '*'); window.close();</script>");
+        response.flushBuffer();
     }
 }

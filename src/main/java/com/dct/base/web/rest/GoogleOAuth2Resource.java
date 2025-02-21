@@ -14,7 +14,6 @@ import org.springframework.security.oauth2.client.web.HttpSessionOAuth2Authoriza
 import org.springframework.security.oauth2.core.endpoint.OAuth2AuthorizationRequest;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.io.IOException;
@@ -38,7 +37,6 @@ public class GoogleOAuth2Resource {
     }
 
     @GetMapping("/p/common/auth/oauth2/authorize/url/google")
-    @ResponseBody
     public BaseResponseDTO getGoogleAuthUrl(HttpServletRequest request) {
         OAuth2AuthorizationRequest authorizationRequest = authorizationRequestResolver.resolve(
             request,
@@ -48,8 +46,6 @@ public class GoogleOAuth2Resource {
         if (authorizationRequest == null) {
             throw new RuntimeException("Authorization request not found");
         }
-
-        System.out.println(authorizationRequest.getState());
 
         String sessionOAuth2AuthorizationRequestName = HttpSessionOAuth2AuthorizationRequestRepository.class.getName();
         String sessionAttributeName = sessionOAuth2AuthorizationRequestName + ".AUTHORIZATION_REQUEST";

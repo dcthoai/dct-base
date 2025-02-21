@@ -13,16 +13,10 @@ public class Welcome {
 
     private static final Logger log = LoggerFactory.getLogger(Welcome.class);
 
-    @GetMapping(value = {"", "/"})
+    @GetMapping
     @ResponseBody
     public String welcome() {
         log.info("Welcome to homepage!!!");
         return "<h1 style=\"width: 300px; margin: 0 auto; margin-top: 45vh;\">Welcome to DCT</h1>";
-    }
-
-    @GetMapping(value = "/test")
-    @ResponseBody
-    public String test() {
-        return "Authenticated successful!!!";
     }
 }
