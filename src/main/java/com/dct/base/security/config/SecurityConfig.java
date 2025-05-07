@@ -5,13 +5,17 @@ import com.dct.base.constants.SecurityConstants;
 import com.dct.base.security.handler.CustomAccessDeniedHandler;
 import com.dct.base.security.handler.CustomAuthenticationEntryPoint;
 import com.dct.base.security.jwt.JwtFilter;
+import com.dct.base.exception.handler.CustomExceptionHandler;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
@@ -20,6 +24,8 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer.FrameOptionsConfig;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
@@ -161,6 +167,23 @@ public class SecurityConfig {
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration auth) throws Exception {
         return auth.getAuthenticationManager();
+    }
+
+    /**
+     * Configure a custom AuthenticationProvider to replace the default provider in Spring Security <p>
+     * Method `setHideUserNotFoundExceptions` allows {@link UsernameNotFoundException} to be thrown
+     * when an account is not found instead of convert to {@link BadCredentialsException} by default <p>
+     * After that, the {@link UsernameNotFoundException} will be handle by {@link CustomExceptionHandler}
+     */
+    @Bean
+    @ConditionalOnBean(UserDetailsService.class)
+    public DaoAuthenticationProvider authenticationProvider(UserDetailsService userDetailsService,
+                                                            PasswordEncoder passwordEncoder) {
+        DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
+        provider.setUserDetailsService(userDetailsService);
+        provider.setPasswordEncoder(passwordEncoder);
+        provider.setHideUserNotFoundExceptions(false);
+        return provider;
     }
 
     @Bean
