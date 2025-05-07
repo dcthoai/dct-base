@@ -8,6 +8,7 @@ import com.dct.base.dto.response.BaseResponseDTO;
 import com.dct.base.exception.BaseAuthenticationException;
 import com.dct.base.exception.BaseBadRequestException;
 import com.dct.base.exception.BaseException;
+import com.dct.base.security.config.SecurityPathConfig;
 
 import jakarta.annotation.Nonnull;
 import jakarta.servlet.FilterChain;
@@ -22,12 +23,14 @@ import org.springframework.http.MediaType;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
+import org.springframework.util.AntPathMatcher;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -41,29 +44,40 @@ public class JwtFilter extends OncePerRequestFilter {
     private static final String ENTITY_NAME = "JwtTokenFilter";
     private final JwtProvider jwtProvider;
     private final MessageUtils messageUtils;
+    private final List<String> securityPublicApiPatterns;
 
-    public JwtFilter(JwtProvider jwtProvider, MessageUtils messageUtils) {
+    public JwtFilter(JwtProvider jwtProvider, MessageUtils messageUtils, SecurityPathConfig securityPathConfig) {
         this.jwtProvider = jwtProvider;
         this.messageUtils = messageUtils;
+        this.securityPublicApiPatterns = securityPathConfig.getPublicPaths();
     }
 
     @Override
     protected void doFilterInternal(@Nonnull HttpServletRequest request,
                                     @Nonnull HttpServletResponse response,
                                     @Nonnull FilterChain filterChain) throws ServletException, IOException {
-        try {
-            String token = resolveToken(request);
-            Authentication authentication = this.jwtProvider.validateToken(token);
-            SecurityContextHolder.getContext().setAuthentication(authentication);
-        } catch (BaseBadRequestException | BaseAuthenticationException exception) {
-            handleException(response, exception);
-            return;
-        } catch (Exception exception) {
-            log.error("JwtFilter unable to process response for: {}", exception.getClass().getName(), exception);
-            throw exception;
+        if (ifAuthenticationRequired(request)) {
+            try {
+                String token = resolveToken(request);
+                Authentication authentication = this.jwtProvider.validateToken(token);
+                SecurityContextHolder.getContext().setAuthentication(authentication);
+            } catch (BaseBadRequestException | BaseAuthenticationException exception) {
+                handleException(response, exception);
+                return;
+            } catch (Exception exception) {
+                log.error("JwtFilter unable to process response for: {}", exception.getClass().getName(), exception);
+                throw exception;
+            }
         }
 
         filterChain.doFilter(request, response);
+    }
+
+    private boolean ifAuthenticationRequired(HttpServletRequest request) {
+        AntPathMatcher antPathMatcher = new AntPathMatcher();
+        String requestURI = request.getRequestURI();
+        log.info("Filtering {}: {}", request.getMethod(), requestURI);
+        return securityPublicApiPatterns.stream().noneMatch(pattern -> antPathMatcher.match(pattern, requestURI));
     }
 
     private String resolveToken(HttpServletRequest request) {
