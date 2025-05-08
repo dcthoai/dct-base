@@ -8,7 +8,7 @@ import com.dct.base.dto.response.BaseResponseDTO;
 import com.dct.base.exception.BaseAuthenticationException;
 import com.dct.base.exception.BaseBadRequestException;
 import com.dct.base.exception.BaseException;
-import com.dct.base.security.config.SecurityPathConfig;
+import com.dct.base.security.config.SecurityAuthorizeHttpRequest;
 
 import jakarta.annotation.Nonnull;
 import jakarta.servlet.FilterChain;
@@ -30,7 +30,6 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
-import java.util.List;
 import java.util.Objects;
 
 /**
@@ -44,12 +43,14 @@ public class JwtFilter extends OncePerRequestFilter {
     private static final String ENTITY_NAME = "JwtTokenFilter";
     private final JwtProvider jwtProvider;
     private final MessageUtils messageUtils;
-    private final List<String> securityPublicApiPatterns;
+    private final String[] securityPublicApiPatterns;
 
-    public JwtFilter(JwtProvider jwtProvider, MessageUtils messageUtils, SecurityPathConfig securityPathConfig) {
+    public JwtFilter(JwtProvider jwtProvider,
+                     MessageUtils messageUtils,
+                     SecurityAuthorizeHttpRequest securityAuthorizeHttpRequest) {
         this.jwtProvider = jwtProvider;
         this.messageUtils = messageUtils;
-        this.securityPublicApiPatterns = securityPathConfig.getPublicPaths();
+        this.securityPublicApiPatterns = securityAuthorizeHttpRequest.getPublicPatterns();
     }
 
     @Override
@@ -77,7 +78,7 @@ public class JwtFilter extends OncePerRequestFilter {
         AntPathMatcher antPathMatcher = new AntPathMatcher();
         String requestURI = request.getRequestURI();
         log.info("Filtering {}: {}", request.getMethod(), requestURI);
-        return securityPublicApiPatterns.stream().noneMatch(pattern -> antPathMatcher.match(pattern, requestURI));
+        return Arrays.stream(securityPublicApiPatterns).noneMatch(pattern -> antPathMatcher.match(pattern, requestURI));
     }
 
     private String resolveToken(HttpServletRequest request) {

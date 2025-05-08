@@ -62,16 +62,18 @@ public class BaseDefaultSecurityConfigurer {
     private final JwtFilter jwtFilter;
     private final CustomAccessDeniedHandler accessDeniedHandler;
     private final CustomAuthenticationEntryPoint authenticationEntryPoint;
-    private final String[] DEFAULT_PUBLIC_API_PATTERNS = SecurityConstants.REQUEST_MATCHERS.DEFAULT_PUBLIC_API_PATTERNS;
+    private final SecurityAuthorizeHttpRequest defaultAuthorizeRequest;
 
     public BaseDefaultSecurityConfigurer(CorsFilter corsFilter,
-                                 JwtFilter jwtFilter,
-                                 CustomAccessDeniedHandler accessDeniedHandler,
-                                 CustomAuthenticationEntryPoint authenticationEntryPoint) {
+                                         JwtFilter jwtFilter,
+                                         CustomAccessDeniedHandler accessDeniedHandler,
+                                         CustomAuthenticationEntryPoint authenticationEntryPoint,
+                                         SecurityAuthorizeHttpRequest authorizeHttpRequest) {
         this.corsFilter = corsFilter;
         this.jwtFilter = jwtFilter;
         this.accessDeniedHandler = accessDeniedHandler;
         this.authenticationEntryPoint = authenticationEntryPoint;
+        this.defaultAuthorizeRequest = authorizeHttpRequest;
         log.debug("Configuring SecurityFilterChain");
     }
 
@@ -108,8 +110,10 @@ public class BaseDefaultSecurityConfigurer {
 
     protected void configureAuthorization(HttpSecurity http, MvcRequestMatcher.Builder mvc) throws Exception {
         http.authorizeHttpRequests(registry -> registry
-            .requestMatchers(SecurityUtils.convertToMvcMatchers(mvc, DEFAULT_PUBLIC_API_PATTERNS))
-            .permitAll()
+                .requestMatchers(SecurityUtils.convertToMvcMatchers(mvc, defaultAuthorizeRequest.getPrivatePatterns()))
+                .authenticated()
+                .requestMatchers(SecurityUtils.convertToMvcMatchers(mvc, defaultAuthorizeRequest.getPublicPatterns()))
+                .permitAll()
             .requestMatchers(HttpMethod.OPTIONS).permitAll()
             .anyRequest().authenticated()
         );
