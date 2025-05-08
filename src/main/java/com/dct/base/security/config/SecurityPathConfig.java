@@ -14,7 +14,7 @@ public interface SecurityPathConfig {
 
         @Override
         public List<String> getPublicPaths() {
-            return List.of(SecurityConstants.REQUEST_MATCHERS.DEFAULT_API_PUBLIC_PATTERN);
+            return List.of(SecurityConstants.REQUEST_MATCHERS.DEFAULT_PUBLIC_API_PATTERNS);
         }
     }
 }

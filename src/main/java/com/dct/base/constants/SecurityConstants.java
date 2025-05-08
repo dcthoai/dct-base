@@ -3,7 +3,7 @@ package com.dct.base.constants;
 import com.dct.base.config.CorsFilterConfig;
 import com.dct.base.dto.auth.BaseAuthTokenDTO;
 import com.dct.base.security.jwt.JwtProvider;
-import com.dct.base.security.config.SecurityConfig;
+import com.dct.base.security.config.BaseDefaultSecurityConfigurer;
 
 /**
  * Security configuration parameters
@@ -27,13 +27,13 @@ public interface SecurityConstants {
     }
 
     /**
-     * The paths for security configuration in {@link SecurityConfig#securityFilterChain} <p>
+     * The paths for security configuration in {@link BaseDefaultSecurityConfigurer#securityFilterChain} <p>
      * Requests matching the patterns below will have their own specific security rules applied <p>
      * Requests not listed will require authentication by default
      */
     interface REQUEST_MATCHERS {
 
-        String[] DEFAULT_API_PUBLIC_PATTERN = {
+        String[] DEFAULT_PUBLIC_API_PATTERNS = {
             "/**.ico",
             "/i18n/**",
             "/uploads/**",
