@@ -9,6 +9,9 @@ import com.dct.base.exception.BaseIllegalArgumentException;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import javax.sql.DataSource;
 import java.nio.charset.StandardCharsets;
 import java.util.Objects;
@@ -20,6 +23,7 @@ import java.util.Properties;
 @SuppressWarnings("unused")
 public class DatasourceConfiguration {
 
+    private static final Logger log = LoggerFactory.getLogger(DatasourceConfiguration.class);
     private static final String ENTITY_NAME = "DatasourceConfiguration";
 
     public static class Builder {
@@ -43,6 +47,7 @@ public class DatasourceConfiguration {
         }
 
         public DataSource build() {
+            log.debug("Configuring datasource by default datasource builder");
             HikariConfig config = new HikariConfig();
             Properties props = new Properties();
 

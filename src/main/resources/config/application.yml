@@ -51,6 +51,13 @@ server:
   port: 8080
 
 dct-base:
+  jpa:
+    persistence-unit-name: dct-base-persistence
+    base-entity-packages:
+      - com.dct.base.entity
+    base-repository-packages:
+      - com.dct.base.repositories
+
   datasource:
     hikari:
       poolName: Hikari

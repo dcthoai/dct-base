@@ -8,6 +8,9 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
 import org.modelmapper.ModelMapper;
 import org.modelmapper.convention.MatchingStrategies;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -18,8 +21,11 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class MapperConfiguration {
 
+    private static final Logger log = LoggerFactory.getLogger(MapperConfiguration.class);
+
     @Bean
     public ObjectMapper objectMapper() {
+        log.debug("Configuring default bean ObjectMapper");
         ObjectMapper objectMapper = new ObjectMapper();
 
         // Avoid errors when encountering undefined properties in JSON that are not present in the Java class being converted
@@ -36,7 +42,7 @@ public class MapperConfiguration {
 
     @Bean
     public ModelMapper modelMapper() {
-        // Create object ModelMapper and config mapping
+        log.debug("Configuring default bean ModelMapper");
         ModelMapper modelMapper = new ModelMapper();
         modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
         return modelMapper;

@@ -2,6 +2,8 @@ package com.dct.base.config;
 
 import com.dct.base.constants.SecurityConstants;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.cors.CorsConfiguration;
@@ -17,6 +19,8 @@ import java.util.List;
 @Configuration
 public class CorsFilterConfig {
 
+    private static final Logger log = LoggerFactory.getLogger(CorsFilterConfig.class);
+
     /**
      * Configures the CORS (Cross-Origin Resource Sharing) filter in the application <p>
      * CORS is a security mechanism that allows or denies requests between different origins <p>
@@ -24,6 +28,7 @@ public class CorsFilterConfig {
      */
     @Bean
     public CorsFilter corsFilter() {
+        log.debug("Configuring default CorsFilter");
         CorsConfiguration config = new CorsConfiguration();
 
         config.setAllowedOriginPatterns(List.of(SecurityConstants.CORS.ALLOWED_ORIGIN_PATTERNS));
