@@ -19,13 +19,13 @@ import org.springframework.context.annotation.Configuration;
  * @author thoaidc
  */
 @Configuration
-public class MapperConfiguration {
+public class BaseMapperConfigurer {
 
-    private static final Logger log = LoggerFactory.getLogger(MapperConfiguration.class);
+    private static final Logger log = LoggerFactory.getLogger(BaseMapperConfigurer.class);
 
     @Bean
     public ObjectMapper objectMapper() {
-        log.debug("Configuring default bean ObjectMapper");
+        log.debug("Configure default ObjectMapper bean");
         ObjectMapper objectMapper = new ObjectMapper();
 
         // Avoid errors when encountering undefined properties in JSON that are not present in the Java class being converted
@@ -42,7 +42,7 @@ public class MapperConfiguration {
 
     @Bean
     public ModelMapper modelMapper() {
-        log.debug("Configuring default bean ModelMapper");
+        log.debug("Configure default ModelMapper bean");
         ModelMapper modelMapper = new ModelMapper();
         modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
         return modelMapper;

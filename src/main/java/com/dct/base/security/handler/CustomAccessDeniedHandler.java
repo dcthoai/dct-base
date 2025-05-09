@@ -1,9 +1,9 @@
 package com.dct.base.security.handler;
 
 import com.dct.base.common.JsonUtils;
-import com.dct.base.common.MessageUtils;
-import com.dct.base.constants.ExceptionConstants;
-import com.dct.base.constants.HttpStatusConstants;
+import com.dct.base.common.MessageTranslationUtils;
+import com.dct.base.constants.BaseExceptionConstants;
+import com.dct.base.constants.BaseHttpStatusConstants;
 import com.dct.base.dto.response.BaseResponseDTO;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -27,9 +27,9 @@ import java.nio.charset.StandardCharsets;
 public class CustomAccessDeniedHandler implements AccessDeniedHandler {
 
     private static final Logger log = LoggerFactory.getLogger(CustomAccessDeniedHandler.class);
-    private final MessageUtils messageUtils;
+    private final MessageTranslationUtils messageUtils;
 
-    public CustomAccessDeniedHandler(MessageUtils messageUtils) {
+    public CustomAccessDeniedHandler(MessageTranslationUtils messageUtils) {
         this.messageUtils = messageUtils;
         log.debug("AccessDeniedHandler 'CustomAccessDeniedHandler' is configured for use");
     }
@@ -52,12 +52,12 @@ public class CustomAccessDeniedHandler implements AccessDeniedHandler {
 
         response.setContentType(MediaType.APPLICATION_JSON_VALUE); // Convert response body to JSON
         response.setCharacterEncoding(StandardCharsets.UTF_8.name());
-        response.setStatus(HttpStatusConstants.FORBIDDEN);
+        response.setStatus(BaseHttpStatusConstants.FORBIDDEN);
 
         BaseResponseDTO responseDTO = BaseResponseDTO.builder()
-            .code(HttpStatusConstants.FORBIDDEN)
-            .success(HttpStatusConstants.STATUS.FAILED)
-            .message(messageUtils.getMessageI18n(ExceptionConstants.FORBIDDEN))
+            .code(BaseHttpStatusConstants.FORBIDDEN)
+            .success(BaseHttpStatusConstants.STATUS.FAILED)
+            .message(messageUtils.getMessageI18n(BaseExceptionConstants.FORBIDDEN))
             .build();
 
         response.getWriter().write(JsonUtils.toJsonString(responseDTO));

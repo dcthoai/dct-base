@@ -1,6 +1,6 @@
 package com.dct.base.common.datetime;
 
-import com.dct.base.constants.DatetimeConstants;
+import com.dct.base.constants.BaseDatetimeConstants;
 
 import java.time.Instant;
 import java.time.LocalDateTime;
@@ -18,7 +18,7 @@ public class InstantBuilder {
     private Instant instanceInstant;
 
     public InstantBuilder(Instant instant) {
-        this(instant, DatetimeConstants.ZoneID.DEFAULT);
+        this(instant, BaseDatetimeConstants.ZoneID.DEFAULT);
     }
 
     public InstantBuilder(Instant instant, String zoneID) {
@@ -27,7 +27,7 @@ public class InstantBuilder {
     }
 
     public InstantBuilder(LocalDateTime localDateTime) {
-        this(localDateTime, DatetimeConstants.ZoneID.DEFAULT);
+        this(localDateTime, BaseDatetimeConstants.ZoneID.DEFAULT);
     }
 
     public InstantBuilder(LocalDateTime localDateTime, String zoneID) {
@@ -36,7 +36,7 @@ public class InstantBuilder {
     }
 
     public InstantBuilder(String dateTime, String formatter) {
-        this(dateTime, formatter, DatetimeConstants.ZoneID.DEFAULT);
+        this(dateTime, formatter, BaseDatetimeConstants.ZoneID.DEFAULT);
     }
 
     public InstantBuilder(String dateTime, String formatter, String zoneID) {
@@ -61,17 +61,17 @@ public class InstantBuilder {
     }
 
     public InstantBuilder plusDays(int daysToAdd) {
-        this.instanceInstant = this.instanceInstant.plusSeconds(daysToAdd * DatetimeConstants.ONE_DAY);
+        this.instanceInstant = this.instanceInstant.plusSeconds(daysToAdd * BaseDatetimeConstants.ONE_DAY);
         return this;
     }
 
     public InstantBuilder plusHours(int hoursToAdd) {
-        this.instanceInstant = this.instanceInstant.plusSeconds(hoursToAdd * DatetimeConstants.ONE_HOUR);
+        this.instanceInstant = this.instanceInstant.plusSeconds(hoursToAdd * BaseDatetimeConstants.ONE_HOUR);
         return this;
     }
 
     public InstantBuilder plusMinutes(int minutesToAdd) {
-        this.instanceInstant = this.instanceInstant.plusSeconds(minutesToAdd * DatetimeConstants.ONE_MINUTE);
+        this.instanceInstant = this.instanceInstant.plusSeconds(minutesToAdd * BaseDatetimeConstants.ONE_MINUTE);
         return this;
     }
 
@@ -166,7 +166,7 @@ public class InstantBuilder {
 
     @Override
     public String toString() {
-        return this.toString(DatetimeConstants.Formatter.DEFAULT);
+        return this.toString(BaseDatetimeConstants.Formatter.DEFAULT);
     }
 
     public String toString(String formatter) {
@@ -175,7 +175,7 @@ public class InstantBuilder {
     }
 
     public String toStringWithZoneID(String zoneID) {
-        return toStringWithZoneID(zoneID, DatetimeConstants.Formatter.DEFAULT);
+        return toStringWithZoneID(zoneID, BaseDatetimeConstants.Formatter.DEFAULT);
     }
 
     public String toStringWithZoneID(String zoneID, String formatter) {

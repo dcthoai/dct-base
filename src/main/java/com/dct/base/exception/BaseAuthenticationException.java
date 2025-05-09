@@ -1,5 +1,6 @@
 package com.dct.base.exception;
 
+@SuppressWarnings("unused")
 public class BaseAuthenticationException extends BaseException {
 
     public BaseAuthenticationException(String entityName, String errorKey) {

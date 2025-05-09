@@ -1,6 +1,6 @@
 package com.dct.base;
 
-import com.dct.base.config.CRLFLogConverter;
+import com.dct.base.config.BaseCRLFLogConverter;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -57,7 +57,7 @@ public class BaseApplication {
         }
 
         log.info(
-            CRLFLogConverter.CRLF_SAFE_MARKER,
+            BaseCRLFLogConverter.CRLF_SAFE_MARKER,
             """
             \n----------------------------------------------------------
             \tApplication '{}' is running! Access URLs:

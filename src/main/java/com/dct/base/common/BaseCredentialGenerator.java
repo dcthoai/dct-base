@@ -12,7 +12,8 @@ import java.security.SecureRandom;
  *
  * @author thoaidc
  */
-public class CredentialGenerator {
+@SuppressWarnings("unused")
+public class BaseCredentialGenerator {
 
     private static final String CHARACTERS = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
     private static final SecureRandom random = new SecureRandom();

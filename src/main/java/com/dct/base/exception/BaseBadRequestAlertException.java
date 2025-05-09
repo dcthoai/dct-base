@@ -1,5 +1,6 @@
 package com.dct.base.exception;
 
+@SuppressWarnings("unused")
 public class BaseBadRequestAlertException extends BaseException {
 
     public BaseBadRequestAlertException(String entityName, String errorKey) {

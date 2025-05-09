@@ -1,6 +1,6 @@
 package com.dct.base.common;
 
-import com.dct.base.constants.BaseConstants;
+import com.dct.base.constants.BaseConfigConstants;
 import com.dct.base.dto.upload.ImageDTO;
 import com.dct.base.dto.upload.ImageParameterDTO;
 
@@ -21,10 +21,10 @@ import java.util.Iterator;
 import java.util.Optional;
 
 @SuppressWarnings("unused")
-public class ImageConverter {
+public class BaseImageConverter {
 
-    private static final Logger log = LoggerFactory.getLogger(ImageConverter.class);
-    private static final String ENTITY_NAME = "ImageConverter";
+    private static final Logger log = LoggerFactory.getLogger(BaseImageConverter.class);
+    private static final String ENTITY_NAME = "BaseImageConverter";
 
     public static boolean isValidImageFormat(MultipartFile file, String[] fileTypesAllowed) {
         if (FileUtils.invalidUploadFile(file))
@@ -42,11 +42,11 @@ public class ImageConverter {
     }
 
     public static boolean isValidImageFormat(MultipartFile file) {
-        return isValidImageFormat(file, BaseConstants.UPLOAD_RESOURCES.VALID_IMAGE_FORMATS);
+        return isValidImageFormat(file, BaseConfigConstants.UPLOAD_RESOURCES.VALID_IMAGE_FORMATS);
     }
 
     public static boolean isCompressibleImage(MultipartFile file) {
-        return isValidImageFormat(file, BaseConstants.UPLOAD_RESOURCES.COMPRESSIBLE_IMAGE_FORMATS);
+        return isValidImageFormat(file, BaseConfigConstants.UPLOAD_RESOURCES.COMPRESSIBLE_IMAGE_FORMATS);
     }
 
     public static ImageDTO compressImage(MultipartFile image) throws IOException {
@@ -61,10 +61,10 @@ public class ImageConverter {
             return null;
 
         File compressedImage = switch (imageParameterDTO.getImageType()) {
-            case BaseConstants.UPLOAD_RESOURCES.PNG,
-                 BaseConstants.UPLOAD_RESOURCES.WEBP -> webpLossyCompression(imageParameterDTO);
-            case BaseConstants.UPLOAD_RESOURCES.JPEG,
-                 BaseConstants.UPLOAD_RESOURCES.JPG -> jpegLossyCompression(imageParameterDTO);
+            case BaseConfigConstants.UPLOAD_RESOURCES.PNG,
+                 BaseConfigConstants.UPLOAD_RESOURCES.WEBP -> webpLossyCompression(imageParameterDTO);
+            case BaseConfigConstants.UPLOAD_RESOURCES.JPEG,
+                 BaseConfigConstants.UPLOAD_RESOURCES.JPG -> jpegLossyCompression(imageParameterDTO);
             default -> {
                 log.error("Could not compress image `{}`", image.getOriginalFilename());
                 yield null;
@@ -79,7 +79,7 @@ public class ImageConverter {
         File temporaryCompressedImage = File.createTempFile("compressed_", imageParameter.getFileExtension());
 
         try (FileImageOutputStream output = new FileImageOutputStream(temporaryCompressedImage)) {
-            ImageWriter writer = getImageWriter(BaseConstants.UPLOAD_RESOURCES.WEBP);
+            ImageWriter writer = getImageWriter(BaseConfigConstants.UPLOAD_RESOURCES.WEBP);
             BufferedImage resizedImage = resizeImage(imageParameter);
 
             log.debug("Compress with quality factor: {}", writer.getDefaultWriteParam().getCompressionQuality());
@@ -153,7 +153,7 @@ public class ImageConverter {
         int imageWidth = imageParameterDTO.getOriginalImageWidth();
         int imageHeight = imageParameterDTO.getOriginalImageHeight();
 
-        imageParameterDTO.setSizeCompressionFactor(getImageSizeCompressionFactor(imageWidth, imageHeight));
+        imageParameterDTO.setSizeCompressionFactor(1.0f);
         imageParameterDTO.setQualityCompressionFactor(getImageQualityCompressionFactor(imageFileSize));
 
         return imageParameterDTO;
@@ -178,8 +178,8 @@ public class ImageConverter {
         int imageHeight = bufferedImage.getHeight();
         long imageFileSize = image.getSize();
         String imageFileName = Optional.ofNullable(image.getOriginalFilename()).orElse("");
-        String defaultImageFormat = BaseConstants.UPLOAD_RESOURCES.DEFAULT_IMAGE_FORMAT;
-        String defaultImageType = BaseConstants.UPLOAD_RESOURCES.WEBP;
+        String defaultImageFormat = BaseConfigConstants.UPLOAD_RESOURCES.DEFAULT_IMAGE_FORMAT;
+        String defaultImageType = BaseConfigConstants.UPLOAD_RESOURCES.WEBP;
         String imageFileExtension = "", imageType = "";
 
         if (!imageFileName.isBlank() && imageFileName.contains(".")) {
@@ -214,19 +214,5 @@ public class ImageConverter {
         }
 
         return qualityCompressionFactor;
-    }
-
-    private static float getImageSizeCompressionFactor(int originalImageWidth, int originalImageHeight) {
-        float sizeCompressionFactor = 1.0f; // Default keep image size
-
-        if (originalImageWidth > 4000 || originalImageHeight > 4000) {
-            sizeCompressionFactor = 0.5f; // Resize 50%
-        } else if (originalImageWidth > 2000 || originalImageHeight > 2000) {
-            sizeCompressionFactor = 0.7f; // Resize 70%
-        } else if (originalImageWidth > 1200 || originalImageHeight > 1080) {
-            sizeCompressionFactor = 0.85f;
-        }
-
-        return sizeCompressionFactor;
     }
 }

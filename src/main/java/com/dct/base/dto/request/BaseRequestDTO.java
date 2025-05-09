@@ -1,7 +1,7 @@
 package com.dct.base.dto.request;
 
 import com.dct.base.common.DateUtils;
-import com.dct.base.constants.DatetimeConstants;
+import com.dct.base.constants.BaseDatetimeConstants;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,6 +25,7 @@ public class BaseRequestDTO implements Serializable {
     @Serial
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(BaseRequestDTO.class);
+    private static final String ENTITY_NAME = "BaseRequestDTO";
     private Integer page = 0;
     private Integer size = 20;
     private String sort;
@@ -64,11 +65,11 @@ public class BaseRequestDTO implements Serializable {
             try {
                 return DateUtils.ofLocalDateTime(
                     fromDate,
-                    DatetimeConstants.Formatter.DEFAULT,
-                    DatetimeConstants.ZoneID.ASIA_HO_CHI_MINH
+                    BaseDatetimeConstants.Formatter.DEFAULT,
+                    BaseDatetimeConstants.ZoneID.ASIA_HO_CHI_MINH
                 ).toString();
             } catch (DateTimeParseException e) {
-                log.error("Could not parse fromDate from request, skip filter by fromDate. {}", e.getMessage());
+                log.error("[{}] - Could not parse fromDate, skip filter by fromDate. {}", ENTITY_NAME, e.getMessage());
             }
         }
 
@@ -80,11 +81,11 @@ public class BaseRequestDTO implements Serializable {
             try {
                 return DateUtils.ofLocalDateTime(
                     toDate,
-                    DatetimeConstants.Formatter.DEFAULT,
-                    DatetimeConstants.ZoneID.ASIA_HO_CHI_MINH
+                    BaseDatetimeConstants.Formatter.DEFAULT,
+                    BaseDatetimeConstants.ZoneID.ASIA_HO_CHI_MINH
                 ).toString();
             } catch (DateTimeParseException e) {
-                log.error("Could not parse toDate from request, skip filter by toDate. {}", e.getMessage());
+                log.error("[{}] - Could not parse toDate, skip filter by toDate. {}", ENTITY_NAME, e.getMessage());
             }
         }
 

@@ -17,13 +17,13 @@ import java.util.Locale;
  * @author thoaidc
  */
 @Configuration
-public class LocaleConfiguration {
+public class BaseLocaleConfigurer {
 
-    private static final Logger log = LoggerFactory.getLogger(LocaleConfiguration.class);
+    private static final Logger log = LoggerFactory.getLogger(BaseLocaleConfigurer.class);
 
     @Bean(name = "localeResolver")
     public LocaleResolver localeResolver() {
-        log.debug("Allow accept-header to set locale for http response");
+        log.debug("Configure the localeResolver bean as the default accept-header handler for http requests");
         return new AcceptHeaderLocaleResolver();
     }
 }

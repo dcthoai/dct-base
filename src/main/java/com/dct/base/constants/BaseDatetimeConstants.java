@@ -1,7 +1,7 @@
 package com.dct.base.constants;
 
 @SuppressWarnings("unused")
-public interface DatetimeConstants {
+public interface BaseDatetimeConstants {
 
     long ONE_SECOND = 1L;
     long ONE_MINUTE = 60 * ONE_SECOND;
@@ -49,19 +49,20 @@ public interface DatetimeConstants {
         String E_DD_MMM_YYYY = "E, dd MMM yyyy"; // Example: Thu, 13 Feb 2025
         String YYYY_MM_DD_NORMALIZED = "yyyyMMdd";
         String YYYY_MM_DD_HH_MM_SS_NORMALIZED = "yyyyMMddHHmmss";
+        String YYYY_MM_DD_HH_MM_SS_SSS_NORMALIZED = "yyyyMMddHHmmssSSS";
         String DD_MM_YYYY_SLASH = "dd/MM/yyyy";
-        String YYYY_MM_DD_DASH = "yyyy/MM/dd";
-        String YYYY_DD_MM_DASH = "yyyy/dd/MM";
+        String YYYY_MM_DD_SLASH = "yyyy/MM/dd";
         String YYYY_MM_DD_HH_MM_SLASH = "yyyy/MM/dd HH:mm";
         String DD_MM_YYYY_HH_MM_SLASH = "dd/MM/yyyy HH:mm";
         String DD_MM_YYYY_HH_MM_SS_SLASH = "dd/MM/yyyy HH:mm:ss";
         String DD_MM_YYYY_HH_MM_SS_SSS_SLASH = "dd/MM/yyyy HH:mm:ss.SSS";
+        String HH_MM_SS_DD_MM_YYYY_SLASH = "HH:mm:ss dd/MM/yyyy";
         String DD_MM_YYYY_DASH = "dd-MM-yyyy";
-        String YYYY_MM_DD_SLASH = "yyyy-MM-dd";
-        String YYYY_DD_MM_SLASH = "yyyy-dd-MM";
+        String YYYY_MM_DD_DASH = "yyyy-MM-dd";
         String YYYY_MM_DD_HH_MM_DASH = "yyyy-MM-dd HH:mm";
         String DD_MM_YYYY_HH_MM_DASH = "dd-MM-yyyy HH:mm";
         String DD_MM_YYYY_HH_MM_SS_DASH = "dd-MM-yyyy HH:mm:ss";
         String DD_MM_YYYY_HH_MM_SS_SSS_DASH = "dd-MM-yyyy HH:mm:ss.SSS";
+        String HH_MM_SS_DD_MM_YYYY_DASH = "HH:mm:ss dd/MM/yyyy";
     }
 }

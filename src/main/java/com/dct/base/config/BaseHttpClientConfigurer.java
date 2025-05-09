@@ -14,9 +14,9 @@ import org.springframework.web.client.RestTemplate;
  * @author thoaidc
  */
 @Configuration
-public class HttpClientConfiguration {
+public class BaseHttpClientConfigurer {
 
-    private static final Logger log = LoggerFactory.getLogger(HttpClientConfiguration.class);
+    private static final Logger log = LoggerFactory.getLogger(BaseHttpClientConfigurer.class);
 
     /**
      * This configuration defines a RestTemplate bean in Spring <p>
@@ -24,7 +24,7 @@ public class HttpClientConfiguration {
      */
     @Bean
     public RestTemplate restTemplate() {
-        log.debug("Configured RestTemplate for send HTTP request/response in spring");
+        log.debug("Configure RestTemplate as default HttpClient for handle HTTP requests/responses");
         RestTemplate restTemplate = new RestTemplate();
         // Create an HTTP message converter, using JacksonConverter to convert between JSON and Java objects
         MappingJackson2HttpMessageConverter converter = new MappingJackson2HttpMessageConverter();

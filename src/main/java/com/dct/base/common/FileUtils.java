@@ -1,7 +1,7 @@
 package com.dct.base.common;
 
-import com.dct.base.config.properties.UploadResourceConfig;
-import com.dct.base.constants.BaseConstants;
+import com.dct.base.config.properties.BaseUploadResourceProperties;
+import com.dct.base.constants.BaseConfigConstants;
 import com.dct.base.dto.upload.ImageDTO;
 
 import org.slf4j.Logger;
@@ -37,11 +37,11 @@ public class FileUtils {
     private static final Logger log = LoggerFactory.getLogger(FileUtils.class);
     private final String UPLOAD_PATH;
 
-    public FileUtils(@Qualifier("uploadResourceConfig") @Nullable UploadResourceConfig uploadResourceConfig) {
+    public FileUtils(@Qualifier("baseUploadResourceProperties") @Nullable BaseUploadResourceProperties uploadResourceConfig) {
         if (Objects.nonNull(uploadResourceConfig)) {
             UPLOAD_PATH = uploadResourceConfig.getUploadPath();
         } else {
-            UPLOAD_PATH = BaseConstants.UPLOAD_RESOURCES.DEFAULT_UPLOAD_PATH;
+            UPLOAD_PATH = BaseConfigConstants.UPLOAD_RESOURCES.DEFAULT_UPLOAD_PATH;
         }
     }
 
@@ -88,7 +88,7 @@ public class FileUtils {
         String uniqueName = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd_HH-mm-ss_SSS"));
 
         if (Objects.isNull(fileNameOrFileExtension))
-            return uniqueName + BaseConstants.UPLOAD_RESOURCES.DEFAULT_IMAGE_FORMAT;
+            return uniqueName + BaseConfigConstants.UPLOAD_RESOURCES.DEFAULT_IMAGE_FORMAT;
 
         String fileExtension = fileNameOrFileExtension.substring(fileNameOrFileExtension.lastIndexOf("."));
         return uniqueName + fileExtension;
@@ -108,7 +108,7 @@ public class FileUtils {
                     log.warn("Could not clean up temporary when save image: {}", fileToSaveImage.getAbsolutePath());
 
                 log.debug("Save new file to: {}", fileToSaveImage.getAbsolutePath());
-                return BaseConstants.UPLOAD_RESOURCES.PREFIX_PATH + fileName;
+                return BaseConfigConstants.UPLOAD_RESOURCES.PREFIX_PATH + fileName;
             }
         } catch (IOException e) {
             log.error("Could not save file: {}", imageDTO.getImageParameterDTO().getOriginalImageFilename(), e);
@@ -134,7 +134,7 @@ public class FileUtils {
 
         try {
             file.transferTo(directory);
-            return BaseConstants.UPLOAD_RESOURCES.PREFIX_PATH + fileName;
+            return BaseConfigConstants.UPLOAD_RESOURCES.PREFIX_PATH + fileName;
         } catch (IOException e) {
             log.error("Could not save this file to: {}", directory.getAbsolutePath(), e);
         }
@@ -152,7 +152,7 @@ public class FileUtils {
             String filePath = save(file);
 
             if (Objects.isNull(filePath))
-                filePaths.add(BaseConstants.UPLOAD_RESOURCES.DEFAULT_IMAGE_PATH_FOR_ERROR);
+                filePaths.add(BaseConfigConstants.UPLOAD_RESOURCES.DEFAULT_IMAGE_PATH_FOR_ERROR);
             else
                 filePaths.add(filePath);
         }
@@ -161,11 +161,11 @@ public class FileUtils {
     }
 
     public String autoCompressImageAndSave(MultipartFile image) {
-        if (!ImageConverter.isValidImageFormat(image))
+        if (!BaseImageConverter.isValidImageFormat(image))
             return null;
 
         try {
-            ImageDTO compressedImageFile = ImageConverter.compressImage(image);
+            ImageDTO compressedImageFile = BaseImageConverter.compressImage(image);
 
             if (Objects.nonNull(compressedImageFile))
                 return save(compressedImageFile);
@@ -196,8 +196,8 @@ public class FileUtils {
         if (!StringUtils.hasText(filePath))
             return false;
 
-        int positionPrefixPath = filePath.lastIndexOf(BaseConstants.UPLOAD_RESOURCES.PREFIX_PATH);
-        int prefixSize = BaseConstants.UPLOAD_RESOURCES.PREFIX_PATH.length();
+        int positionPrefixPath = filePath.lastIndexOf(BaseConfigConstants.UPLOAD_RESOURCES.PREFIX_PATH);
+        int prefixSize = BaseConfigConstants.UPLOAD_RESOURCES.PREFIX_PATH.length();
         String fileName = filePath.substring(positionPrefixPath + prefixSize);
         File file = getFileToSave(fileName, false);
 

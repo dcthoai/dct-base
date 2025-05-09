@@ -1,6 +1,6 @@
 package com.dct.base.config.properties;
 
-import com.dct.base.constants.PropertiesConstants;
+import com.dct.base.constants.BasePropertiesConstants;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -15,16 +15,16 @@ import org.springframework.stereotype.Component;
  * {@link ConfigurationProperties} helps Spring map config properties to fields,
  * instead of using @{@link Value} for each property individually <p>
  *
- * {@link PropertiesConstants#DATASOURCE} decides the prefix for the configurations that will be mapped <p>
+ * {@link BasePropertiesConstants#DATASOURCE_CONNECTION} decides the prefix for the configurations that will be mapped <p>
  *
  * See <a href="">application-dev.yml</a> for detail
  *
  * @author thoaidc
  */
 @Component
-@ConditionalOnProperty(name = PropertiesConstants.DATASOURCE)
-@ConfigurationProperties(prefix = PropertiesConstants.DATASOURCE)
-public class Datasource {
+@ConditionalOnProperty(name = BasePropertiesConstants.DATASOURCE_CONNECTION)
+@ConfigurationProperties(prefix = BasePropertiesConstants.DATASOURCE_CONNECTION, ignoreUnknownFields = false)
+public class BaseDatasourceConnectionProperties {
 
     private String driverClassName;
     private String database;

@@ -1,6 +1,6 @@
 package com.dct.base.config.properties;
 
-import com.dct.base.constants.PropertiesConstants;
+import com.dct.base.constants.BasePropertiesConstants;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -15,16 +15,16 @@ import org.springframework.stereotype.Component;
  * {@link ConfigurationProperties} helps Spring map config properties to fields,
  * instead of using @{@link Value} for each property individually <p>
  *
- * {@link PropertiesConstants#HIKARI} decides the prefix for the configurations that will be mapped <p>
+ * {@link BasePropertiesConstants#HIKARI} decides the prefix for the configurations that will be mapped <p>
  *
  * See <a href="">application-dev.yml</a> for detail
  *
  * @author thoaidc
  */
 @Component
-@ConditionalOnProperty(value = PropertiesConstants.HIKARI)
-@ConfigurationProperties(prefix = PropertiesConstants.HIKARI)
-public class Hikari {
+@ConditionalOnProperty(value = BasePropertiesConstants.HIKARI)
+@ConfigurationProperties(prefix = BasePropertiesConstants.HIKARI, ignoreUnknownFields = false)
+public class BaseHikariProperties {
 
     private boolean autoCommit;
     private boolean allowPoolSuspension;

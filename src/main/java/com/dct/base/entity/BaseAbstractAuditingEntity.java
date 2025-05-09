@@ -34,7 +34,7 @@ import java.time.Instant;
 @MappedSuperclass // Make this class a superclass that other entities can inherit from
 @EntityListeners(AuditingEntityListener.class)
 @SuppressWarnings("unused")
-public abstract class AbstractAuditingEntity implements Serializable {
+public abstract class BaseAbstractAuditingEntity implements Serializable {
 
     // Used to identify the version of the class when performing serialization.
     // Ensures compatibility when serialized data is read from different versions of the class.

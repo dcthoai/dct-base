@@ -71,7 +71,8 @@ public class JsonUtils {
                 Type type = TypeToken.getParameterized(List.class, className).getType();
                 results = gson.fromJson(jsonElement, type); // Parse json data as list
             } else if (jsonElement.isJsonObject()) {
-                T object = gson.fromJson(jsonElement, className); // Parse json data as an object then add to list results
+                // Parse json data as an object then add to list results
+                T object = gson.fromJson(jsonElement, className);
 
                 if (Objects.nonNull(object))
                     results.add(object);

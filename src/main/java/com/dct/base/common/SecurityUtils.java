@@ -1,4 +1,4 @@
-package com.dct.base.security.utils;
+package com.dct.base.common;
 
 import org.springframework.security.web.servlet.util.matcher.MvcRequestMatcher;
 

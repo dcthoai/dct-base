@@ -14,12 +14,12 @@ import java.util.Objects;
  * or other unsafe characters that may cause security problems or affect the log format
  * @author thoaidc
  */
-public class CRLFLogConverter extends ClassicConverter {
+public class BaseCRLFLogConverter extends ClassicConverter {
 
     public static final Marker CRLF_SAFE_MARKER = MarkerFactory.getMarker("CRLF_SAFE");
     private static final String[] SAFE_LOGGERS = { "org.hibernate" };
 
-    public CRLFLogConverter() {}
+    public BaseCRLFLogConverter() {}
 
     @Override
     public String convert(ILoggingEvent event) {

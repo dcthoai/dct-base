@@ -41,5 +41,5 @@ import java.lang.annotation.Target;
 public @interface CheckAuthorize {
 
     // A list of roles and permissions you want to apply
-    String authorities() default "";
+    String[] authorities() default "";
 }

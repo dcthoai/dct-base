@@ -1,6 +1,6 @@
 package com.dct.base.config;
 
-import com.dct.base.constants.SecurityConstants;
+import com.dct.base.constants.BaseSecurityConstants;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,27 +17,27 @@ import java.util.List;
  * @author thoaidc
  */
 @Configuration
-public class CorsFilterConfig {
+public class BaseCorsFilterConfigurer {
 
-    private static final Logger log = LoggerFactory.getLogger(CorsFilterConfig.class);
+    private static final Logger log = LoggerFactory.getLogger(BaseCorsFilterConfigurer.class);
 
     /**
      * Configures the CORS (Cross-Origin Resource Sharing) filter in the application <p>
      * CORS is a security mechanism that allows or denies requests between different origins <p>
-     * View the details of the permissions or restrictions in {@link SecurityConstants.CORS}
+     * View the details of the permissions or restrictions in {@link BaseSecurityConstants.CORS}
      */
     @Bean
     public CorsFilter corsFilter() {
-        log.debug("Configuring default CorsFilter");
+        log.debug("Configure default CorsFilter bean");
         CorsConfiguration config = new CorsConfiguration();
 
-        config.setAllowedOriginPatterns(List.of(SecurityConstants.CORS.ALLOWED_ORIGIN_PATTERNS));
-        config.setAllowedHeaders(List.of(SecurityConstants.CORS.ALLOWED_HEADERS));
-        config.setAllowedMethods(List.of(SecurityConstants.CORS.ALLOWED_REQUEST_METHODS));
-        config.setAllowCredentials(SecurityConstants.CORS.ALLOW_CREDENTIALS);
+        config.setAllowedOriginPatterns(List.of(BaseSecurityConstants.CORS.ALLOWED_ORIGIN_PATTERNS));
+        config.setAllowedHeaders(List.of(BaseSecurityConstants.CORS.ALLOWED_HEADERS));
+        config.setAllowedMethods(List.of(BaseSecurityConstants.CORS.ALLOWED_REQUEST_METHODS));
+        config.setAllowCredentials(BaseSecurityConstants.CORS.ALLOW_CREDENTIALS);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration(SecurityConstants.CORS.APPLY_FOR, config); // Apply CORS to all endpoints
+        source.registerCorsConfiguration(BaseSecurityConstants.CORS.APPLY_FOR, config); // Apply CORS to all endpoints
 
         return new CorsFilter(source);
     }

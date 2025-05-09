@@ -1,6 +1,6 @@
 package com.dct.base.common.datetime;
 
-import com.dct.base.constants.DatetimeConstants;
+import com.dct.base.constants.BaseDatetimeConstants;
 
 import java.time.Instant;
 import java.time.LocalDateTime;
@@ -18,7 +18,7 @@ public class LocalDateTimeBuilder {
     private LocalDateTime instanceLocalDateTime;
 
     public LocalDateTimeBuilder(LocalDateTime localDateTime) {
-        this(localDateTime, DatetimeConstants.ZoneID.DEFAULT);
+        this(localDateTime, BaseDatetimeConstants.ZoneID.DEFAULT);
     }
 
     public LocalDateTimeBuilder(LocalDateTime localDateTime, String zoneID) {
@@ -27,7 +27,7 @@ public class LocalDateTimeBuilder {
     }
 
     public LocalDateTimeBuilder(Instant instant) {
-        this(instant, DatetimeConstants.ZoneID.DEFAULT);
+        this(instant, BaseDatetimeConstants.ZoneID.DEFAULT);
     }
 
     public LocalDateTimeBuilder(Instant instant, String zoneID) {
@@ -36,7 +36,7 @@ public class LocalDateTimeBuilder {
     }
 
     public LocalDateTimeBuilder(String localDateTime, String formatter) {
-        this(localDateTime, formatter, DatetimeConstants.ZoneID.DEFAULT);
+        this(localDateTime, formatter, BaseDatetimeConstants.ZoneID.DEFAULT);
     }
 
     public LocalDateTimeBuilder(String localDateTime, String formatter, String zoneID) {
@@ -166,7 +166,7 @@ public class LocalDateTimeBuilder {
 
     @Override
     public String toString() {
-        return this.toString(DatetimeConstants.Formatter.DEFAULT);
+        return this.toString(BaseDatetimeConstants.Formatter.DEFAULT);
     }
 
     public String toString(String formatter) {
@@ -175,7 +175,7 @@ public class LocalDateTimeBuilder {
     }
 
     public String toStringWithZoneID(String zoneID) {
-        return toStringWithZoneID(zoneID, DatetimeConstants.Formatter.DEFAULT);
+        return toStringWithZoneID(zoneID, BaseDatetimeConstants.Formatter.DEFAULT);
     }
 
     public String toStringWithZoneID(String zoneID, String formatter) {

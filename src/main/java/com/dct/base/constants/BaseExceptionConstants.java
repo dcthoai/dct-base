@@ -6,12 +6,12 @@ package com.dct.base.constants;
  * <ul>
  *   <li><a href="">resources/i18n/messages</a></li>
  * </ul>
- * These paths are defined in {@link BaseConstants#MESSAGE_SOURCE_BASENAME}
+ * These paths are defined in {@link BaseConfigConstants#MESSAGE_SOURCE_BASENAME}
  *
  * @author thoaidc
  */
 @SuppressWarnings("unused")
-public interface ExceptionConstants {
+public interface BaseExceptionConstants {
 
     // I18n exception
     String TRANSLATE_NOT_FOUND = "exception.i18n.notFound";
@@ -39,15 +39,6 @@ public interface ExceptionConstants {
 
     // Request data error
     String INVALID_REQUEST_DATA = "exception.request.data.invalid";
-
-    // Role
-    String ROLE_EXISTED = "exception.role.existed";
-    String ROLE_PERMISSIONS_NOT_EMPTY = "exception.role.permissions.notEmpty";
-    String ROLE_PERMISSION_INVALID = "exception.role.permission.invalidList";
-
-    // RabbitMQ
-    String DIRECT_EXCHANGE_NULL = "exception.rabbitmq.exchange.directExchangeNull";
-
     String CANNOT_SAVE_VIDEO = "exception.home.video.canNotSaveFile";
     String CANNOT_SAVE_IMAGE = "exception.home.image.canNotSaveFile";
 
@@ -61,6 +52,7 @@ public interface ExceptionConstants {
     String NAME_NOT_BLANK = "exception.data.name.notBlank";
     String NAME_MAX_LENGTH = "exception.data.name.maxLength";
     String CODE_NOT_BLANK = "exception.data.code.notBlank";
+    String CODE_MAX_LENGTH = "exception.data.code.maxLength";
     String FULLNAME_NOT_BLANK = "exception.data.fullname.notBlank";
     String FULLNAME_MAX_LENGTH = "exception.data.fullname.maxLength";
     String USERNAME_NOT_BLANK = "exception.data.username.notBlank";
@@ -92,5 +84,5 @@ public interface ExceptionConstants {
     String DEVICE_ID_NOT_BLANK = "exception.data.deviceId.notBlank";
 
     // Config validate
-    String DATASOURCE_CONFIG_INFO_NULL = "";
+    String DATASOURCE_CONFIG_INFO_NULL = "exception.datasource.config.null";
 }

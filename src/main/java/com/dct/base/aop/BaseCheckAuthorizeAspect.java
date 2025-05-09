@@ -1,7 +1,7 @@
 package com.dct.base.aop;
 
 import com.dct.base.aop.annotation.CheckAuthorize;
-import com.dct.base.constants.ExceptionConstants;
+import com.dct.base.constants.BaseExceptionConstants;
 import com.dct.base.exception.BaseAuthenticationException;
 
 import org.aspectj.lang.ProceedingJoinPoint;
@@ -11,6 +11,7 @@ import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
 import org.aspectj.lang.annotation.Pointcut;
 import org.aspectj.lang.reflect.MethodSignature;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.core.Authentication;
@@ -39,13 +40,13 @@ import jakarta.servlet.http.HttpServletRequest;
  */
 @Aspect
 @Component
-public class CheckAuthorizeAspect {
+public class BaseCheckAuthorizeAspect {
 
-    private static final Logger log = LoggerFactory.getLogger(CheckAuthorizeAspect.class);
-    private static final String ENTITY_NAME = "CheckAuthorizeAspect";
+    private static final Logger log = LoggerFactory.getLogger(BaseCheckAuthorizeAspect.class);
+    private static final String ENTITY_NAME = "BaseCheckAuthorizeAspect";
 
-    public CheckAuthorizeAspect() {
-        log.debug("Configured CheckAuthorizeAspect for handle authenticate method");
+    public BaseCheckAuthorizeAspect() {
+        log.debug("Configured BaseCheckAuthorizeAspect as default handler for authenticate method");
     }
 
     /**
@@ -72,7 +73,7 @@ public class CheckAuthorizeAspect {
         CheckAuthorize annotation = methodSignature.getMethod().getAnnotation(CheckAuthorize.class);
 
         // Check against the list of permissions of the current user in security context
-        List<String> requiredAuthorities = Arrays.asList(annotation.authorities().split(","));
+        List<String> requiredAuthorities = Arrays.asList(annotation.authorities());
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Set<String> userAuthorities = authentication.getAuthorities()
                 .stream()
@@ -93,6 +94,6 @@ public class CheckAuthorizeAspect {
         } catch (Exception ignore) {}
 
         // Throw an exception to allow CustomExceptionHandler handling and return a response to the client
-        throw new BaseAuthenticationException(ENTITY_NAME, ExceptionConstants.FORBIDDEN);
+        throw new BaseAuthenticationException(ENTITY_NAME, BaseExceptionConstants.FORBIDDEN);
     }
 }

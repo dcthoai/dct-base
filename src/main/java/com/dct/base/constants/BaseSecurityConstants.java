@@ -1,6 +1,6 @@
 package com.dct.base.constants;
 
-import com.dct.base.config.CorsFilterConfig;
+import com.dct.base.config.BaseCorsFilterConfigurer;
 import com.dct.base.dto.auth.BaseAuthTokenDTO;
 import com.dct.base.security.jwt.JwtProvider;
 
@@ -9,7 +9,7 @@ import com.dct.base.security.jwt.JwtProvider;
  * @author thoaidc
  */
 @SuppressWarnings("unused")
-public interface SecurityConstants {
+public interface BaseSecurityConstants {
 
     // The encryption complexity in PasswordEncoder's algorithm (between 4 and 31)
     // Higher values mean the password is harder to attack, but too high will reduce performance
@@ -43,7 +43,7 @@ public interface SecurityConstants {
     }
 
     /**
-     * The configurations applied in the CORS filter in {@link CorsFilterConfig#corsFilter()}
+     * The configurations applied in the CORS filter in {@link BaseCorsFilterConfigurer#corsFilter()}
      */
     interface CORS {
         String APPLY_FOR = "/**"; // CORS filter is applied to all requests

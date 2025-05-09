@@ -1,9 +1,9 @@
 package com.dct.base.security.handler;
 
 import com.dct.base.common.JsonUtils;
-import com.dct.base.common.MessageUtils;
-import com.dct.base.constants.ExceptionConstants;
-import com.dct.base.constants.HttpStatusConstants;
+import com.dct.base.common.MessageTranslationUtils;
+import com.dct.base.constants.BaseExceptionConstants;
+import com.dct.base.constants.BaseHttpStatusConstants;
 import com.dct.base.dto.response.BaseResponseDTO;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -29,9 +29,9 @@ import java.nio.charset.StandardCharsets;
 public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint {
 
     private static final Logger log = LoggerFactory.getLogger(CustomAuthenticationEntryPoint.class);
-    private final MessageUtils messageUtils;
+    private final MessageTranslationUtils messageUtils;
 
-    public CustomAuthenticationEntryPoint(MessageUtils messageUtils) {
+    public CustomAuthenticationEntryPoint(MessageTranslationUtils messageUtils) {
         this.messageUtils = messageUtils;
         log.debug("AuthenticationEntryPoint 'CustomAuthenticationEntryPoint' is configured for use");
     }
@@ -53,12 +53,12 @@ public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint 
 
         response.setContentType(MediaType.APPLICATION_JSON_VALUE); // Convert response body to JSON
         response.setCharacterEncoding(StandardCharsets.UTF_8.name());
-        response.setStatus(HttpStatusConstants.UNAUTHORIZED);
+        response.setStatus(BaseHttpStatusConstants.UNAUTHORIZED);
 
         BaseResponseDTO responseDTO = BaseResponseDTO.builder()
-            .code(HttpStatusConstants.UNAUTHORIZED)
-            .success(HttpStatusConstants.STATUS.FAILED)
-            .message(messageUtils.getMessageI18n(ExceptionConstants.UNAUTHORIZED))
+            .code(BaseHttpStatusConstants.UNAUTHORIZED)
+            .success(BaseHttpStatusConstants.STATUS.FAILED)
+            .message(messageUtils.getMessageI18n(BaseExceptionConstants.UNAUTHORIZED))
             .build();
 
         response.getWriter().write(JsonUtils.toJsonString(responseDTO));

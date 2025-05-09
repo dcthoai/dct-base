@@ -1,11 +1,11 @@
 package com.dct.base.security.config;
 
-import com.dct.base.constants.SecurityConstants;
+import com.dct.base.constants.BaseSecurityConstants;
 import com.dct.base.security.handler.CustomAccessDeniedHandler;
 import com.dct.base.security.handler.CustomAuthenticationEntryPoint;
 import com.dct.base.security.jwt.JwtFilter;
-import com.dct.base.exception.handler.CustomExceptionHandler;
-import com.dct.base.security.utils.SecurityUtils;
+import com.dct.base.exception.handler.BaseExceptionHandler;
+import com.dct.base.common.SecurityUtils;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -98,9 +98,9 @@ public class BaseDefaultSecurityConfigurer {
     protected void configureHeaders(HttpSecurity http) throws Exception {
         http.headers(header -> header
             .frameOptions(HeadersConfigurer.FrameOptionsConfig::sameOrigin)
-            .contentSecurityPolicy(policy -> policy.policyDirectives(SecurityConstants.HEADER.SECURITY_POLICY))
+            .contentSecurityPolicy(policy -> policy.policyDirectives(BaseSecurityConstants.HEADER.SECURITY_POLICY))
             .referrerPolicy(config -> config.policy(ReferrerPolicy.STRICT_ORIGIN_WHEN_CROSS_ORIGIN))
-            .permissionsPolicy(config -> config.policy(SecurityConstants.HEADER.PERMISSIONS_POLICY))
+            .permissionsPolicy(config -> config.policy(BaseSecurityConstants.HEADER.PERMISSIONS_POLICY))
         );
     }
 
@@ -150,7 +150,7 @@ public class BaseDefaultSecurityConfigurer {
      * Configure a custom AuthenticationProvider to replace the default provider in Spring Security <p>
      * Method `setHideUserNotFoundExceptions` allows {@link UsernameNotFoundException} to be thrown
      * when an account is not found instead of convert to {@link BadCredentialsException} by default <p>
-     * After that, the {@link UsernameNotFoundException} will be handle by {@link CustomExceptionHandler}
+     * After that, the {@link UsernameNotFoundException} will be handle by {@link BaseExceptionHandler}
      */
     @Bean
     @ConditionalOnBean(UserDetailsService.class)
@@ -175,6 +175,6 @@ public class BaseDefaultSecurityConfigurer {
     @Bean
     @ConditionalOnMissingBean(PasswordEncoder.class)
     public PasswordEncoder defaultPasswordEncoder() {
-        return new BCryptPasswordEncoder(SecurityConstants.BCRYPT_COST_FACTOR);
+        return new BCryptPasswordEncoder(BaseSecurityConstants.BCRYPT_COST_FACTOR);
     }
 }

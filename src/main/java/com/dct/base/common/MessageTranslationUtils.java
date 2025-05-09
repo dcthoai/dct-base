@@ -1,6 +1,6 @@
 package com.dct.base.common;
 
-import com.dct.base.constants.ExceptionConstants;
+import com.dct.base.constants.BaseExceptionConstants;
 import com.dct.base.dto.response.BaseResponseDTO;
 import com.dct.base.interceptor.BaseResponseFilter;
 
@@ -19,12 +19,12 @@ import java.util.Locale;
  */
 @SuppressWarnings("unused")
 @Component
-public class MessageUtils {
+public class MessageTranslationUtils {
 
-    private static final Logger log = LoggerFactory.getLogger(MessageUtils.class);
+    private static final Logger log = LoggerFactory.getLogger(MessageTranslationUtils.class);
     private final MessageSource messageSource; // Spring boot service for I18n
 
-    public MessageUtils(MessageSource messageSource) {
+    public MessageTranslationUtils(MessageSource messageSource) {
         this.messageSource = messageSource;
     }
 
@@ -32,7 +32,7 @@ public class MessageUtils {
      * Get the internationalized content (I18n) of the key based on the current locale in the application
      * @param messageKey The code corresponding to the internationalized content to be retrieved
      * @param args Arguments passed to use dynamic values for message
-     * @return Value of {@link ExceptionConstants#TRANSLATE_NOT_FOUND} if not found message I18n
+     * @return Value of {@link BaseExceptionConstants#TRANSLATE_NOT_FOUND} if not found message I18n
      */
     public String getMessageI18n(String messageKey, Object ...args) {
         log.debug("Translate message for key: '{}'", messageKey);
@@ -43,7 +43,7 @@ public class MessageUtils {
         if (StringUtils.hasText(message))
             return message;
 
-        return messageSource.getMessage(ExceptionConstants.TRANSLATE_NOT_FOUND, null, "", locale);
+        return messageSource.getMessage(BaseExceptionConstants.TRANSLATE_NOT_FOUND, null, "", locale);
     }
 
     /**
@@ -77,7 +77,7 @@ public class MessageUtils {
             if (StringUtils.hasText(messageTranslated))
                 responseDTO.setMessage(messageTranslated);
         } else {
-            responseDTO.setMessage(getMessageI18n(ExceptionConstants.TRANSLATE_NOT_FOUND));
+            responseDTO.setMessage(getMessageI18n(BaseExceptionConstants.TRANSLATE_NOT_FOUND));
         }
 
         return responseDTO;

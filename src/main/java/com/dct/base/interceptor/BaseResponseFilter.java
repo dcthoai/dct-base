@@ -1,6 +1,6 @@
 package com.dct.base.interceptor;
 
-import com.dct.base.common.MessageUtils;
+import com.dct.base.common.MessageTranslationUtils;
 import com.dct.base.dto.response.BaseResponseDTO;
 
 import jakarta.annotation.Nullable;
@@ -26,9 +26,9 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice;
 public class BaseResponseFilter implements ResponseBodyAdvice<Object> {
 
     private static final Logger log = LoggerFactory.getLogger(BaseResponseFilter.class);
-    private final MessageUtils messageUtils;
+    private final MessageTranslationUtils messageUtils;
 
-    public BaseResponseFilter(MessageUtils messageUtils) {
+    public BaseResponseFilter(MessageTranslationUtils messageUtils) {
         this.messageUtils = messageUtils;
     }
 

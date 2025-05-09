@@ -1,9 +1,9 @@
 package com.dct.base.security.jwt;
 
 import com.dct.base.common.JsonUtils;
-import com.dct.base.common.MessageUtils;
-import com.dct.base.constants.HttpStatusConstants;
-import com.dct.base.constants.SecurityConstants;
+import com.dct.base.common.MessageTranslationUtils;
+import com.dct.base.constants.BaseHttpStatusConstants;
+import com.dct.base.constants.BaseSecurityConstants;
 import com.dct.base.dto.response.BaseResponseDTO;
 import com.dct.base.exception.BaseAuthenticationException;
 import com.dct.base.exception.BaseBadRequestException;
@@ -42,11 +42,11 @@ public class JwtFilter extends OncePerRequestFilter {
     private static final Logger log = LoggerFactory.getLogger(JwtFilter.class);
     private static final String ENTITY_NAME = "JwtTokenFilter";
     private final JwtProvider jwtProvider;
-    private final MessageUtils messageUtils;
+    private final MessageTranslationUtils messageUtils;
     private final String[] securityPublicApiPatterns;
 
     public JwtFilter(JwtProvider jwtProvider,
-                     MessageUtils messageUtils,
+                     MessageTranslationUtils messageUtils,
                      SecurityAuthorizeHttpRequest securityAuthorizeHttpRequest) {
         this.jwtProvider = jwtProvider;
         this.messageUtils = messageUtils;
@@ -87,19 +87,19 @@ public class JwtFilter extends OncePerRequestFilter {
 
         if (Objects.nonNull(cookies)) {
             bearerToken = Arrays.stream(cookies)
-                    .filter(cookie -> SecurityConstants.COOKIES.HTTP_ONLY_COOKIE_ACCESS_TOKEN.equals(cookie.getName()))
+                    .filter(cookie -> BaseSecurityConstants.COOKIES.HTTP_ONLY_COOKIE_ACCESS_TOKEN.equals(cookie.getName()))
                     .findFirst()
                     .map(Cookie::getValue)
                     .orElse(null);
         }
 
         if (!StringUtils.hasText(bearerToken))
-            bearerToken = request.getHeader(SecurityConstants.HEADER.AUTHORIZATION_HEADER);
+            bearerToken = request.getHeader(BaseSecurityConstants.HEADER.AUTHORIZATION_HEADER);
 
         if (!StringUtils.hasText(bearerToken))
-            bearerToken = request.getHeader(SecurityConstants.HEADER.AUTHORIZATION_GATEWAY_HEADER);
+            bearerToken = request.getHeader(BaseSecurityConstants.HEADER.AUTHORIZATION_GATEWAY_HEADER);
 
-        if (StringUtils.hasText(bearerToken) && bearerToken.startsWith(SecurityConstants.HEADER.TOKEN_TYPE))
+        if (StringUtils.hasText(bearerToken) && bearerToken.startsWith(BaseSecurityConstants.HEADER.TOKEN_TYPE))
             return bearerToken.substring(7);
 
         return bearerToken;
@@ -107,13 +107,13 @@ public class JwtFilter extends OncePerRequestFilter {
 
     private void handleException(HttpServletResponse response, BaseException exception) throws IOException {
         log.error("[{}] - Handling exception {}", ENTITY_NAME, exception.getClass().getName(), exception);
-        response.setStatus(HttpStatusConstants.UNAUTHORIZED);
+        response.setStatus(BaseHttpStatusConstants.UNAUTHORIZED);
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
         response.setCharacterEncoding(StandardCharsets.UTF_8.name());
 
         BaseResponseDTO responseDTO = BaseResponseDTO.builder()
-            .code(HttpStatusConstants.UNAUTHORIZED)
-            .success(HttpStatusConstants.STATUS.FAILED)
+            .code(BaseHttpStatusConstants.UNAUTHORIZED)
+            .success(BaseHttpStatusConstants.STATUS.FAILED)
             .message(messageUtils.getMessageI18n(exception.getErrorKey(), exception.getArgs()))
             .build();
 
