@@ -29,6 +29,7 @@ import java.util.Set;
 public class JsonUtils {
 
     private static final Logger log = LoggerFactory.getLogger(JsonUtils.class);
+    private static final String ENTITY_NAME = "JsonUtils";
 
     // Allow serialize even null field, auto format json before save
     private static final Gson gson = new GsonBuilder().serializeNulls().setPrettyPrinting().create();
@@ -44,9 +45,9 @@ public class JsonUtils {
         try (FileReader reader = new FileReader(filePath)) {
             return gson.fromJson(reader, className);
         } catch (JsonSyntaxException e) {
-            log.error("Invalid JSON format. {}", e.getMessage());
+            log.error("[{}] - Invalid JSON format. {}", ENTITY_NAME, e.getMessage());
         } catch (IOException | JsonIOException e) {
-            log.error("Cannot read data from file: {}. {}", filePath, e.getMessage());
+            log.error("[{}] - Cannot read data from file: {}. {}", ENTITY_NAME, filePath, e.getMessage());
         } catch (Exception e) {
             log.error(e.getMessage());
         }
@@ -80,9 +81,9 @@ public class JsonUtils {
 
             return results;
         } catch (JsonSyntaxException e) {
-            log.error("Invalid JSON format. {}", e.getMessage());
+            log.error("[{}] - Invalid JSON format. {}", ENTITY_NAME, e.getMessage());
         } catch (IOException | JsonIOException e) {
-            log.error("Cannot read data from file: {}. {}", filePath, e.getMessage());
+            log.error("[{}] - Cannot read data from file: {}. {}", ENTITY_NAME, filePath, e.getMessage());
         } catch (Exception e) {
             log.error(e.getMessage());
         }
@@ -99,7 +100,7 @@ public class JsonUtils {
         try (FileWriter writer = new FileWriter(filePath)) {
             gson.toJson(jsonObject, writer);
         } catch (IOException | JsonIOException e) {
-            log.error("Cannot write JSON object to file: {}", filePath, e);
+            log.error("[{}] - Cannot write JSON object to file: {}", ENTITY_NAME, filePath, e);
         } catch (Exception e) {
             log.error(e.getMessage());
         }
@@ -118,9 +119,9 @@ public class JsonUtils {
             try {
                 return gson.fromJson(jsonString, (Type) typeOrClass);
             } catch (JsonSyntaxException e) {
-                log.error("Invalid JSON format. {}", e.getMessage());
+                log.error("[{}] - Invalid JSON format. {}", ENTITY_NAME, e.getMessage());
             } catch (JsonIOException e) {
-                log.error("Cannot parse JSON string. {}", e.getMessage());
+                log.error("[{}] - Cannot parse JSON string. {}", ENTITY_NAME, e.getMessage());
             }
         }
 
@@ -149,7 +150,7 @@ public class JsonUtils {
             Type type = TypeToken.getParameterized(collectionType, typeParams).getType();
             return parseJson(jsonString, type);
         } catch (Exception e) {
-            log.error("Cannot parse JSON string to {}. {}", collectionType.getName(), e.getMessage());
+            log.error("[{}] - Cannot parse JSON string to {}. {}", ENTITY_NAME, collectionType.getName(), e.getMessage());
         }
 
         return null;
@@ -164,7 +165,7 @@ public class JsonUtils {
         try {
             return gson.toJson(object);
         } catch (JsonIOException e) {
-            log.error("Cannot convert object to JSON string. {}", e.getMessage());
+            log.error("[{}] - Cannot convert object to JSON string. {}", ENTITY_NAME, e.getMessage());
         }
 
         return "";

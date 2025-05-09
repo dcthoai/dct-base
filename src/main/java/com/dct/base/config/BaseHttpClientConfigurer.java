@@ -24,7 +24,7 @@ public class BaseHttpClientConfigurer {
      */
     @Bean
     public RestTemplate restTemplate() {
-        log.debug("Configure RestTemplate as default HttpClient for handle HTTP requests/responses");
+        log.debug("Configure `RestTemplate` as a default HttpClient for handle HTTP requests/responses");
         RestTemplate restTemplate = new RestTemplate();
         // Create an HTTP message converter, using JacksonConverter to convert between JSON and Java objects
         MappingJackson2HttpMessageConverter converter = new MappingJackson2HttpMessageConverter();

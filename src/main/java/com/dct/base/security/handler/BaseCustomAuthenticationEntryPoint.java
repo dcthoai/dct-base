@@ -26,14 +26,14 @@ import java.nio.charset.StandardCharsets;
  * @author thoaidc
  */
 @Component
-public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint {
+public class BaseCustomAuthenticationEntryPoint implements AuthenticationEntryPoint {
 
-    private static final Logger log = LoggerFactory.getLogger(CustomAuthenticationEntryPoint.class);
-    private final MessageTranslationUtils messageUtils;
+    private static final Logger log = LoggerFactory.getLogger(BaseCustomAuthenticationEntryPoint.class);
+    private final MessageTranslationUtils messageTranslationUtils;
 
-    public CustomAuthenticationEntryPoint(MessageTranslationUtils messageUtils) {
-        this.messageUtils = messageUtils;
-        log.debug("AuthenticationEntryPoint 'CustomAuthenticationEntryPoint' is configured for use");
+    public BaseCustomAuthenticationEntryPoint(MessageTranslationUtils messageTranslationUtils) {
+        this.messageTranslationUtils = messageTranslationUtils;
+        log.debug("Configure `BaseCustomAuthenticationEntryPoint` as a default AuthenticationEntryPoint");
     }
 
     /**
@@ -58,7 +58,7 @@ public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint 
         BaseResponseDTO responseDTO = BaseResponseDTO.builder()
             .code(BaseHttpStatusConstants.UNAUTHORIZED)
             .success(BaseHttpStatusConstants.STATUS.FAILED)
-            .message(messageUtils.getMessageI18n(BaseExceptionConstants.UNAUTHORIZED))
+            .message(messageTranslationUtils.getMessageI18n(BaseExceptionConstants.UNAUTHORIZED))
             .build();
 
         response.getWriter().write(JsonUtils.toJsonString(responseDTO));

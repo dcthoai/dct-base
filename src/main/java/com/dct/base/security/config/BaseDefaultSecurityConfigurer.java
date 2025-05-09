@@ -1,8 +1,8 @@
 package com.dct.base.security.config;
 
 import com.dct.base.constants.BaseSecurityConstants;
-import com.dct.base.security.handler.CustomAccessDeniedHandler;
-import com.dct.base.security.handler.CustomAuthenticationEntryPoint;
+import com.dct.base.security.handler.BaseCustomAccessDeniedHandler;
+import com.dct.base.security.handler.BaseCustomAuthenticationEntryPoint;
 import com.dct.base.security.jwt.JwtFilter;
 import com.dct.base.exception.handler.BaseExceptionHandler;
 import com.dct.base.common.SecurityUtils;
@@ -60,14 +60,14 @@ public class BaseDefaultSecurityConfigurer {
     private static final Logger log = LoggerFactory.getLogger(BaseDefaultSecurityConfigurer.class);
     private final CorsFilter corsFilter;
     private final JwtFilter jwtFilter;
-    private final CustomAccessDeniedHandler accessDeniedHandler;
-    private final CustomAuthenticationEntryPoint authenticationEntryPoint;
+    private final BaseCustomAccessDeniedHandler accessDeniedHandler;
+    private final BaseCustomAuthenticationEntryPoint authenticationEntryPoint;
     private final SecurityAuthorizeHttpRequest defaultAuthorizeRequest;
 
     public BaseDefaultSecurityConfigurer(CorsFilter corsFilter,
                                          JwtFilter jwtFilter,
-                                         CustomAccessDeniedHandler accessDeniedHandler,
-                                         CustomAuthenticationEntryPoint authenticationEntryPoint,
+                                         BaseCustomAccessDeniedHandler accessDeniedHandler,
+                                         BaseCustomAuthenticationEntryPoint authenticationEntryPoint,
                                          SecurityAuthorizeHttpRequest authorizeHttpRequest) {
         this.corsFilter = corsFilter;
         this.jwtFilter = jwtFilter;

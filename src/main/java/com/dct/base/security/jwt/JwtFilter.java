@@ -42,14 +42,14 @@ public class JwtFilter extends OncePerRequestFilter {
     private static final Logger log = LoggerFactory.getLogger(JwtFilter.class);
     private static final String ENTITY_NAME = "JwtTokenFilter";
     private final JwtProvider jwtProvider;
-    private final MessageTranslationUtils messageUtils;
+    private final MessageTranslationUtils messageTranslationUtils;
     private final String[] securityPublicApiPatterns;
 
     public JwtFilter(JwtProvider jwtProvider,
-                     MessageTranslationUtils messageUtils,
+                     MessageTranslationUtils messageTranslationUtils,
                      SecurityAuthorizeHttpRequest securityAuthorizeHttpRequest) {
         this.jwtProvider = jwtProvider;
-        this.messageUtils = messageUtils;
+        this.messageTranslationUtils = messageTranslationUtils;
         this.securityPublicApiPatterns = securityAuthorizeHttpRequest.getPublicPatterns();
     }
 
@@ -114,7 +114,7 @@ public class JwtFilter extends OncePerRequestFilter {
         BaseResponseDTO responseDTO = BaseResponseDTO.builder()
             .code(BaseHttpStatusConstants.UNAUTHORIZED)
             .success(BaseHttpStatusConstants.STATUS.FAILED)
-            .message(messageUtils.getMessageI18n(exception.getErrorKey(), exception.getArgs()))
+            .message(messageTranslationUtils.getMessageI18n(exception.getErrorKey(), exception.getArgs()))
             .build();
 
         response.getWriter().write(JsonUtils.toJsonString(responseDTO));

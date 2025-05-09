@@ -35,6 +35,7 @@ import java.util.Objects;
 public class FileUtils {
 
     private static final Logger log = LoggerFactory.getLogger(FileUtils.class);
+    private static final String ENTITY_NAME = "FileUtils";
     private final String UPLOAD_PATH;
 
     public FileUtils(@Qualifier("baseUploadResourceProperties") @Nullable BaseUploadResourceProperties uploadResourceConfig) {
@@ -72,13 +73,13 @@ public class FileUtils {
             File parentDir = file.getParentFile();
 
             if (Objects.nonNull(parentDir) && !parentDir.exists() && !parentDir.mkdirs()) {
-                log.warn("Could not create parent directory: {}", parentDir.getAbsolutePath());
+                log.warn("[{}] - Could not create parent directory: {}", ENTITY_NAME, parentDir.getAbsolutePath());
                 return null;
             }
 
             return file.createNewFile() ? file : null;
         } catch (Exception e) {
-            log.warn("Could not create new file at: {}", file.getAbsolutePath());
+            log.warn("[{}] - Could not create new file at: {}", ENTITY_NAME, file.getAbsolutePath());
         }
 
         return null;
@@ -104,14 +105,17 @@ public class FileUtils {
                 Path targetPath = fileToSaveImage.toPath();
                 Files.copy(sourcePath, targetPath, StandardCopyOption.REPLACE_EXISTING);
 
-                if (!imageDTO.getCompressedImage().delete())
-                    log.warn("Could not clean up temporary when save image: {}", fileToSaveImage.getAbsolutePath());
+                if (!imageDTO.getCompressedImage().delete()) {
+                    String temporaryFilePath = fileToSaveImage.getAbsolutePath();
+                    log.warn("[{}] - Could not clean up temporary image: {}", ENTITY_NAME, temporaryFilePath);
+                }
 
-                log.debug("Save new file to: {}", fileToSaveImage.getAbsolutePath());
+                log.debug("[{}] - Save new file to: {}", ENTITY_NAME, fileToSaveImage.getAbsolutePath());
                 return BaseConfigConstants.UPLOAD_RESOURCES.PREFIX_PATH + fileName;
             }
         } catch (IOException e) {
-            log.error("Could not save file: {}", imageDTO.getImageParameterDTO().getOriginalImageFilename(), e);
+            String filename = imageDTO.getImageParameterDTO().getOriginalImageFilename();
+            log.error("[{}] - Could not save file: {}", ENTITY_NAME, filename, e);
         }
 
         return null;
@@ -122,7 +126,7 @@ public class FileUtils {
             return null;
 
         if (Objects.isNull(file.getOriginalFilename())) {
-            log.warn("The uploaded file has an invalid name or is empty");
+            log.warn("[{}] - The uploaded file has an invalid name or is empty", ENTITY_NAME);
             return null;
         }
 
@@ -136,7 +140,7 @@ public class FileUtils {
             file.transferTo(directory);
             return BaseConfigConstants.UPLOAD_RESOURCES.PREFIX_PATH + fileName;
         } catch (IOException e) {
-            log.error("Could not save this file to: {}", directory.getAbsolutePath(), e);
+            log.error("[{}] - Could not save this file to: {}", ENTITY_NAME, directory.getAbsolutePath(), e);
         }
 
         return null;
@@ -172,7 +176,7 @@ public class FileUtils {
 
             return save(image);
         } catch (IOException e) {
-            log.error("Could not auto compress image and save: {}", image.getOriginalFilename(), e);
+            log.error("[{}] - Could not auto compress image and save: {}", ENTITY_NAME, image.getOriginalFilename(), e);
         }
 
         return null;
@@ -204,7 +208,7 @@ public class FileUtils {
         if (Objects.isNull(file))
             return false;
 
-        log.debug("Deleting file: {}", file.getAbsolutePath());
+        log.debug("[{}] - Deleting file: {}", ENTITY_NAME, file.getAbsolutePath());
         return file.delete();
     }
 
@@ -215,7 +219,7 @@ public class FileUtils {
 
         for (String filePath : filePaths) {
             if (!delete(filePath)) {
-                log.error("Could not delete file: {}", filePath);
+                log.error("[{}] - Could not delete file: {}", ENTITY_NAME, filePath);
             }
         }
     }

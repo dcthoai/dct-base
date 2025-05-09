@@ -43,7 +43,7 @@ public class BaseExceptionHandler extends ResponseEntityExceptionHandler {
 
     public BaseExceptionHandler(MessageTranslationUtils messageUtils) {
         this.messageUtils = messageUtils;
-        log.debug("Configure 'BaseExceptionHandler' as default custom exception handler");
+        log.debug("Configure `BaseExceptionHandler` as a default custom exception handler");
     }
 
     /**

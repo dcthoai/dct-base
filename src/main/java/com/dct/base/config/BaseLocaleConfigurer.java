@@ -23,7 +23,7 @@ public class BaseLocaleConfigurer {
 
     @Bean(name = "localeResolver")
     public LocaleResolver localeResolver() {
-        log.debug("Configure the localeResolver bean as the default accept-header handler for http requests");
+        log.debug("Configure `localeResolver` bean as a default accept-header handler for http requests");
         return new AcceptHeaderLocaleResolver();
     }
 }

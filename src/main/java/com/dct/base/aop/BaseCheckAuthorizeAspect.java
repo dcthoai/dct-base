@@ -46,7 +46,7 @@ public class BaseCheckAuthorizeAspect {
     private static final String ENTITY_NAME = "BaseCheckAuthorizeAspect";
 
     public BaseCheckAuthorizeAspect() {
-        log.debug("Configured BaseCheckAuthorizeAspect as default handler for authenticate method");
+        log.debug("Configure `BaseCheckAuthorizeAspect` as a default handler for authenticate method");
     }
 
     /**

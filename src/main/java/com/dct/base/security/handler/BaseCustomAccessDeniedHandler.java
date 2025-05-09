@@ -24,14 +24,14 @@ import java.nio.charset.StandardCharsets;
  * @author thoaidc
  */
 @Component
-public class CustomAccessDeniedHandler implements AccessDeniedHandler {
+public class BaseCustomAccessDeniedHandler implements AccessDeniedHandler {
 
-    private static final Logger log = LoggerFactory.getLogger(CustomAccessDeniedHandler.class);
+    private static final Logger log = LoggerFactory.getLogger(BaseCustomAccessDeniedHandler.class);
     private final MessageTranslationUtils messageUtils;
 
-    public CustomAccessDeniedHandler(MessageTranslationUtils messageUtils) {
+    public BaseCustomAccessDeniedHandler(MessageTranslationUtils messageUtils) {
         this.messageUtils = messageUtils;
-        log.debug("AccessDeniedHandler 'CustomAccessDeniedHandler' is configured for use");
+        log.debug("Configure `BaseCustomAccessDeniedHandler` as a default AccessDeniedHandler");
     }
 
     /**
@@ -48,7 +48,7 @@ public class CustomAccessDeniedHandler implements AccessDeniedHandler {
     public void handle(HttpServletRequest request,
                        HttpServletResponse response,
                        AccessDeniedException exception) throws IOException {
-        log.error("AccessDenied handler is active. {}: {}", exception.getMessage(), request.getRequestURL());
+        log.error("Access denied handler is active. {}: {}", exception.getMessage(), request.getRequestURL());
 
         response.setContentType(MediaType.APPLICATION_JSON_VALUE); // Convert response body to JSON
         response.setCharacterEncoding(StandardCharsets.UTF_8.name());
