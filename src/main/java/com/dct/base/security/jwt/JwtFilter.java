@@ -40,7 +40,7 @@ import java.util.Objects;
 public class JwtFilter extends OncePerRequestFilter {
 
     private static final Logger log = LoggerFactory.getLogger(JwtFilter.class);
-    private static final String ENTITY_NAME = "JwtTokenFilter";
+    private static final String ENTITY_NAME = "JwtFilter";
     private final JwtProvider jwtProvider;
     private final MessageTranslationUtils messageTranslationUtils;
     private final String[] securityPublicApiPatterns;
