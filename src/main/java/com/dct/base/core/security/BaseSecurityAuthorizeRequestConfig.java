@@ -2,6 +2,7 @@ package com.dct.base.core.security;
 
 import com.dct.base.constants.BaseSecurityConstants;
 
+@SuppressWarnings("unused")
 public abstract class BaseSecurityAuthorizeRequestConfig {
 
     public String[] getPublicPatterns() {

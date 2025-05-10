@@ -1,4 +1,4 @@
 package com.dct.base.core.security;
 
-public class BaseSecurityConfigAdapter {
+public abstract class BaseSecurityConfigAdapter {
 }
