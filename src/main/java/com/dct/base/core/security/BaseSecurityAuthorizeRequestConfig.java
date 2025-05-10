@@ -1,17 +1,13 @@
-package com.dct.base.security.config;
+package com.dct.base.core.security;
 
 import com.dct.base.constants.BaseSecurityConstants;
-import org.springframework.stereotype.Component;
 
-@Component
-public class DefaultSecurityAuthorizeHttpRequest implements SecurityAuthorizeHttpRequest {
+public abstract class BaseSecurityAuthorizeRequestConfig {
 
-    @Override
     public String[] getPublicPatterns() {
         return BaseSecurityConstants.REQUEST_MATCHERS.DEFAULT_PUBLIC_API_PATTERNS;
     }
 
-    @Override
     public String[] getPrivatePatterns() {
         return new String[0];
     }
