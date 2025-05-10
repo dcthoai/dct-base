@@ -1,8 +1,8 @@
-package com.dct.base.interceptor;
+package com.dct.base.core.interceptor;
 
-import com.dct.base.common.MessageTranslationUtils;
 import com.dct.base.dto.response.BaseResponseDTO;
 
+import jakarta.annotation.Nonnull;
 import jakarta.annotation.Nullable;
 
 import org.slf4j.Logger;
@@ -13,7 +13,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.server.ServerHttpRequest;
 import org.springframework.http.server.ServerHttpResponse;
-import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice;
 
 /**
@@ -22,31 +21,22 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice;
  *
  * @author thoaidc
  */
-@ControllerAdvice
-public class BaseResponseFilter implements ResponseBodyAdvice<Object> {
+public abstract class BaseResponseFilter implements ResponseBodyAdvice<Object> {
 
     private static final Logger log = LoggerFactory.getLogger(BaseResponseFilter.class);
-    private final MessageTranslationUtils messageUtils;
-
-    public BaseResponseFilter(MessageTranslationUtils messageUtils) {
-        this.messageUtils = messageUtils;
-    }
 
     /**
      * Check if the response is a {@link BaseResponseDTO} or {@link ResponseEntity}<{@link BaseResponseDTO}> <p>
      * If true, the response will be processed by {@link BaseResponseFilter#beforeBodyWrite}
      *
      * @param returnType the return type
-     * @param converterType the selected converter type
+     * @param converter the selected converter type
      * @return true if response type is supported by this filter
      */
     @Override
-    public boolean supports(MethodParameter returnType, Class<? extends HttpMessageConverter<?>> converterType) {
-        boolean isBaseResponseDTOType = BaseResponseDTO.class.isAssignableFrom(returnType.getParameterType());
-        boolean isBasicResponseEntity = ResponseEntity.class.isAssignableFrom(returnType.getParameterType());
-        log.debug("Response will be processed by: " + converterType.getSimpleName());
-
-        return isBaseResponseDTOType || isBasicResponseEntity;
+    public boolean supports(@Nonnull MethodParameter returnType, Class<? extends HttpMessageConverter<?>> converter) {
+        log.debug("Response will be processed by: " + converter.getSimpleName());
+        return isSupport(returnType, converter);
     }
 
     /**
@@ -67,19 +57,10 @@ public class BaseResponseFilter implements ResponseBodyAdvice<Object> {
                                   @Nullable Class<? extends HttpMessageConverter<?>> selectedConverterType,
                                   @Nullable ServerHttpRequest request,
                                   @Nullable ServerHttpResponse response) {
-        if (body instanceof BaseResponseDTO) {
-            return messageUtils.setResponseMessageI18n((BaseResponseDTO) body);
-        }
-
-        if (body instanceof ResponseEntity<?> responseEntity) {
-            Object responseBody = responseEntity.getBody();
-
-            if (responseBody instanceof BaseResponseDTO) {
-                BaseResponseDTO responseDTO = messageUtils.setResponseMessageI18n((BaseResponseDTO) responseBody);
-                return new ResponseEntity<>(responseDTO, responseEntity.getHeaders(), responseEntity.getStatusCode());
-            }
-        }
-
-        return body;
+        return writeBody(body, request, response);
     }
+
+    protected abstract boolean isSupport(MethodParameter returnType, Class<? extends HttpMessageConverter<?>> converter);
+
+    protected abstract Object writeBody(Object body, ServerHttpRequest request, ServerHttpResponse response);
 }

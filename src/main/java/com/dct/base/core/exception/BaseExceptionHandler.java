@@ -1,4 +1,4 @@
-package com.dct.base.exception.handler;
+package com.dct.base.core.exception;
 
 import com.dct.base.common.MessageTranslationUtils;
 import com.dct.base.constants.BaseExceptionConstants;
@@ -20,7 +20,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
-import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.multipart.MaxUploadSizeExceededException;
@@ -35,8 +34,7 @@ import java.util.Objects;
  *
  * @author thoaidc
  */
-@ControllerAdvice
-public class BaseExceptionHandler extends ResponseEntityExceptionHandler {
+public abstract class BaseExceptionHandler extends ResponseEntityExceptionHandler {
 
     private static final Logger log = LoggerFactory.getLogger(BaseExceptionHandler.class);
     private final MessageTranslationUtils messageUtils;

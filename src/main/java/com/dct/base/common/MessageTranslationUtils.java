@@ -2,7 +2,7 @@ package com.dct.base.common;
 
 import com.dct.base.constants.BaseExceptionConstants;
 import com.dct.base.dto.response.BaseResponseDTO;
-import com.dct.base.interceptor.BaseResponseFilter;
+import com.dct.base.core.interceptor.BaseResponseFilter;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
