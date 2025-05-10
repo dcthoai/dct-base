@@ -8,7 +8,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.stereotype.Component;
 
 @Component
-@ConditionalOnMissingBean(name = "customSecurityAuthorizeRequest")
+@ConditionalOnMissingBean(value = BaseSecurityAuthorizeRequestConfig.class)
 public class DefaultBaseSecurityAuthorizeRequest extends BaseSecurityAuthorizeRequestConfig {
 
     private static final Logger log = LoggerFactory.getLogger(DefaultBaseSecurityAuthorizeRequest.class);
