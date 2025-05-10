@@ -90,7 +90,7 @@ public class BaseCheckAuthorizeAspect {
             HttpServletRequest httpServletRequest = Objects.requireNonNull(request).getRequest();
             String url = httpServletRequest.getRequestURL().toString();
             String username = Objects.nonNull(authentication.getName()) ? authentication.getName() : "Anonymous";
-            log.error("User '{}' does not have any permission to access this function: {}", username, url);
+            log.error("[{}] - User '{}' does not have any permission to access: {}", ENTITY_NAME, username, url);
         } catch (Exception ignore) {}
 
         // Throw an exception to allow CustomExceptionHandler handling and return a response to the client

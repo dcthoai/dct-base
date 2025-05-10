@@ -10,6 +10,8 @@ import com.dct.base.dto.response.BaseResponseDTO;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Component;
@@ -20,10 +22,12 @@ import java.nio.charset.StandardCharsets;
 @Component
 public class DefaultBaseAccessDeniedHandler extends BaseAccessDeniedHandler {
 
+    private static final Logger log = LoggerFactory.getLogger(DefaultBaseAccessDeniedHandler.class);
     private final MessageTranslationUtils messageTranslationUtils;
 
     public DefaultBaseAccessDeniedHandler(MessageTranslationUtils messageTranslationUtils) {
         this.messageTranslationUtils = messageTranslationUtils;
+        log.debug("`DefaultBaseAccessDeniedHandler` has been automatically configured to handle access denied exceptions");
     }
 
     @Override

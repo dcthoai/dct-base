@@ -4,6 +4,8 @@ import com.dct.base.common.MessageTranslationUtils;
 import com.dct.base.core.interceptor.BaseResponseFilter;
 import com.dct.base.dto.response.BaseResponseDTO;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.MethodParameter;
 import org.springframework.http.ResponseEntity;
@@ -15,12 +17,14 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 @ControllerAdvice
 public class DefaultBaseResponseFilter extends BaseResponseFilter {
 
+    private static final Logger log = LoggerFactory.getLogger(DefaultBaseResponseFilter.class);
     private final MessageTranslationUtils messageUtils;
 
     @Autowired
     public DefaultBaseResponseFilter(MessageTranslationUtils messageUtils) {
         super();
         this.messageUtils = messageUtils;
+        log.debug("`DefaultBaseResponseFilter` has been automatically configured to handle response body");
     }
 
     @Override

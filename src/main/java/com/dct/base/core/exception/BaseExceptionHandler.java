@@ -34,6 +34,7 @@ import java.util.Objects;
  *
  * @author thoaidc
  */
+@SuppressWarnings("unused")
 public abstract class BaseExceptionHandler extends ResponseEntityExceptionHandler {
 
     private static final Logger log = LoggerFactory.getLogger(BaseExceptionHandler.class);
@@ -41,7 +42,6 @@ public abstract class BaseExceptionHandler extends ResponseEntityExceptionHandle
 
     public BaseExceptionHandler(MessageTranslationUtils messageUtils) {
         this.messageUtils = messageUtils;
-        log.debug("Configure `BaseExceptionHandler` as a default custom exception handler");
     }
 
     /**

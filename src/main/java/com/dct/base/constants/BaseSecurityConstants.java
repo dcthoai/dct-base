@@ -2,7 +2,7 @@ package com.dct.base.constants;
 
 import com.dct.base.config.BaseCorsFilterConfigurer;
 import com.dct.base.dto.auth.BaseAuthTokenDTO;
-import com.dct.base.security.jwt.JwtProvider;
+import com.dct.base.core.security.jwt.BaseJwtProvider;
 
 /**
  * Security configuration parameters
@@ -17,7 +17,7 @@ public interface BaseSecurityConstants {
 
     /**
      * The corresponding keys to store information in the payload of a JWT token <p>
-     * See {@link JwtProvider#createToken(BaseAuthTokenDTO)} for details
+     * See {@link BaseJwtProvider#createToken(BaseAuthTokenDTO)} for details
      */
     interface TOKEN_PAYLOAD {
         String USER_ID = "userId";

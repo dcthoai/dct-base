@@ -1,11 +1,11 @@
 package com.dct.base.dto.auth;
 
-import com.dct.base.security.jwt.JwtProvider;
 import org.springframework.security.core.Authentication;
+import com.dct.base.core.security.jwt.BaseJwtProvider;
 
 /**
  * User information after successful authentication, used to generate the access token
- * Used in {@link JwtProvider#createToken(BaseAuthTokenDTO)}
+ * Used in {@link BaseJwtProvider#createToken(BaseAuthTokenDTO)}
  *
  * @author thoaidc
  */

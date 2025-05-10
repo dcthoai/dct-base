@@ -21,6 +21,7 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice;
  *
  * @author thoaidc
  */
+@SuppressWarnings("unused")
 public abstract class BaseResponseFilter implements ResponseBodyAdvice<Object> {
 
     private static final Logger log = LoggerFactory.getLogger(BaseResponseFilter.class);

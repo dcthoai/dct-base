@@ -5,6 +5,8 @@ import com.dct.base.core.security.BaseSecurityAuthorizeRequestConfig;
 import com.dct.base.core.security.jwt.BaseJwtFilter;
 import com.dct.base.core.security.jwt.BaseJwtProvider;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
@@ -12,6 +14,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class DefaultBaseJwtFilter extends BaseJwtFilter {
 
+    private static final Logger log = LoggerFactory.getLogger(DefaultBaseJwtFilter.class);
     private final BaseJwtProvider jwtProvider;
     private final BaseSecurityAuthorizeRequestConfig authorizeRequestConfig;
 
@@ -22,6 +25,7 @@ public class DefaultBaseJwtFilter extends BaseJwtFilter {
         super(messageTranslationUtils);
         this.jwtProvider = jwtProvider;
         this.authorizeRequestConfig = authorizeRequestConfig;
+        log.debug("`DefaultBaseJwtFilter` has been automatically configured to validate request token");
     }
 
     @Override
